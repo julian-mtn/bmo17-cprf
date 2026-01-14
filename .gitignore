@@ -1,0 +1,10 @@
+# Fichiers objets
+*.o
+
+# Exécutables
+*.out
+a.out
+
+# Fichiers temporaires
+*.tmp
+*.log
