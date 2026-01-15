@@ -6,6 +6,7 @@
 #include <time.h>
 #include <unistd.h>  
 
+/*test commit*/
 
 /*
 * Pseudo-random generator(PRG) pour l'arbre GGM
