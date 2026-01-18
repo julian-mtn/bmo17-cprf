@@ -74,4 +74,42 @@ telle que $C(x)=1$, on a
 Autrement dit, la clé contrainte permet d’évaluer la PRF exactement sur les entrées autorisées.
 \end{defbox}
 
+\section{Implémentation de la CPRF de BMO17}
+
+La CPRF de BMO17 est basée sur l'itération successive d'une permutation à trappe, qui est une fonction bijective, que l'on notera $\pi$.
+
+\begin{defbox}{Génération de la clé maîtresse}
+La clé maîtresse sera composé des éléments :
+\begin{itemize}
+  \item $ST_0 \in \mathbb{Z}_N$
+  \item $SK$ une clé RSA pour avoir la permutation $\pi_{SK}$
+\end{itemize}
+\end{defbox}
+
+\begin{defbox}{Évaluation de la CPRF avec la clé maîtresse}
+    
+    Avec la clé maîtresse ($ST_0$, $SK$) et une entrée $c$, on peut évaluer la CPRF sur $c$ :
+    \[
+    F((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0) 
+    \]
+  
+\end{defbox}
+
+\begin{defbox}{Génération de la clé contrainte}
+  À partir de la clé maîtresse ($ST_0$, $SK$) et d'un entier $n$, la clé contrainte calculée sera composée des éléments :
+  \begin{itemize}
+    \item $PK$
+    \item $ST_n$ $=$ $\pi_{SK}^{-n}(ST_0)$
+    \item $n$
+  \end{itemize}
+\end{defbox}
+
+\begin{defbox}{Évaluation de la CPRF avec la clé contrainte}
+    
+    Avec la clé contrainte ($PK$, $ST_n$, $n$) et une entrée $c$, on peut évaluer la CPRF si $c < n$ :
+    \[
+    F.Eval((PK, ST_n, n), c) = \pi_{PK}^{n-c}(ST_c) 
+    \]
+\end{defbox}
 \end{document}
+
