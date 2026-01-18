@@ -1,0 +1,77 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{enumitem}
+\usepackage{geometry}
+\usepackage[many]{tcolorbox}
+\geometry{margin=2.5cm}
+
+\tcbset{
+  mydefstyle/.style={
+    colback=white,
+    colframe=black,
+    fonttitle=\bfseries,
+    boxrule=0.8pt,
+    arc=4pt,
+    left=3mm, right=3mm, top=2mm, bottom=2mm,
+    breakable
+  }
+}
+
+% Environnement "définition encadrée"
+\newtcolorbox{defbox}[2][]{mydefstyle,title=#2,#1}
+
+\title{Constrained Pseudorandom Functions, Revisited}
+\author{Julian Mouthon, Mario Razafinony}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Définitions}
+
+\begin{defbox}{Fonction pseudo-aléatoire (PRF)}
+
+Une fonction pseudo-aléatoire
+\[
+F : \mathcal K \times D \rightarrow R
+\]
+est une fonction telle que, pour une clé secrète $K$, la fonction $F(K,\cdot)$ est
+indiscernable d’une fonction réellement aléatoire
+$G : D \rightarrow R$ pour tout adversaire efficace.
+\end{defbox}
+
+\begin{defbox}{Contrainte}
+\[
+C : D \rightarrow \{0,1\}.
+\]
+
+\[
+C(x)=1 \text{ : « l’entrée est autorisée »} \qquad
+C(x)=0 \text{ : « l’entrée est interdite »}.
+\]
+\end{defbox}
+
+\begin{defbox}{CPRF}
+Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes efficaces :
+\begin{itemize}
+\item $\textsf{Setup}(1^\lambda) \to K$ (clé maître) : génère la clé secrète principale $K$.
+\item $\textsf{Constrain}(K,C) \to K_C$ (clé contrainte) : produit une clé spéciale $K_C$ permettant
+d’évaluer la fonction uniquement sur les entrées autorisées par $C$.
+\item $\textsf{Eval}(K,x) \to y$ : évalue la fonction pseudo-aléatoire sur une entrée $x$ avec la clé maître.
+\item $\textsf{EvalC}(K_C,x) \to y$ : évalue la fonction sur l’entrée $x$ avec la clé contrainte $K_C$.
+\end{itemize}
+
+
+Une CPRF est correcte si, pour toute clé $K$, toute contrainte $C$ et toute entrée $x$
+telle que $C(x)=1$, on a
+\[
+\textsf{EvalC}(K_C,x)=\textsf{Eval}(K,x).
+\]
+
+Autrement dit, la clé contrainte permet d’évaluer la PRF exactement sur les entrées autorisées.
+\end{defbox}
+
+\end{document}
