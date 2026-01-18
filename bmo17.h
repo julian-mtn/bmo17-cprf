@@ -20,14 +20,6 @@ typedef struct {
 } bmo17_constrained_key;
 
 /*
-* Pseudo-random generator(PRG) pour l'arbre GGM
-* @param input: entrée de KEY_SIZE octets
-* @param left: sortie de KEY_SIZE octets (partie gauche)
-* @param right: sortie de KEY_SIZE octets (partie droite)
-*/
-static void prg(const uint8_t * data, uint8_t * left, uint8_t * right);
-
-/*
  * Génère une clé maître aléatoire pour BMO17 CPRF (version GGM)
 */
 bmo17_master_key* bmo17_keygen();
