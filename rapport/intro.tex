@@ -82,24 +82,24 @@ La CPRF de BMO17 est basée sur l'itération successive d'une permutation à tra
 La clé maîtresse sera composé des éléments :
 \begin{itemize}
   \item $ST_0 \in \mathbb{Z}_N$
-  \item $SK$ une clé RSA pour avoir la permutation $\pi_{SK}$
+  \item $PK$ une clé RSA pour avoir la permutation $\pi_{PK}$
 \end{itemize}
 \end{defbox}
 
 \begin{defbox}{Évaluation de la CPRF avec la clé maîtresse}
     
-    Avec la clé maîtresse ($ST_0$, $SK$) et une entrée $c$, on peut évaluer la CPRF sur $c$ :
+    Avec la clé maîtresse ($ST_0$, $PK$) et une entrée $c$, on peut évaluer la CPRF sur $c$ :
     \[
-    F((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0) 
+    F((PK, ST_0), c) = \pi_{PK}^{-c}(ST_0) 
     \]
   
 \end{defbox}
 
 \begin{defbox}{Génération de la clé contrainte}
-  À partir de la clé maîtresse ($ST_0$, $SK$) et d'un entier $n$, la clé contrainte calculée sera composée des éléments :
+  À partir de la clé maîtresse ($ST_0$, $PK$) et d'un entier $n$, la clé contrainte calculée sera composée des éléments :
   \begin{itemize}
     \item $PK$
-    \item $ST_n$ $=$ $\pi_{SK}^{-n}(ST_0)$
+    \item $ST_n$ $=$ $\pi_{PK}^{-n}(ST_0)$
     \item $n$
   \end{itemize}
 \end{defbox}
