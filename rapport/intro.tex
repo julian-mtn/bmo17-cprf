@@ -64,7 +64,6 @@ d’évaluer la fonction uniquement sur les entrées autorisées par $C$.
 \item $\textsf{EvalC}(K_C,x) \to y$ : évalue la fonction sur l’entrée $x$ avec la clé contrainte $K_C$.
 \end{itemize}
 
-
 Une CPRF est correcte si, pour toute clé $K$, toute contrainte $C$ et toute entrée $x$
 telle que $C(x)=1$, on a
 \[
@@ -76,40 +75,51 @@ Autrement dit, la clé contrainte permet d’évaluer la PRF exactement sur les 
 
 \section{Implémentation de la CPRF de BMO17}
 
-La CPRF de BMO17 est basée sur l'itération successive d'une permutation à trappe, qui est une fonction bijective, que l'on notera $\pi$.
+La CPRF de BMO17 est basée sur l'itération successive d'une permutation à trappe,
+c’est-à-dire une fonction bijective facile à calculer mais difficile à inverser sans information secrète.
+On note cette permutation $\pi$.
 
 \begin{defbox}{Génération de la clé maîtresse}
-La clé maîtresse sera composé des éléments :
+La clé maîtresse est composée des éléments suivants :
 \begin{itemize}
-  \item $ST_0 \in \mathbb{Z}_N$
-  \item $PK$ une clé RSA pour avoir la permutation $\pi_{PK}$
+  \item $ST_0 \in \mathbb{Z}_N$, un état initial secret choisi aléatoirement
+  \item $SK$, une clé secrète RSA définissant la permutation à trappe $\pi_{SK}$
 \end{itemize}
+La clé publique associée $PK$ permet uniquement de calculer la permutation directe $\pi$.
 \end{defbox}
 
 \begin{defbox}{Évaluation de la CPRF avec la clé maîtresse}
     
-    Avec la clé maîtresse ($ST_0$, $PK$) et une entrée $c$, on peut évaluer la CPRF sur $c$ :
-    \[
-    F((PK, ST_0), c) = \pi_{PK}^{-c}(ST_0) 
-    \]
-  
+Avec la clé maîtresse $(ST_0, SK)$ et une entrée $c$, on peut évaluer la CPRF sur $c$ par :
+\[
+F((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0)
+\]
+
+L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à partir de l’état initial $ST_0$.
 \end{defbox}
 
 \begin{defbox}{Génération de la clé contrainte}
-  À partir de la clé maîtresse ($ST_0$, $PK$) et d'un entier $n$, la clé contrainte calculée sera composée des éléments :
-  \begin{itemize}
-    \item $PK$
-    \item $ST_n$ $=$ $\pi_{PK}^{-n}(ST_0)$
-    \item $n$
-  \end{itemize}
+À partir de la clé maîtresse $(ST_0, SK)$ et d’un entier $n$, correspondant à la contrainte
+$C(c) = [c < n]$, la clé contrainte est composée des éléments suivants :
+\begin{itemize}
+  \item $PK$, la clé publique associée à la permutation $\pi$
+  \item $ST_n = \pi_{SK}^{-n}(ST_0)$
+  \item $n$
+\end{itemize}
+
+La clé secrète $SK$ n’est pas incluse dans la clé contrainte.
 \end{defbox}
 
 \begin{defbox}{Évaluation de la CPRF avec la clé contrainte}
     
-    Avec la clé contrainte ($PK$, $ST_n$, $n$) et une entrée $c$, on peut évaluer la CPRF si $c < n$ :
-    \[
-    F.Eval((PK, ST_n, n), c) = \pi_{PK}^{n-c}(ST_c) 
-    \]
-\end{defbox}
-\end{document}
+Avec la clé contrainte $(PK, ST_n, n)$ et une entrée $c$, l’évaluation est possible uniquement si
+$c < n$.
+Dans ce cas, la valeur de la CPRF est calculée comme suit :
+\[
+\textsf{EvalC}((PK, ST_n, n), c) = \pi_{PK}^{\,n-c}(ST_n)
+\]
 
+Cette valeur est égale à $F((SK, ST_0), c)$ par construction, ce qui assure la correction du schéma.
+\end{defbox}
+
+\end{document}
