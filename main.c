@@ -7,7 +7,7 @@ void test_rsa(char * msg){
     
     BN_CTX *ctx = BN_CTX_new();
 
-    rsa_key_t *key = rsa_keygen();
+    rsa_key *key = rsa_keygen();
     if (!key) { 
         printf("Erreur génération clé\n"); 
         return;

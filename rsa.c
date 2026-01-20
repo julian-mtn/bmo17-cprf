@@ -4,7 +4,7 @@
 /*
  * génère une clé RSA sécurisée
 */
-rsa_key_t *rsa_keygen() {
+rsa_key *rsa_keygen() {
 
     int bits = 2048;
 
@@ -12,7 +12,7 @@ rsa_key_t *rsa_keygen() {
     BN_CTX *ctx = BN_CTX_new();
     if (!ctx) return NULL;
 
-    rsa_key_t *key = malloc(sizeof(rsa_key_t));
+    rsa_key *key = malloc(sizeof(rsa_key));
     if (!key) {
         BN_CTX_free(ctx);
         return NULL;
@@ -58,7 +58,7 @@ rsa_key_t *rsa_keygen() {
 /*
  * libère la mémoire d'une clé rsa
 */
-void rsa_key_free(rsa_key_t *key) {
+void rsa_key_free(rsa_key *key) {
     if (!key) return;
     BN_free(key->e);
     BN_free(key->d);
@@ -69,7 +69,7 @@ void rsa_key_free(rsa_key_t *key) {
 /*
  *  Évalue la permutation RSA avec la clé public
 */
-int rsa_eval_public(BIGNUM *out,const BIGNUM *in,const rsa_key_t *key,BN_CTX *ctx) 
+int rsa_eval_public(BIGNUM *out,const BIGNUM *in,const rsa_key *key,BN_CTX *ctx) 
 {
     if (!out || !in || !key || !ctx) return 0;
 
@@ -85,7 +85,7 @@ int rsa_eval_public(BIGNUM *out,const BIGNUM *in,const rsa_key_t *key,BN_CTX *ct
 /*
 *  Évalue la permutation RSA avec la clé privée
 */
-int rsa_eval_private(BIGNUM *out,const BIGNUM *in,const rsa_key_t *key,BN_CTX *ctx) 
+int rsa_eval_private(BIGNUM *out,const BIGNUM *in,const rsa_key *key,BN_CTX *ctx) 
 {
     if (!out || !in || !key || !ctx) return 0;
     if (BN_is_negative(in) || BN_cmp(in, key->n) >= 0) return 0;
@@ -100,7 +100,7 @@ int rsa_eval_private(BIGNUM *out,const BIGNUM *in,const rsa_key_t *key,BN_CTX *c
 * hash une entrée avec SHA-256 pour pouvoir l'utiliser dans RSA (pour la permutation à trappe)
 * applique aussi modulo n
 */
-int rsa_hash_to_bn(BIGNUM *out,const unsigned char *msg,size_t msg_len,const rsa_key_t *key,BN_CTX *ctx)
+int rsa_hash_to_bn(BIGNUM *out,const unsigned char *msg,size_t msg_len,const rsa_key *key,BN_CTX *ctx)
  {
     if (!out || !msg || !key || !ctx) return 0;
 
