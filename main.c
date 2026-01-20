@@ -3,7 +3,7 @@
 #include "rsa.h"
 
 
-void test_rsa(){
+void test_rsa(char * msg){
     
     BN_CTX *ctx = BN_CTX_new();
 
@@ -15,8 +15,7 @@ void test_rsa(){
 
     //hash du message
     BIGNUM *x = BN_new();
-    const unsigned char *msg = (unsigned char *)"Alice";
-    rsa_hash_to_bn(x, msg, 5, key, ctx);
+    rsa_hash_to_bn(x, (const unsigned char *)msg, 5, key, ctx);
 
     //Évaluer la permutation publique
     BIGNUM *y_pub = BN_new();
@@ -47,7 +46,7 @@ void test_rsa(){
 
 int main() {
 
-    test_rsa();
+    test_rsa("coucou ceci est un test");
 
     return 0;
 }
