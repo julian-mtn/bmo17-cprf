@@ -24,7 +24,7 @@ void rsa_key_free(rsa_key *key);
 /*
  *  Évalue la permutation RSA avec la clé public
 */
-int rsa_eval_public(BIGNUM *out,const BIGNUM *in,const rsa_key *key,BN_CTX *ctx);
+int rsa_eval_public(BIGNUM *out,const BIGNUM *in,BIGNUM * e, BIGNUM * n,BN_CTX *ctx);
 
 /*
 *  Évalue la permutation RSA avec la clé privée

@@ -69,15 +69,15 @@ void rsa_key_free(rsa_key *key) {
 /*
  *  Évalue la permutation RSA avec la clé public
 */
-int rsa_eval_public(BIGNUM *out,const BIGNUM *in,const rsa_key *key,BN_CTX *ctx) 
+int rsa_eval_public(BIGNUM *out,const BIGNUM *in,BIGNUM * e, BIGNUM * n,BN_CTX *ctx) 
 {
-    if (!out || !in || !key || !ctx) return 0;
+    if (!out || !in || !e || !n || !ctx) return 0;
 
     //Vérifier que 0 <= in < n 
-    if (BN_is_negative(in) || BN_cmp(in, key->n) >= 0) return 0;
+    if (BN_is_negative(in) || BN_cmp(in,n) >= 0) return 0;
 
     //vérifie la clé publique
-    if (!BN_mod_exp(out, in, key->e, key->n, ctx)) return 0;
+    if (!BN_mod_exp(out, in, e, n, ctx)) return 0;
 
     return 1;
 }
