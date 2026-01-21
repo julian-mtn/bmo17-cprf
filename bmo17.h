@@ -44,7 +44,7 @@ void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c);
 * Evaluation de la CPRF avec la clé contrainte : 
 * applique c-n fois la permutation à partir de l’état STn
 */
-BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, int n, int c);
+BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, BIGNUM * n, BIGNUM * c);
 
 
 #endif

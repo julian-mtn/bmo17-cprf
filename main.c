@@ -19,7 +19,7 @@ void test_rsa(char * msg){
 
     //Évaluer la permutation publique
     BIGNUM *y_pub = BN_new();
-    rsa_eval_public(y_pub, x, key, ctx);
+    rsa_eval_public(y_pub, x, key->e,key->n, ctx);
 
     //Évaluer la permutation privée
     BIGNUM *y_priv = BN_new();

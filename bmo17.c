@@ -16,7 +16,7 @@ BIGNUM *random_bn_from_urandom(int num_bytes) {
         return NULL;
     }
 
-    size_t r = fread(buf, 1, num_bytes, f);
+    int r = fread(buf, 1, num_bytes, f);
     fclose(f);
 
     if (r != num_bytes) {
@@ -71,7 +71,10 @@ bmo17_constrained_key * bmo17_constrained_keygen(bmo17_master_key * mk, int n){
 */
 void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c){
     BN_CTX *ctx = BN_CTX_new();
-    if (!ctx) return NULL;
+    if (!ctx){
+        printf("erreur bmo17_eval_master_key : ctx ");
+        exit(1);
+    }
 
     out = mk->ST0;
     for(int i=0; i<=c;i++){
@@ -84,18 +87,28 @@ void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c){
 * Evaluation de la CPRF avec la clé contrainte : 
 * applique c-n fois la permutation à partir de l’état STn
 */
-BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, int n, int c){
+BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, BIGNUM * n, BIGNUM * c){
     BN_CTX *ctx = BN_CTX_new();
-    if (!ctx) return NULL;
+    if (!ctx){
+        printf("erreur bmo17_eval_constrained_key : ctx ");
+        exit(1);
+    }
 
-    if(c<0 || c>n){
+    BIGNUM *zero = BN_new();
+    BN_zero(zero) ;
+
+    if(BN_cmp(c,zero) <0 || BN_cmp(c,n) > 0){
         printf("erreur : c<0 ou c>n");
         exit(1);
     }
 
     BIGNUM * out = STn;
-    int nb_permutation = n-c;
-    for(int i=0; i<= nb_permutation; i++){
+    BIGNUM* nb_permutation = BN_new();
+    BN_sub(nb_permutation,n,c);
+
+    BIGNUM* i = BN_new();
+    
+    for(BN_zero(i); BN_cmp(i,nb_permutation) <= 0; BN_add_word(i,1)){
         rsa_eval_public(out,out,e,n,ctx);
     }
 
