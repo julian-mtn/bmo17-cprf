@@ -19,6 +19,15 @@ typedef struct {
     unsigned int n;  // contrainte
 } bmo17_constrained_key;
 
+/*
+ * génère la clé maitresse de BMO17
+*/
+bmo17_master_key * bmo17_master_keygen();
 
+
+/*
+ * génère un nombre aléatoire sécurisé
+*/
+BIGNUM *random_bn_from_urandom(int num_bytes);
 
 #endif
