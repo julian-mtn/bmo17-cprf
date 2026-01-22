@@ -14,8 +14,9 @@ typedef struct {
 } bmo17_master_key;
 
 typedef struct {
-    BIGNUM *e;   // clé publique RSA = e
+    BIGNUM *e;   //clé publique RSA = e
     BIGNUM *STn;     // état après n inversions
+    BIGNUM *N;  //modulo rsa
     unsigned int n;  // contrainte (nb permutation)
 } bmo17_constrained_key;
 
@@ -44,7 +45,7 @@ void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c);
 * Evaluation de la CPRF avec la clé contrainte : 
 * applique c-n fois la permutation à partir de l’état STn
 */
-BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, BIGNUM * n, BIGNUM * c);
+void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e,  BIGNUM *N, BIGNUM * STn,  unsigned int n, BIGNUM * c);
 
 
 #endif

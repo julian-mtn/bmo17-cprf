@@ -44,7 +44,11 @@ bmo17_master_key * bmo17_master_keygen(){
     }
 
     mk->SK = rsa_keygen(2048);
-    
+    if (!mk->SK) {
+        printf("Erreur génération clé RSA\n");
+        exit(1);
+    }
+
     return mk;
 }
 
@@ -53,64 +57,96 @@ bmo17_master_key * bmo17_master_keygen(){
 */
 bmo17_constrained_key * bmo17_constrained_keygen(bmo17_master_key * mk, int n){
 
-
     bmo17_constrained_key * ck = malloc(sizeof(bmo17_constrained_key));
     if(!ck) return NULL;
 
-    ck->e = mk->SK->e;
-    ck->n = n;    
-    bmo17_eval_master_key(ck->STn,mk,n);
+    ck->STn = BN_new();
+    if (!ck->STn) return NULL;
+
+    ck->e = BN_dup(mk->SK->e);
+    ck->N = BN_dup(mk->SK->n);  
+
+    if (!ck->e || !ck->N) {
+        printf("Erreur duplication clé publique RSA\n");
+        exit(1);
+    }
+
+    ck->n = n;
+
+    bmo17_eval_master_key(ck->STn, mk, n);
 
     return ck;
-    
 }
+
+
 
 /*
 * Evaluation de la CPRF avec la clé maîtresse : 
 * applique c fois l’inverse de la permutation à partir de l’état initial ST0
 */
-void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c){
+void bmo17_eval_master_key(BIGNUM * out, bmo17_master_key * mk, int c){
+
     BN_CTX *ctx = BN_CTX_new();
     if (!ctx){
-        printf("erreur bmo17_eval_master_key : ctx ");
+        printf("erreur bmo17_eval_master_key : ctx\n");
         exit(1);
     }
 
-    out = mk->ST0;
-    for(int i=0; i<=c;i++){
-        rsa_eval_private(out,out,mk->SK,ctx);
+    BN_copy(out, mk->ST0);
+
+    for(int i = 0; i < c; i++){
+        rsa_eval_private(out, out, mk->SK, ctx);
     }
 
+    BN_CTX_free(ctx);
 }
+
 
 /*
 * Evaluation de la CPRF avec la clé contrainte : 
 * applique c-n fois la permutation à partir de l’état STn
 */
-BIGNUM * bmo17_eval_constrained_key(BIGNUM *e, BIGNUM * STn, BIGNUM * n, BIGNUM * c){
+void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
+
     BN_CTX *ctx = BN_CTX_new();
     if (!ctx){
-        printf("erreur bmo17_eval_constrained_key : ctx ");
+        printf("erreur bmo17_eval_constrained_key : ctx\n");
         exit(1);
     }
+
+    // Construire bn_n à partir de n (borne compteur)
+    BIGNUM *bn_n = BN_new();
+    BN_set_word(bn_n, n);
 
     BIGNUM *zero = BN_new();
-    BN_zero(zero) ;
+    BN_zero(zero);
 
-    if(BN_cmp(c,zero) <0 || BN_cmp(c,n) > 0){
-        printf("erreur : c<0 ou c>n");
+    // Vérification 0 <= c <= n
+    if(BN_cmp(c, zero) < 0 || BN_cmp(c, bn_n) > 0){
+        printf("erreur : c < 0 ou c > n\n");
         exit(1);
     }
 
-    BIGNUM * out = STn;
+    // out = copie de STn
+    BN_copy(out, STn);
+
+    // nb_permutation = n - c
     BIGNUM* nb_permutation = BN_new();
-    BN_sub(nb_permutation,n,c);
+    BN_sub(nb_permutation, bn_n, c);
 
     BIGNUM* i = BN_new();
+    BN_zero(i);
     
-    for(BN_zero(i); BN_cmp(i,nb_permutation) <= 0; BN_add_word(i,1)){
-        rsa_eval_public(out,out,e,n,ctx);
+
+
+    while (BN_cmp(i, nb_permutation) < 0) {
+        rsa_eval_public(out, out, e, N, ctx);
+        BN_add_word(i, 1);
     }
 
-    return out;
+    BN_free(zero);
+    BN_free(nb_permutation);
+    BN_free(i);
+    BN_free(bn_n);
+    BN_CTX_free(ctx);
 }
