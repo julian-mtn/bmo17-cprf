@@ -1,5 +1,5 @@
 
-#include "bmo17.h"
+#include "../include/bmo17.h"
 
 /*
  * génère un nombre aléatoire sécurisé

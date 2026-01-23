@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "rsa.h"
-#include "bmo17.h"
+#include "../include/rsa.h"
+#include "../include/bmo17.h"
 
 void test_rsa(char * msg){
     printf("=== Test RSA ===\n");

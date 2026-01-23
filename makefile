@@ -4,7 +4,7 @@ LIBS = -lcrypto
 TARGET = bmo17
 
 all:
-	$(CC) $(CFLAGS) *.c -o $(TARGET) $(LIBS)
+	$(CC) $(CFLAGS) ./sources/*.c -o $(TARGET) $(LIBS)
 
 clean:
 	rm -f $(TARGET) *.o a.out
