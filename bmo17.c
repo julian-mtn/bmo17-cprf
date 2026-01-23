@@ -114,31 +114,24 @@ void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn
         exit(1);
     }
 
-    // Construire bn_n à partir de n (borne compteur)
     BIGNUM *bn_n = BN_new();
     BN_set_word(bn_n, n);
 
     BIGNUM *zero = BN_new();
     BN_zero(zero);
 
-    // Vérification 0 <= c <= n
     if(BN_cmp(c, zero) < 0 || BN_cmp(c, bn_n) > 0){
         printf("erreur : c < 0 ou c > n\n");
         exit(1);
     }
 
-    // out = copie de STn
     BN_copy(out, STn);
 
-    // nb_permutation = n - c
     BIGNUM* nb_permutation = BN_new();
     BN_sub(nb_permutation, bn_n, c);
 
     BIGNUM* i = BN_new();
     BN_zero(i);
-    
-
-
     while (BN_cmp(i, nb_permutation) < 0) {
         rsa_eval_public(out, out, e, N, ctx);
         BN_add_word(i, 1);

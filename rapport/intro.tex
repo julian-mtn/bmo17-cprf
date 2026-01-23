@@ -25,10 +25,42 @@
 
 \title{Constrained Pseudorandom Functions, Revisited}
 \author{Julian Mouthon, Mario Razafinony}
-\date{}
+\date{\today}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhf{}
+
+\fancyhead[L]{Projet CCA}
+\fancyhead[R]{Sorbonne Université}
+\fancyfoot[C]{\thepage}
+
 
 \begin{document}
 \maketitle
+
+\section*{Introduction}
+
+Ce projet s’inscrit dans le cadre de l’étude des fonctions pseudo-aléatoires contraintes
+(\emph{Constrained Pseudorandom Functions}, CPRF), une extension des fonctions
+pseudo-aléatoires classiques permettant de restreindre les évaluations à un sous-ensemble
+d’entrées défini par une contrainte.
+
+Dans un premier temps, nous présentons les notions fondamentales liées aux fonctions
+pseudo-aléatoires et aux CPRFs, ainsi que la construction proposée par Bost, Minaud et
+Ohrimenko en 2017 (BMO17).
+
+Dans un second temps, nous nous intéressons aux travaux récents de Cheng et Jaeger
+en 2025 (CJ25), qui mettent en évidence une attaque contre cette CPRF et proposent une variante
+hachée assurant la sécurité dans un nouveau modèle. 
+
+\newpage
+
+
+\tableofcontents
+\newpage
+
 
 \section{Définitions}
 
