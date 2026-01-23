@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+\documentclass[11pt]{article}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath,amssymb}
 \usepackage{hyperref}
@@ -64,6 +64,7 @@ hachée assurant la sécurité dans un nouveau modèle.
 
 \section{Définitions}
 
+\addcontentsline{toc}{subsection}{Fonction pseudo-aléatoire}
 \begin{defbox}{Fonction pseudo-aléatoire (PRF)}
 
 Une fonction pseudo-aléatoire
@@ -75,18 +76,31 @@ indiscernable d’une fonction réellement aléatoire
 $G : D \rightarrow R$ pour tout adversaire efficace.
 \end{defbox}
 
+\addcontentsline{toc}{subsection}{Contrainte}
 \begin{defbox}{Contrainte}
-\[
-C : D \rightarrow \{0,1\}.
-\]
 
+Une contrainte est un prédicat booléen
 \[
-C(x)=1 \text{ : « l’entrée est autorisée »} \qquad
-C(x)=0 \text{ : « l’entrée est interdite »}.
+C : D \rightarrow \{0,1\},
 \]
+qui partitionne le domaine $D$ en deux ensembles :
+\begin{itemize}
+\item les entrées \emph{autorisées}, telles que $C(x)=1$ ;
+\item les entrées \emph{interdites} (ou contraintes), telles que $C(x)=0$.
+\end{itemize}
+
+Intuitivement, la contrainte spécifie l’ensemble des entrées sur lesquelles une clé
+contrainte est autorisée à évaluer la fonction pseudo-aléatoire.
+
+Ici, nous considérons principalement des contraintes de la forme
+\[
+C_n(x) = [x < n],
+\]
+qui autorisent toutes les entrées strictement inférieures à un seuil $n \in \mathbb{N}$.
 \end{defbox}
 
-\begin{defbox}{CPRF}
+\addcontentsline{toc}{subsection}{Fonction pseudo-aléatoire contrainte}
+\begin{defbox}{Fonction pseudo-aléatoire contrainte (CPRF)}
 Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes efficaces :
 \begin{itemize}
 \item $\textsf{Setup}(1^\lambda) \to K$ (clé maître) : génère la clé secrète principale $K$.
@@ -107,10 +121,13 @@ Autrement dit, la clé contrainte permet d’évaluer la PRF exactement sur les 
 
 \section{Construction de la CPRF de BMO17}
 
+\subsection{Propriétés}
+
 La CPRF de BMO17 est basée sur l'itération successive d'une permutation à trappe,
 c’est-à-dire une fonction bijective facile à calculer mais difficile à inverser sans information secrète.
 On note cette permutation $\pi$.
 
+\addcontentsline{toc}{subsubsection}{Clé maîtresse}
 \begin{defbox}{Génération de la clé maîtresse}
 La clé maîtresse est composée des éléments suivants :
 \begin{itemize}
@@ -120,7 +137,8 @@ La clé maîtresse est composée des éléments suivants :
 La clé publique associée $PK$ permet uniquement de calculer la permutation directe $\pi$.
 \end{defbox}
 
-\begin{defbox}{Évaluation de la CPRF avec la clé maîtresse}
+\addcontentsline{toc}{subsubsection}{Evaluation avec clé maîtresse}
+\begin{defbox}{Evaluation de la CPRF avec la clé maîtresse}
     
 Avec la clé maîtresse $(ST_0, SK)$ et une entrée $c$, on peut évaluer la CPRF sur $c$ par :
 \[
@@ -130,6 +148,7 @@ F((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0)
 L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à partir de l’état initial $ST_0$.
 \end{defbox}
 
+\addcontentsline{toc}{subsubsection}{Clé contrainte}
 \begin{defbox}{Génération de la clé contrainte}
 À partir de la clé maîtresse $(ST_0, SK)$ et d’un entier $n$, correspondant à la contrainte
 $C(c) = [c < n]$, la clé contrainte est composée des éléments suivants :
@@ -142,6 +161,7 @@ $C(c) = [c < n]$, la clé contrainte est composée des éléments suivants :
 La clé secrète $SK$ n’est pas incluse dans la clé contrainte.
 \end{defbox}
 
+\addcontentsline{toc}{subsubsection}{Évaluation avec clé contrainte}
 \begin{defbox}{Évaluation de la CPRF avec la clé contrainte}
     
 Avec la clé contrainte $(PK, ST_n, n)$ et une entrée $c$, l’évaluation est possible uniquement si
@@ -153,5 +173,59 @@ Dans ce cas, la valeur de la CPRF est calculée comme suit :
 
 Cette valeur est égale à $F((SK, ST_0), c)$ par construction, ce qui assure la correction du schéma.
 \end{defbox}
+
+
+
+\subsection{Implémentation}
+
+Nous utilisons la bibliothèque OpenSSL pour la gestion des grands entiers
+(\texttt{BIGNUM}), les opérations modulaires et le calcul de hachage SHA-256.
+
+L’aléa est sécurisé et est obtenu à partir de \texttt{/dev/urandom}, ce qui
+permet de générer l’état initial $ST_0$ ainsi que les paramètres RSA de manière sûre.
+
+
+\subsubsection{Permutation RSA}
+
+La permutation à trappe utilisée dans BMO17 est défini à l’aide de RSA.
+Nous implémentons la génération de clés RSA de taille 2048 bits, ainsi que l’évaluation
+de la permutation dans les deux sens.
+
+Plus précisément, la fonction publique correspond à l’exponentiation modulaire
+\[
+x \mapsto x^e \bmod N,
+\]
+tandis que l’inverse de la permutation est calculé via l’exponentiation privée
+\[
+x \mapsto x^d \bmod N.
+\]
+
+Afin de limiter les fuites par canaux auxiliaires, l’évaluation privée est réalisée à l’aide
+de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit un temps
+d’exécution indépendant des données secrètes.
+
+\subsubsection{Clé maîtresse}
+
+La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
+privée RSA. L’état initial est généré comme un entier aléatoire de 256 bits à partir de
+\texttt{/dev/urandom}..
+
+L’évaluation avec la clé maîtresse consiste à appliquer $c$ fois l’inverse de la permutation
+RSA à partir de $ST_0$.
+
+\subsubsection{Clé contrainte}
+
+À partir de la clé maîtresse et d’un paramètre de contrainte $n$, nous dérivons une clé
+contrainte composée de la clé publique RSA $(e, N)$ et de l’état
+\[
+ST_n = \pi^{-n}(ST_0).
+\]
+
+Cette clé permet ensuite d’évaluer la CPRF uniquement pour les entrées $c < n$ en
+appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé privée n’est
+jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
+sont possibles.
+
+
 
 \end{document}
