@@ -226,11 +226,30 @@ appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé pri
 jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
 sont possibles.
 
-\section{Implémentation de l'attaque de CJ25}
+\section{L'attaque CJ25}
 
+\subsection{Résumé}
 
-\section{Implémentation de la CPRF hachée de CJ25}
+L’attaque CJ25 exploite le fait qu'un attaquant peut reçevoir des évaluations et évaluer en parallèle des entrées à partir de clés contraintes.
 
+Plus précisément, l’adversaire commence par obtenir une évaluation de la fonction pseudo-aléatoire contrainte sur une entrée donnée $x$, 
+c’est-à-dire une valeur $y = F(K, x). $
+
+Dans un second temps, il peut demander une ou plusieurs clés contraintes $K_R$ telles que l’ensemble de contraintes $R$ inclut l’entrée $x$.
+Àvec une telle clé contrainte, il peut alors recalculer la valeur 
+$y' = \mathrm{EvalC}(K_R, x)$, et tester si $y' = y$. 
+
+Il est donc possible pour un attaquant de discerner les sortie réelles des sorties aléatoires de la CPRF.
+
+\subsection{Jeu de sécurité}
+
+\subsection{Implémentation}
+
+\section{CPRF hachée de CJ25}
+
+\subsection{Résumé}
+
+\subsection{Implémentation}
 
 
 \section{Une preuve sur une définition des CPRF}
