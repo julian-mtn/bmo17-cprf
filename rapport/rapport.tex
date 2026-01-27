@@ -191,18 +191,18 @@ La permutation à trappe utilisée dans BMO17 est défini à l’aide de RSA.
 Nous implémentons la génération de clés RSA de taille 2048 bits, ainsi que l’évaluation
 de la permutation dans les deux sens.
 
-Plus précisément, la fonction publique correspond à l’exponentiation modulaire
+Plus précisément, la fonction publique correspond à:
 \[
 x \mapsto x^e \bmod N,
 \]
-tandis que l’inverse de la permutation est calculé via l’exponentiation privée
+tandis que l’inverse de la permutation est calculé via:
 \[
 x \mapsto x^d \bmod N.
 \]
 
 Afin de limiter les fuites par canaux auxiliaires, l’évaluation privée est réalisée à l’aide
 de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit un temps
-d’exécution indépendant des données secrètes.
+d’exécution indépendant des données.
 
 \subsubsection{Clé maîtresse}
 
