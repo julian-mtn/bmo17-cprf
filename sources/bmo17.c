@@ -35,13 +35,8 @@ BIGNUM *random_bn_from_urandom(int num_bytes) {
 */
 bmo17_master_key * bmo17_master_keygen(){
 
-    bmo17_master_key * mk =  malloc(sizeof(bmo17_master_key));
-
-    mk->ST0 = random_bn_from_urandom(32);
-    if(mk->ST0 == NULL){
-        printf("Erreur génération ST0");
-        exit(1);
-    }
+    bmo17_master_key * mk = malloc(sizeof(bmo17_master_key));
+    if (!mk) return NULL;
 
     mk->SK = rsa_keygen(2048);
     if (!mk->SK) {
@@ -49,8 +44,21 @@ bmo17_master_key * bmo17_master_keygen(){
         exit(1);
     }
 
+    BN_CTX *ctx = BN_CTX_new();
+    BIGNUM *g = BN_new();
+
+    do {
+        mk->ST0 = random_bn_from_urandom(256); // taille >= n
+        BN_mod(mk->ST0, mk->ST0, mk->SK->n, ctx);
+        BN_gcd(g, mk->ST0, mk->SK->n, ctx);
+    } while (!BN_is_one(g));
+
+    BN_free(g);
+    BN_CTX_free(ctx);
+
     return mk;
 }
+
 
 /*
  * génère la clé contrainte de BMO17
@@ -142,4 +150,21 @@ void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn
     BN_free(i);
     BN_free(bn_n);
     BN_CTX_free(ctx);
+}
+
+void bmo17_constrained_key_free(bmo17_constrained_key *ck) {
+    if (!ck) return;
+
+    BN_free(ck->e);
+    BN_free(ck->N);
+    BN_free(ck->STn);
+    free(ck);
+}
+
+void bmo17_master_key_free(bmo17_master_key *mk) {
+    if (!mk) return;
+
+    BN_free(mk->ST0);
+    rsa_key_free(mk->SK);
+    free(mk);
 }

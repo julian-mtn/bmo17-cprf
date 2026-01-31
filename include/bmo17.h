@@ -47,5 +47,8 @@ void bmo17_eval_master_key(BIGNUM * out,bmo17_master_key * mk, int c);
 */
 void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e,  BIGNUM *N, BIGNUM * STn,  unsigned int n, BIGNUM * c);
 
+void bmo17_master_key_free(bmo17_master_key *mk);
+void bmo17_constrained_key_free(bmo17_constrained_key *ck);
+
 
 #endif

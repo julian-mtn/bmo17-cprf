@@ -1,10 +1,30 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -O2
-LIBS = -lcrypto
-TARGET = bmo17
+CC      = gcc
+CFLAGS  = -Wall -Wextra -O2
+LIBS    = -lcrypto
 
-all:
-	$(CC) $(CFLAGS) ./sources/*.c -o $(TARGET) $(LIBS)
+SRC_DIR = sources
+INC_DIR = include
+
+COMMON_SRC = $(SRC_DIR)/bmo17.c $(SRC_DIR)/rsa.c
+
+SERVER_SRC = $(SRC_DIR)/server.c
+ATTACK_SRC  = $(SRC_DIR)/attack.c
+TEST_SRC       = $(SRC_DIR)/tests.c
+
+SERVER = server
+ATTACK  = attack
+TEST       = tests
+
+all: $(SERVER) $(ATTACK) $(TEST)
+
+$(SERVER): $(SERVER_SRC) $(COMMON_SRC)
+	$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ $(LIBS)
+
+$(ATTACK): $(ATTACK_SRC) $(SRC_DIR)/rsa.c
+	$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ $(LIBS)
+
+$(TEST): $(TEST_SRC) $(COMMON_SRC)
+	$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ $(LIBS)
 
 clean:
-	rm -f $(TARGET) *.o a.out
+	rm -f $(SERVER) $(ATTACK) $(TEST) *.o
