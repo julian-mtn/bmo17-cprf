@@ -9,7 +9,7 @@
 
 #define PORT 4242
 #define BUF_SIZE 4096
-#define MAX_TRIES 100 // = x 
+#define MAX_TRIES 20 // = x 
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -37,7 +37,7 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BN_CTX *c
 
         /* ---- oracle EVAL ---- */
         dprintf(sock, "EVAL %d\n", x);
-        recv_line(sock, buffer, BUF_SIZE);
+        recv_line(sock, buffer, BUF_SIZE); //Stx
 
         char *hex_STx = strchr(buffer, ' ');
         if (!hex_STx)
@@ -72,7 +72,7 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BN_CTX *c
 
 int main() {
 
-    for (int n = 10; n <= 20; n++) {
+    for (int n = 2; n <= 30; n++) {
 
         int sock;
         struct sockaddr_in addr;
@@ -94,8 +94,8 @@ int main() {
         printf("[*] Connecté au serveur (n = %d)\n", n);
 
         /* ---- CONSTRAIN ---- */
-        dprintf(sock, "CONSTRAIN %d\n", n);
-        recv_line(sock, buffer, BUF_SIZE);
+        dprintf(sock, "CONSTRAIN %d\n", n); 
+        recv_line(sock, buffer, BUF_SIZE); //Stn
 
         char e_hex[1024], N_hex[4096], STn_hex[4096];
         int n_recv;
@@ -111,12 +111,12 @@ int main() {
         printf("[*] Clé contrainte reçue (n = %d)\n", n);
 
         /* ---- attaque ---- */
-        int found = attaque_cprf(sock, n, MAX_TRIES, e, N, ctx);
+        int found = attaque_cprf(sock, n, MAX_TRIES, e, N, ctx); //Stx
 
         if (!found)
             printf("Aucune PRF détectée\n");
 
-        /* ---- cleanup ---- */
+
         BN_free(e);
         BN_free(N);
         BN_CTX_free(ctx);
