@@ -204,6 +204,97 @@ Afin de limiter les fuites par canaux auxiliaires, l’évaluation privée est r
 de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit un temps
 d’exécution indépendant des données.
 
+
+
+
+
+\subsubsection{Permutation à trappe RABIN}
+
+\paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
+
+\begin{itemize}
+\item\textbf{Génération de la clé :}
+
+On choisit deux nombres premiers distincts $p$ et $q$ tels que :
+\[
+p \equiv q \equiv 3 \pmod{4}
+\]
+
+La clé publique est définie par :
+\[
+n = p \cdot q
+\]
+
+La clé privée est le couple $(p, q)$.
+
+Cette condition sur $p$ et $q$ permet un calcul efficace des racines carrées modulo ces nombres premiers.
+
+\item\textbf{Permutation de Rabin :}
+
+La permutation de Rabin est la fonction :
+\[
+f : \mathbb{Z}_n \rightarrow \mathbb{Z}_n
+\]
+définie par :
+\[
+f(x) = x^2 \bmod n
+\]
+
+Cette fonction est facile à calculer, mais difficile à inverser sans connaître la factorisation de $n$.
+
+\item\textbf{Inverser la permutation de Rabin :}
+
+Inverser la permutation de Rabin revient à résoudre l'équation :
+\[
+x^2 \equiv y \pmod{n}
+\]
+
+Lorsque $n = p \cdot q$, cette équation admet exactement \textbf{quatre solutions distinctes} modulo $n$.
+
+%\subsection{Résolution modulo p et q}
+
+On commence par réduire le problème modulo $p$ et $q$ :
+\[
+\begin{cases}
+x^2 \equiv y \pmod{p} \\
+x^2 \equiv y \pmod{q}
+\end{cases}
+\]
+
+Comme $p \equiv 3 \pmod{4}$, une racine carrée modulo $p$ est donnée par :
+\[
+r_p = y^{\frac{p+1}{4}} \bmod p
+\]
+
+De même, modulo $q$ :
+\[
+r_q = y^{\frac{q+1}{4}} \bmod q
+\]
+
+Les solutions sont donc :
+\[
+x \equiv \pm r_p \pmod{p}, \quad x \equiv \pm r_q \pmod{q}
+\]
+
+%\subsection{Recombinaison par le théorème des restes chinois}
+
+En combinant les solutions modulo $p$ et $q$ à l'aide du théorème des restes chinois, on obtient quatre solutions distinctes modulo $n$ :
+\[
+(\pm r_p, \pm r_q)
+\]
+
+Chaque paire correspond à une solution $x$ telle que :
+\[
+x^2 \equiv y \pmod{n}
+\]
+
+
+\end{itemize}
+
+
+
+
+
 \subsubsection{Clé maîtresse}
 
 La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
