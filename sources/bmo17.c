@@ -59,9 +59,10 @@ bmo17_master_key * bmo17_master_keygen(){
     return mk;
 }
 
-/* 
+
 /*
  * génère la clé maitresse de BM017 pour la permutation rabin
+ */
 
 bmo17_master_key_rabin * bmo17_master_keygen_rabin(){
     bmo17_master_key_rabin * mk = malloc(sizeof(bmo17_master_key_rabin));
@@ -88,7 +89,7 @@ bmo17_master_key_rabin * bmo17_master_keygen_rabin(){
     return mk;
 
 }
-*/
+
 
 /*
  * génère la clé contrainte de BMO17
@@ -117,8 +118,8 @@ bmo17_constrained_key * bmo17_constrained_keygen(bmo17_master_key * mk, int n){
 }
 
 /*
- * génère la clé contrainte de BMO17 pour la permutation rabin
-
+* génère la clé contrainte de BMO17 pour la permutation rabin
+*/
 bmo17_constrained_key_rabin * bmo17_constrained_keygen_rabin(bmo17_master_key_rabin * mk, int n){
     
     bmo17_constrained_key_rabin * ck = malloc(sizeof(bmo17_constrained_key_rabin));
@@ -140,7 +141,7 @@ bmo17_constrained_key_rabin * bmo17_constrained_keygen_rabin(bmo17_master_key_ra
 
     return ck;
 }
-*/
+
 
 /*
 * Evaluation de la CPRF avec la clé maîtresse : 
@@ -163,10 +164,10 @@ void bmo17_eval_master_key(BIGNUM * out, bmo17_master_key * mk, int c){
     BN_CTX_free(ctx);
 }
 
-/*
-* Evaluation de la CPRF avec la clé maîtresse rabin : 
-* applique c fois la résolution de rabin à partir de l’état initial ST0
 
+/* Evaluation de la CPRF avec la clé maîtresse rabin : 
+* applique c fois la résolution de rabin à partir de l’état initial ST0
+*/
 void bmo17_eval_master_key_rabin(BIGNUM * out, bmo17_master_key_rabin * mk, int c){
     
     BN_CTX *ctx = BN_CTX_new();
@@ -201,7 +202,7 @@ void bmo17_eval_master_key_rabin(BIGNUM * out, bmo17_master_key_rabin * mk, int 
     BN_free(x3);
     BN_free(x4);
     BN_CTX_free(ctx);
-}*/
+}
 
 
 /*
@@ -246,10 +247,10 @@ void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn
     BN_CTX_free(ctx);
 }
 
-/*
-* Evaluation de la CPRF avec la clé contrainte de rabin : 
-* applique c-n fois la permutation de rabin à partir de l’état STn
 
+/* Evaluation de la CPRF avec la clé contrainte de rabin : 
+* applique c-n fois la permutation de rabin à partir de l’état STn
+*/
 void bmo17_eval_constrained_key_rabin(BIGNUM * out, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
     
     BN_CTX *ctx = BN_CTX_new();
@@ -287,7 +288,7 @@ void bmo17_eval_constrained_key_rabin(BIGNUM * out, BIGNUM *N, BIGNUM * STn, uns
     BN_free(bn_n);
     BN_CTX_free(ctx);
 }
-*/
+
 
 void bmo17_constrained_key_free(bmo17_constrained_key *ck) {
     if (!ck) return;
@@ -298,7 +299,7 @@ void bmo17_constrained_key_free(bmo17_constrained_key *ck) {
     free(ck);
 }
 
-/*
+
 void bmo17_constrained_key_rabin_free(bmo17_constrained_key_rabin *ck) {
     if (!ck) return;
 
@@ -306,7 +307,7 @@ void bmo17_constrained_key_rabin_free(bmo17_constrained_key_rabin *ck) {
     BN_free(ck->STn);
     free(ck);
 }
-*/
+
 void bmo17_master_key_free(bmo17_master_key *mk) {
     if (!mk) return;
 
@@ -314,7 +315,7 @@ void bmo17_master_key_free(bmo17_master_key *mk) {
     rsa_key_free(mk->SK);
     free(mk);
 }
-/* 
+
 void bmo17_master_key_rabin_free(bmo17_master_key_rabin *mk) {
     if (!mk) return;
 
@@ -322,4 +323,3 @@ void bmo17_master_key_rabin_free(bmo17_master_key_rabin *mk) {
     rabin_key_free(mk->SK);
     free(mk);
 }
-*/

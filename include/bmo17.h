@@ -82,11 +82,11 @@ void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e,  BIGNUM *N, BIGNUM * ST
 */
 void bmo17_eval_constrained_key_rabin(BIGNUM * out, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c);
 
-/* 
+ 
 void bmo17_master_key_free(bmo17_master_key *mk);
 void bmo17_master_key_rabin_free(bmo17_master_key_rabin *mk);
 void bmo17_constrained_key_free(bmo17_constrained_key *ck);
 void bmo17_constrained_key_rabin_free(bmo17_constrained_key_rabin *ck);
-*/
+
 
 #endif
