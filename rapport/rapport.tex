@@ -229,8 +229,6 @@ appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé pri
 jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
 sont possibles.
 
-
-
 \subsection{Tests d'amélioration}
 \subsubsection{Permutation à trappe Rabin}
 
@@ -312,7 +310,6 @@ Les solutions sont donc:
 \end{itemize}
 
 \paragraph{Problème:}Laquelle de ces racines correspond au message original ?
-
 \paragraph{}
 La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 4 pré-images.
 Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
@@ -320,13 +317,13 @@ Appliquer l'inverse \(n-c\) fois ou une autre manipulation n'assure pas de retro
 
 
 \subsubsection{AES}
-
+\paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
 Contrairement à \(x \mapsto x^2 \bmod n\), AES est injectif et chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
 Cependant, pour déchiffrer, il faut absolument connaître la clé \(k\) :
 \begin{itemize}
     \item Sans la clé, l'attaquant ne peut pas inverser la permutation.
-    \item Même avec toutes les connaissances sur le mécanisme interne, AES reste sécurisé grâce à la clé secrète.
+    \item AES reste sécurisé grâce à la clé secrète.
 \end{itemize}
 
 
