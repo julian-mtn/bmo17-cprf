@@ -313,7 +313,7 @@ Les solutions sont donc:
 \paragraph{}
 La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 4 pré-images.
 Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
-Appliquer l'inverse \(n-c\) fois ou une autre manipulation n'assure pas de retrouver le message original.
+Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
 
 
 \subsubsection{AES}
@@ -326,7 +326,7 @@ Cependant, pour déchiffrer, il faut absolument connaître la clé \(k\) :
     \item AES reste sécurisé grâce à la clé secrète.
 \end{itemize}
 
-
+\paragraph{}
 Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour notre CPRF.
 
 
