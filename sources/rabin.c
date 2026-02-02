@@ -84,7 +84,7 @@ int rabin_eval(BIGNUM *y, const BIGNUM *x, const BIGNUM *n, BN_CTX *ctx) {
  * 
  * Résoud : x^2 ≡ y (mod n)
  */
-int rabin_solve(BIGNUM *x1, BIGNUM *x2, BIGNUM *x3, BIGNUM *x4, const BIGNUM *y, const rabin_key *key, BN_CTX *ctx) {
+int rabin_solve(BIGNUM * X, const BIGNUM *y, const rabin_key *key, BN_CTX *ctx) {
 
     BN_CTX_start(ctx);
 
@@ -120,36 +120,14 @@ int rabin_solve(BIGNUM *x1, BIGNUM *x2, BIGNUM *x3, BIGNUM *x4, const BIGNUM *y,
     BN_mod_inverse(qinv, key->q, key->p, ctx);
     BN_mod_inverse(pinv, key->p, key->q, ctx);
 
-    // x1 = +rp , +rq
+    // Combinaison CRT pour obtenir les 4 racines
+    // X[0] = (rp * q * qinv + rq * p * pinv) mod n
     BN_mul(tmp1, rp, key->q, ctx);
     BN_mul(tmp1, tmp1, qinv, ctx);
     BN_mul(tmp2, rq, key->p, ctx);
     BN_mul(tmp2, tmp2, pinv, ctx);
-    BN_add(x1, tmp1, tmp2);
-    BN_mod(x1, x1, key->n, ctx);
-
-    // x2 = +rp , -rq
-    BN_sub(tmp2, key->q, rq);
-    BN_mul(tmp2, tmp2, key->p, ctx);
-    BN_mul(tmp2, tmp2, pinv, ctx);
-    BN_add(x2, tmp1, tmp2);
-    BN_mod(x2, x2, key->n, ctx);
-
-    // x3 = -rp , +rq
-    BN_sub(tmp1, key->p, rp);
-    BN_mul(tmp1, tmp1, key->q, ctx);
-    BN_mul(tmp1, tmp1, qinv, ctx);
-    BN_mul(tmp2, rq, key->p, ctx);
-    BN_mul(tmp2, tmp2, pinv, ctx);
-    BN_add(x3, tmp1, tmp2);
-    BN_mod(x3, x3, key->n, ctx);
-
-    // x4 = -rp , -rq
-    BN_sub(tmp2, key->q, rq);
-    BN_mul(tmp2, tmp2, key->p, ctx);
-    BN_mul(tmp2, tmp2, pinv, ctx);
-    BN_add(x4, tmp1, tmp2);
-    BN_mod(x4, x4, key->n, ctx);
+    BN_add(X, tmp1, tmp2);
+    BN_mod(X, X, key->n, ctx);
 
     BN_CTX_end(ctx);
     return 1;

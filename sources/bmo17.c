@@ -178,29 +178,21 @@ void bmo17_eval_master_key_rabin(BIGNUM * out, bmo17_master_key_rabin * mk, int 
 
     BN_copy(out, mk->ST0);
 
-    BIGNUM *x1 = BN_new();
-    BIGNUM *x2 = BN_new();
-    BIGNUM *x3 = BN_new();
-    BIGNUM *x4 = BN_new();
+    BIGNUM *X = BN_new();
+
 
     for(int i = 0; i < c; i++){
         // Résout out^2 ≡ y (mod n) et récupère les 4 racines
-        if (!rabin_solve(x1, x2, x3, x4, out, mk->SK, ctx)){
+        if (!rabin_solve(X, out, mk->SK, ctx)){
             printf("erreur rabin_solve\n");
             exit(1);
         }
         
         // Choisit la plus petite racine de manière déterministe
-        BN_copy(out, x1);
-        if (BN_cmp(x2, out) < 0) BN_copy(out, x2);
-        if (BN_cmp(x3, out) < 0) BN_copy(out, x3);
-        if (BN_cmp(x4, out) < 0) BN_copy(out, x4);
+        BN_copy(out, X);
     }
 
-    BN_free(x1);
-    BN_free(x2);
-    BN_free(x3);
-    BN_free(x4);
+    BN_free(X);
     BN_CTX_free(ctx);
 }
 

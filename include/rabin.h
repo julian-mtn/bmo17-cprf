@@ -34,4 +34,4 @@ int rabin_eval(BIGNUM *y, const BIGNUM *x, const BIGNUM *n, BN_CTX *ctx);
  * 
  * Résoud : x^2 ≡ y (mod n)
  */
-int rabin_solve(BIGNUM *x1, BIGNUM *x2, BIGNUM *x3, BIGNUM *x4, const BIGNUM *y, const rabin_key *key, BN_CTX *ctx);
+int rabin_solve(BIGNUM *X, const BIGNUM *y, const rabin_key *key, BN_CTX *ctx);
