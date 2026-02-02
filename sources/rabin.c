@@ -129,6 +129,8 @@ int rabin_solve(BIGNUM * X, const BIGNUM *y, const rabin_key *key, BN_CTX *ctx) 
     BN_add(X, tmp1, tmp2);
     BN_mod(X, X, key->n, ctx);
 
+    //TODO : gérer les autres racines 
+
     BN_CTX_end(ctx);
     return 1;
 }
