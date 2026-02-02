@@ -10,19 +10,23 @@
 \contentsline {subsubsection}{Évaluation avec clé contrainte}{4}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Implémentation}{5}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Permutation RSA}{5}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Permutation à trappe RABIN}{5}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.2}Clé maîtresse}{5}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Clé contrainte}{5}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Tests d'amélioration}{5}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Permutation à trappe Rabin}{5}{subsubsection.2.3.1}%
 \contentsline {paragraph}{}{5}{section*.3}%
-\contentsline {subsubsection}{\numberline {2.2.3}Clé maîtresse}{6}{subsubsection.2.2.3}%
-\contentsline {subsubsection}{\numberline {2.2.4}Clé contrainte}{6}{subsubsection.2.2.4}%
+\contentsline {paragraph}{Problème:}{7}{section*.4}%
+\contentsline {paragraph}{}{7}{section*.5}%
+\contentsline {subsubsection}{\numberline {2.3.2}AES}{7}{subsubsection.2.3.2}%
 \contentsline {section}{\numberline {3}L'attaque CJ25}{7}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Résumé}{7}{subsection.3.1}%
-\contentsline {paragraph}{}{7}{section*.4}%
-\contentsline {paragraph}{}{7}{section*.5}%
 \contentsline {paragraph}{}{7}{section*.6}%
 \contentsline {paragraph}{}{7}{section*.7}%
-\contentsline {subsection}{\numberline {3.2}Jeu de sécurité}{7}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Implémentation}{7}{subsection.3.3}%
-\contentsline {section}{\numberline {4}CPRF hachée de CJ25}{7}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Résumé}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Implémentation}{7}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Une preuve sur une définition des CPRF}{7}{section.5}%
+\contentsline {paragraph}{}{7}{section*.8}%
+\contentsline {paragraph}{}{7}{section*.9}%
+\contentsline {subsection}{\numberline {3.2}Jeu de sécurité}{8}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Implémentation}{8}{subsection.3.3}%
+\contentsline {section}{\numberline {4}CPRF hachée de CJ25}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Résumé}{8}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Implémentation}{8}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Une preuve sur une définition des CPRF}{8}{section.5}%

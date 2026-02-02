@@ -7,6 +7,9 @@
 \usepackage{geometry}
 \usepackage[many]{tcolorbox}
 \geometry{margin=2.5cm}
+% chktex-file 26
+% chktex-file 13
+
 
 \tcbset{
   mydefstyle/.style={
@@ -28,6 +31,7 @@
 \date{\today}
 
 \usepackage{fancyhdr}
+\setlength{\headheight}{13.59999pt}
 \pagestyle{fancy}
 
 \fancyhf{}
@@ -57,10 +61,8 @@ hachée assurant la sécurité dans un nouveau modèle.
 
 \newpage
 
-
 \tableofcontents
 \newpage
-
 
 \section{Définitions}
 
@@ -83,10 +85,10 @@ Une contrainte est un prédicat booléen
 \[
 C : D \rightarrow \{0,1\},
 \]
-qui partitionne le domaine $D$ en deux ensembles :
+qui partitionne le domaine $D$ en deux ensembles:
 \begin{itemize}
-\item les entrées \emph{autorisées}, telles que $C(x)=1$ ;
-\item les entrées \emph{interdites} (ou contraintes), telles que $C(x)=0$.
+\item les entrées \emph{autorisées}, telles que $C(x)=1$
+\item les entrées \emph{interdites} (ou contraintes), telles que $C(x)=0$
 \end{itemize}
 
 Intuitivement, la contrainte spécifie l’ensemble des entrées sur lesquelles une clé
@@ -101,10 +103,10 @@ qui autorisent toutes les entrées strictement inférieures à un seuil $n \in \
 
 \addcontentsline{toc}{subsection}{Fonction pseudo-aléatoire contrainte}
 \begin{defbox}{Fonction pseudo-aléatoire contrainte (CPRF)}
-Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes efficaces :
+Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes efficaces:
 \begin{itemize}
-\item $\textsf{Setup}(1^\lambda) \to K$ (clé maître) : génère la clé secrète principale $K$.
-\item $\textsf{Constrain}(K,C) \to K_C$ (clé contrainte) : produit une clé spéciale $K_C$ permettant
+\item $\textsf{Setup}(1^\lambda) \to K$ (clé maître): génère la clé secrète principale $K$.
+\item $\textsf{Constrain}(K,C) \to K_C$ (clé contrainte): produit une clé spéciale $K_C$ permettant
 d’évaluer la fonction uniquement sur les entrées autorisées par $C$.
 \item $\textsf{Eval}(K,x) \to y$ : évalue la fonction pseudo-aléatoire sur une entrée $x$ avec la clé maître.
 \item $\textsf{EvalC}(K_C,x) \to y$ : évalue la fonction sur l’entrée $x$ avec la clé contrainte $K_C$.
@@ -205,10 +207,32 @@ de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit 
 d’exécution indépendant des données.
 
 
+\subsubsection{Clé maîtresse}
+
+La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
+privée RSA. L’état initial est généré comme un entier aléatoire de 256 bits à partir de
+\texttt{/dev/urandom}..
+
+L’évaluation avec la clé maîtresse consiste à appliquer $c$ fois l’inverse de la permutation
+RSA à partir de $ST_0$.
+
+\subsubsection{Clé contrainte}
+
+À partir de la clé maîtresse et d’un paramètre de contrainte $n$, nous dérivons une clé
+contrainte composée de la clé publique RSA $(e, N)$ et de l’état
+\[
+ST_n = \pi^{-n}(ST_0).
+\]
+
+Cette clé permet ensuite d’évaluer la CPRF uniquement pour les entrées $c < n$ en
+appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé privée n’est
+jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
+sont possibles.
 
 
 
-\subsubsection{Permutation à trappe RABIN}
+\subsection{Tests d'amélioration}
+\subsubsection{Permutation à trappe Rabin}
 
 \paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
 
@@ -272,47 +296,42 @@ De même, modulo $q$ :
 r_q = y^{\frac{q+1}{4}} \bmod q
 \]
 
-La solution est donc:
+Les solutions sont donc: 
 
-\[
-X = (r_p * q * q^{-1}_{\bmod p} + r_q * p * p^{-1}_{\bmod q}) \bmod n 
-\]
+\begin{itemize}
+  \item $X_0 = (r_p * q * q^{-1}_{\bmod p} + r_q * p * p^{-1}_{\bmod q}) \bmod n $
 
-//TODO : gérer les autres racines
-//dire que ça fonctionne pas car pas une permutation à trappe, en appliquant la permutation inverse n-c fois
-// on n'est pas sûr que la pré-image soit celle qu'on veut
+  \item $X_1 = (r_p * q * q^{-1}_{\bmod p} - r_q * p * p^{-1}_{\bmod q}) \bmod n$
 
-// avec AES ? 
+  \item $X_2 = (-r_p * q * q^{-1}_{\bmod p} + r_q * p * p^{-1}_{\bmod q}) \bmod n$
 
-//marche pas non plus car l'attaquant a besoin de la clé de chiffrement pour inverser la permutation
-
+  \item $X_3 = (-r_p * q * q^{-1}_{\bmod p} - r_q * p * p^{-1}_{\bmod q}) \bmod n$
 \end{itemize}
 
 
+\end{itemize}
+
+\paragraph{Problème:}Laquelle de ces racines correspond au message original ?
+
+\paragraph{}
+La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 4 pré-images.
+Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
+Appliquer l'inverse \(n-c\) fois ou une autre manipulation n'assure pas de retrouver le message original.
 
 
+\subsubsection{AES}
 
-\subsubsection{Clé maîtresse}
+Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
+Contrairement à \(x \mapsto x^2 \bmod n\), AES est injectif et chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
+Cependant, pour déchiffrer, il faut absolument connaître la clé \(k\) :
+\begin{itemize}
+    \item Sans la clé, l'attaquant ne peut pas inverser la permutation.
+    \item Même avec toutes les connaissances sur le mécanisme interne, AES reste sécurisé grâce à la clé secrète.
+\end{itemize}
 
-La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
-privée RSA. L’état initial est généré comme un entier aléatoire de 256 bits à partir de
-\texttt{/dev/urandom}..
 
-L’évaluation avec la clé maîtresse consiste à appliquer $c$ fois l’inverse de la permutation
-RSA à partir de $ST_0$.
+Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour notre CPRF.
 
-\subsubsection{Clé contrainte}
-
-À partir de la clé maîtresse et d’un paramètre de contrainte $n$, nous dérivons une clé
-contrainte composée de la clé publique RSA $(e, N)$ et de l’état
-\[
-ST_n = \pi^{-n}(ST_0).
-\]
-
-Cette clé permet ensuite d’évaluer la CPRF uniquement pour les entrées $c < n$ en
-appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé privée n’est
-jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
-sont possibles.
 
 \section{L'attaque CJ25}
 
