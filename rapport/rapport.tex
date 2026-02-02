@@ -9,6 +9,8 @@
 \geometry{margin=2.5cm}
 % chktex-file 26
 % chktex-file 13
+\usepackage{tikz}
+\usetikzlibrary{trees}
 
 
 \tcbset{
@@ -322,6 +324,41 @@ La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 
 Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
 Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
 
+
+
+\begin{tikzpicture}[
+  grow=down,
+  sibling distance=20mm,
+  level distance=15mm,
+  every node/.style={fill=red!20,draw=blue!30, circle, rounded corners, align=center, minimum width=10mm},
+  correct/.style={draw=green!30, fill=green!20},
+  level label/.style={font=\small, anchor=west, align=left}
+]
+
+\node[correct] {$ST_0$}
+  % Niveau 1
+  child {node[correct] {$X_0$} 
+    % Niveau 2
+    child {node[correct] {$X_0$} 
+      % Niveau 3 
+      child {node[correct] {$\dots$} 
+        child {node[correct] {$ST_n$}}
+        child {node {$X_1$}}
+        child {node {$X_2$}}
+        child {node {$X_3$}}
+      }
+      child {node {$X_1$}}
+      child {node {$X_2$}}
+      child {node {$X_3$}}
+    }
+    child {node {$X_1$}} 
+    child {node {$X_2$}}
+    child {node {$X_3$}}
+  }
+  child {node {$X_1$}} 
+  child {node {$X_2$}}
+  child {node {$X_3$}};
+\end{tikzpicture}
 
 \subsubsection{AES}
 \paragraph{}

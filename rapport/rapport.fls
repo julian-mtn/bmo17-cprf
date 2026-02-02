@@ -239,6 +239,8 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbhooks.code.tex
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbtheorems.code.tex
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tcolorbox/tcbfitting.code.tex
+INPUT /usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytrees.code.tex
+INPUT /usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tikzlibrarytrees.code.tex
 INPUT /usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
