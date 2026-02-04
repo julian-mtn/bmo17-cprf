@@ -9,7 +9,13 @@
 
 #define PORT 4242
 #define BUF_SIZE 4096
+<<<<<<< HEAD
 #define MAX_TRIES 10 // = x 
+=======
+#define NB_PERMUTATION 50 // nombre max de permutations à tester
+#define NB_ATTACKS 50 // nombre d'attaques max = nb de contraintes
+
+>>>>>>> a887bf5 (attack server)
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -30,9 +36,7 @@ void recv_line(int sock, char *buf, size_t size) {
 int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
     char buffer[BUF_SIZE];
     int found = 0;
-
-    printf("[*] Attaque en cours ...\n");
-
+    printf("[*] Attaque pour n = %d\n", n);
     for (int x = n + 1; x < n + max_tries; x++) {
 
         /* ---- oracle EVAL ---- */
@@ -49,7 +53,7 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
 
         BIGNUM *tmp = BN_dup(STx);
 
-        /* appliquer les permutations */
+        // appliquer les permutations 
         for (int i = 0; i < x - n; i++) {
             if(rsa_eval_public(tmp, tmp, e, N, ctx)==0){
                 printf("erreur rsa_eval_public\n");
@@ -70,34 +74,38 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
 
         //printf("[*] x = %d : pas de PRF détectée\n", x);
     }
-
-    printf("[*] Attaque terminée\n");
     return found;
 }
 
 int main() {
 
-    for (int n = 2; n <= 30; n++) {
+    int sock;
+    struct sockaddr_in addr;
 
-        int sock;
-        struct sockaddr_in addr;
+    //connexion au serveur
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(PORT);
+    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+
+    if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+        perror("connect");
+        exit(1);
+    }
+
+    printf("paramètres de l'attaque : \n");
+    printf(" - nombre de permutations par attaque : %d\n", NB_PERMUTATION);
+    printf(" - nombre d'attaques (contraintes) : %d\n", NB_ATTACKS);
+
+    int found = 0;
+    printf("[*] Attaque en cours ...\n");
+    for (int n = 2; n <= NB_ATTACKS ; n++) {
+
         char buffer[BUF_SIZE];
 
         BN_CTX *ctx = BN_CTX_new();
 
-        /* --- connexion --- */
-        sock = socket(AF_INET, SOCK_STREAM, 0);
-        addr.sin_family = AF_INET;
-        addr.sin_port = htons(PORT);
-        inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
-
-        if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
-            perror("connect");
-            exit(1);
-        }
-
-        printf("[*] Connecté au serveur (n = %d)\n", n);
-
+        
         /* ---- CONSTRAIN ---- */
         dprintf(sock, "CONSTRAIN %d\n", n); 
         recv_line(sock, buffer, BUF_SIZE); //Stn
@@ -115,7 +123,7 @@ int main() {
         BN_hex2bn(&N, N_hex);
         BN_hex2bn(&STn, STn_hex);
 
-        printf("[*] Clé contrainte reçue (n = %d)\n", n);
+        //printf("[*] Clé contrainte reçue (n = %d)\n", n);
 
         /* ---- attaque ---- */
         int found = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx); //Stx
@@ -128,9 +136,15 @@ int main() {
         BN_free(N);
         BN_free(STn);
         BN_CTX_free(ctx);
-        close(sock);
+  
+        
     }
-
+    close(sock);
+    printf("[*] Attaque terminée\n");
+    if(found)
+        printf("[!!!] PRF détectée pour au moins un n\n");
+    else
+        printf("[*] Aucune faille détectée\n");
     return 0;
 }
 

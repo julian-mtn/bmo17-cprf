@@ -85,7 +85,7 @@ int main() {
             if (strncmp(buffer, "EVAL", 4) == 0) {
                 int x = atoi(buffer + 5);
                 BIGNUM *y = BN_new();
-
+                
                 bmo17_eval_master_key(y, mk, x); //Stx
 
                 dprintf(client_fd, "OK ");
@@ -95,7 +95,7 @@ int main() {
             }
             else if (strncmp(buffer, "CONSTRAIN", 9) == 0) {
                 int n = atoi(buffer + 10);
-
+                printf("[*] Génération de la clé contrainte pour n = %d\n", n);
                 bmo17_constrained_key *ck =bmo17_constrained_keygen(mk, n); //PK, Stn, n
 
                 if (!ck) {
