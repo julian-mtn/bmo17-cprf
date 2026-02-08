@@ -378,14 +378,24 @@ Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour not
 
 \subsection{Résumé}
 
-\paragraph{}L’attaque CJ25 exploite le fait qu'un attaquant peut reçevoir des évaluations et évaluer la valeur qu'il reçoit sur une clé contrainte.
+\paragraph{}
+L’attaque CJ25 exploite le fait qu’un attaquant peut obtenir une clé contrainte
+permettant d’évaluer la fonction pseudo‑aléatoire sur un sous‑ensemble d’entrées,
+tout en conservant l’accès à un oracle d’évaluation global.
 
-\paragraph{}Plus précisément, l’adversaire commence par obtenir une évaluation de la fonction pseudo-aléatoire contrainte sur une entrée donnée $x$, 
-c’est-à-dire une valeur $ST_x = F((SK, ST_0), x). $. À cet étape, l'attaquant ne sait pas si $ST_x$ est le résultat d'une fonction aléatoire ou non.
+\paragraph{}
+Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
+clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
+entrée $x$ telle que $x > n$ à l’aide des permutations publiques associées.
+\paragraph{}
+Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
+$x > n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
+provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
 
-\paragraph{}Dans un second temps, il demandera une clé contrainte $(PK, ST_n, n)$ telle que l’entrée $x$ n'est pas contrainte $(x > n)$.
-Avec une telle clé contrainte, au lieu de calculer $\pi_{PK}^{\,n-c}(ST_n)$, il calculera $\pi_{PK}^{\,x-n}(ST_x) = ST_a$.
-Si l'attaquant retrouve $ST_a = ST_n$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction non aléatoire.
+\paragraph{}
+À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
+publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
+Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction non aléatoire.
 
 \paragraph{}Il est donc possible pour un attaquant d'avoir des informations les résultats pour distinguer une fonction aléatoire d'une CPRF.
 
@@ -404,6 +414,36 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
 \end{defbox}
 
 \subsection{Implémentation}
+
+Pour simuler le jeu de sécurité, nous avons mis en place une architecture client–serveur locale 
+reposant sur TCP. Le serveur implémente l’oracle du jeu 
+(évaluation et génération de clés contraintes), 
+le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
+
+\subsubsection{Oracle (server.c)}
+
+L’oracle met à disposition deux interfaces accessibles à l’attaquant :
+\begin{itemize}
+    \item \texttt{EVAL(x)} : retourne une valeur associée à l’entrée $x$.\\
+    En monde PRF, l’oracle retourne l’évaluation de la CPRF à l’aide de la clé maîtresse.\\
+    En monde aléatoire, il retourne une valeur uniforme de même taille.
+
+    \item \texttt{CONSTRAIN(n)} : retourne une clé contrainte associée à l’indice $n$,
+    permettant l’évaluation de la fonction sur un sous‑ensemble d’entrées.
+\end{itemize}
+
+
+\subsubsection{Attaquant (attack.c)}
+
+L’attaquant choisit un indice $n$ et demande à l’oracle la clé
+contrainte correspondante. Cette clé lui permet d’évaluer la fonction sur des entrées
+strictement supérieures à $n$.
+
+Ensuite il effectue des requêtes \texttt{EVAL} sur des entrées
+$x > n$. À partir des valeurs retournées par l’oracle et de la clé contrainte, il
+applique les permutations publiques afin de tester la cohérence de la structure de la CPRF.
+
+Si l’attaquant trouve une correspondance, il peut conclure que l’oracle implémente une CPRF plutôt qu’une fonction aléatoire.
 
 \section{CPRF hachée de CJ25}
 
