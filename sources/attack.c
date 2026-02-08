@@ -10,6 +10,7 @@
 #define PORT 4242
 #define BUF_SIZE 4096
 #define MAX_TRIES 10 // = x 
+#define MAX_N 50
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -30,8 +31,6 @@ void recv_line(int sock, char *buf, size_t size) {
 int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
     char buffer[BUF_SIZE];
     int found = 0;
-
-    printf("[*] Attaque en cours ...\n");
 
     for (int x = n + 1; x < n + max_tries; x++) {
 
@@ -58,7 +57,7 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
         }
 
         if (BN_cmp(tmp, STn) == 0) {
-            printf("[!!!] PRF détectée pour x = %d\n", x);
+            //printf("[!!!] PRF détectée pour x = %d\n", x);
             found = 1;
             BN_free(STx);
             BN_free(tmp);
@@ -71,13 +70,15 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
         //printf("[*] x = %d : pas de PRF détectée\n", x);
     }
 
-    printf("[*] Attaque terminée\n");
     return found;
 }
 
 int main() {
 
-    for (int n = 2; n <= 30; n++) {
+    printf("[*] Connecté au serveur PORT %d\n", PORT);
+    printf("[*] Attaque en cours ...\n");
+    int found = 0;
+    for (int n = 2; n <= MAX_N; n++) {
 
         int sock;
         struct sockaddr_in addr;
@@ -96,8 +97,6 @@ int main() {
             exit(1);
         }
 
-        printf("[*] Connecté au serveur (n = %d)\n", n);
-
         /* ---- CONSTRAIN ---- */
         dprintf(sock, "CONSTRAIN %d\n", n); 
         recv_line(sock, buffer, BUF_SIZE); //Stn
@@ -115,13 +114,11 @@ int main() {
         BN_hex2bn(&N, N_hex);
         BN_hex2bn(&STn, STn_hex);
 
-        printf("[*] Clé contrainte reçue (n = %d)\n", n);
+        //printf("[*] Clé contrainte reçue (n = %d)\n", n);
 
         /* ---- attaque ---- */
-        int found = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx); //Stx
-
-        if (!found)
-            printf("Aucune PRF détectée\n");
+        int tmp = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx); //Stx
+        if(tmp) found += 1;
 
 
         BN_free(e);
@@ -130,6 +127,11 @@ int main() {
         BN_CTX_free(ctx);
         close(sock);
     }
+    printf("[*] Attaque terminée\n");
+    if(found)
+        printf("[!!!] PRF détectée pour %d/%d tests\n", found, MAX_N);
+    else
+        printf("Aucune PRF détectée pour les %d testés\n", MAX_N);
 
     return 0;
 }

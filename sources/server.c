@@ -3,7 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
-
+#include <time.h>
 #include "../include/bmo17.h"
 #include "../include/rsa.h"
 
@@ -71,6 +71,8 @@ int main() {
             perror("accept");
             continue;
         }
+        srand(time(NULL) ^ getpid()); 
+        int challenge_bit = rand() % 2; // 0 : PRF, 1 : aléatoire
 
         printf("[*] Client connecté\n");
 
@@ -85,8 +87,16 @@ int main() {
             if (strncmp(buffer, "EVAL", 4) == 0) {
                 int x = atoi(buffer + 5);
                 BIGNUM *y = BN_new();
+                
+                
+                if (challenge_bit == 0) {
+                    //  PRF
+                    bmo17_eval_master_key(y, mk, x); //Stx
+                } else {
+                    //  aléatoire
+                    BN_rand(y, 256, 0, 0); // même taille que Stx
+                }
 
-                bmo17_eval_master_key(y, mk, x); //Stx
 
                 dprintf(client_fd, "OK ");
                 send_bn(client_fd, y);
