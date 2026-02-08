@@ -381,7 +381,7 @@ Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour not
 \paragraph{}L’attaque CJ25 exploite le fait qu'un attaquant peut reçevoir des évaluations et évaluer la valeur qu'il reçoit sur une clé contrainte.
 
 \paragraph{}Plus précisément, l’adversaire commence par obtenir une évaluation de la fonction pseudo-aléatoire contrainte sur une entrée donnée $x$, 
-c’est-à-dire une valeur $ST_x = F((SK, ST_0), x). $. À cet étape, l'attaquant ne connait pas encore si $ST_x$ est le résultat d'une fonction aléatoire ou non.
+c’est-à-dire une valeur $ST_x = F((SK, ST_0), x). $. À cet étape, l'attaquant ne sait pas si $ST_x$ est le résultat d'une fonction aléatoire ou non.
 
 \paragraph{}Dans un second temps, il demandera une clé contrainte $(PK, ST_n, n)$ telle que l’entrée $x$ n'est pas contrainte $(x > n)$.
 Avec une telle clé contrainte, au lieu de calculer $\pi_{PK}^{\,n-c}(ST_n)$, il calculera $\pi_{PK}^{\,n-c}(ST_x) = ST_a$.
@@ -390,6 +390,15 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
 \paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur certains résultats avec une probabilité de $1/N$ de trouver qu'un résultat n'est pas le résultat d'une fonction aléatoire, où $N$ est la taille de la permutation.
 
 \subsection{Jeu de sécurité}
+\begin{defbox}{Jeu de sécurité pour les CPRF}
+L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire $G$. 
+L’objectif de l'attaquant est de distinguer les deux cas.
+\begin{itemize}
+\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C$ pour une contrainte de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
+\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées de son choix
+\item \textbf{Décision :} $\mathcal{A}$ décide si $O$ est la $CPRF$ ou la fonction aléatoire $G$.
+\end{itemize}
+\end{defbox}
 
 \subsection{Implémentation}
 

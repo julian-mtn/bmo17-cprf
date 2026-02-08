@@ -98,7 +98,7 @@ int main() {
         }
 
         /* ---- CONSTRAIN ---- */
-        dprintf(sock, "CONSTRAIN %d\n", n); 
+        dprintf(sock, "CONSTRAIN %d\n", n); //demande une clé contrainte pour n
         recv_line(sock, buffer, BUF_SIZE); //Stn
 
         char e_hex[1024], N_hex[4096], STn_hex[4096];
