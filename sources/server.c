@@ -8,7 +8,7 @@
 #include "../include/rsa.h"
 
 #define PORT 4242
-#define BUF_SIZE 4096
+#define BUF_SIZE 1024
 
 
 void send_bn(int sock, BIGNUM *bn) {
@@ -28,6 +28,7 @@ void send_constrained_key(int sock, bmo17_constrained_key *ck) {
     OPENSSL_free(N_hex);
     OPENSSL_free(ST_hex);
 }
+
 
 
 int main() {

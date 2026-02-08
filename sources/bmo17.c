@@ -158,7 +158,10 @@ void bmo17_eval_master_key(BIGNUM * out, bmo17_master_key * mk, int c){
     BN_copy(out, mk->ST0);
 
     for(int i = 0; i < c; i++){
-        rsa_eval_private(out, out, mk->SK, ctx);
+        if(rsa_eval_private(out, out, mk->SK, ctx)==0){
+            printf("erreur rsa_eval_private\n");
+            exit(1);
+        }
     }
 
     BN_CTX_free(ctx);

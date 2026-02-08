@@ -9,7 +9,7 @@
 
 #define PORT 4242
 #define BUF_SIZE 4096
-#define MAX_TRIES 20 // = x 
+#define MAX_TRIES 10 // = x 
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -27,7 +27,7 @@ void recv_line(int sock, char *buf, size_t size) {
 /*
  * effectuer une attaque sur la cprf
 */
-int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BN_CTX *ctx) {
+int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
     char buffer[BUF_SIZE];
     int found = 0;
 
@@ -51,10 +51,13 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BN_CTX *c
 
         /* appliquer les permutations */
         for (int i = 0; i < x - n; i++) {
-            rsa_eval_public(tmp, tmp, e, N, ctx);
+            if(rsa_eval_public(tmp, tmp, e, N, ctx)==0){
+                printf("erreur rsa_eval_public\n");
+                exit(1);
+            }
         }
 
-        if (BN_cmp(tmp, STx) == 0) {
+        if (BN_cmp(tmp, STn) == 0) {
             printf("[!!!] PRF détectée pour x = %d\n", x);
             found = 1;
             BN_free(STx);
@@ -64,6 +67,8 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BN_CTX *c
 
         BN_free(STx);
         BN_free(tmp);
+
+        //printf("[*] x = %d : pas de PRF détectée\n", x);
     }
 
     printf("[*] Attaque terminée\n");
@@ -104,14 +109,16 @@ int main() {
 
         BIGNUM *e = BN_new();
         BIGNUM *N = BN_new();
+        BIGNUM *STn = BN_new();
 
         BN_hex2bn(&e, e_hex);
         BN_hex2bn(&N, N_hex);
+        BN_hex2bn(&STn, STn_hex);
 
         printf("[*] Clé contrainte reçue (n = %d)\n", n);
 
         /* ---- attaque ---- */
-        int found = attaque_cprf(sock, n, MAX_TRIES, e, N, ctx); //Stx
+        int found = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx); //Stx
 
         if (!found)
             printf("Aucune PRF détectée\n");
@@ -119,6 +126,7 @@ int main() {
 
         BN_free(e);
         BN_free(N);
+        BN_free(STn);
         BN_CTX_free(ctx);
         close(sock);
     }
