@@ -394,10 +394,13 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
 L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire $G$. 
 L’objectif de l'attaquant est de distinguer les deux cas.
 \begin{itemize}
-\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C$ pour une contrainte de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
-\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées de son choix
-\item \textbf{Décision :} $\mathcal{A}$ décide si $O$ est la $CPRF$ ou la fonction aléatoire $G$.
+\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C = (PK, ST_n, n)$ pour une contrainte $n$ de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
+\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées $x > n$ pour obtenir des valeurs $ST_x$ non contraintes.
+\item \textbf{Phase 3 :} $\mathcal{A}$ utilise les valeurs obtenues pour évaluer $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ et compare avec $ST_n$.
+\item \textbf{Décision :} $\mathcal{A}$ décide que $O$ est la $CPRF$ si $ST_a = ST_n$, sinon il décide que $O$ est une fonction aléatoire.
 \end{itemize}
+Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
+L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.
 \end{defbox}
 
 \subsection{Implémentation}
