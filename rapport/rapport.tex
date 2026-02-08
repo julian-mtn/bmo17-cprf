@@ -384,10 +384,10 @@ Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour not
 c’est-à-dire une valeur $ST_x = F((SK, ST_0), x). $. À cet étape, l'attaquant ne sait pas si $ST_x$ est le résultat d'une fonction aléatoire ou non.
 
 \paragraph{}Dans un second temps, il demandera une clé contrainte $(PK, ST_n, n)$ telle que l’entrée $x$ n'est pas contrainte $(x > n)$.
-Avec une telle clé contrainte, au lieu de calculer $\pi_{PK}^{\,n-c}(ST_n)$, il calculera $\pi_{PK}^{\,n-c}(ST_x) = ST_a$.
-Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction non aléatoire.
+Avec une telle clé contrainte, au lieu de calculer $\pi_{PK}^{\,n-c}(ST_n)$, il calculera $\pi_{PK}^{\,x-n}(ST_x) = ST_a$.
+Si l'attaquant retrouve $ST_a = ST_n$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction non aléatoire.
 
-\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur certains résultats avec une probabilité de $1/N$ de trouver qu'un résultat n'est pas le résultat d'une fonction aléatoire, où $N$ est la taille de la permutation.
+\paragraph{}Il est donc possible pour un attaquant d'avoir des informations les résultats pour distinguer une fonction aléatoire d'une CPRF.
 
 \subsection{Jeu de sécurité}
 \begin{defbox}{Jeu de sécurité pour les CPRF}
