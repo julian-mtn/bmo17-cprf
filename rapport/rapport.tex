@@ -10,20 +10,42 @@
 % chktex-file 26
 % chktex-file 13
 \usepackage{tikz}
-\usetikzlibrary{trees}
+\usetikzlibrary{trees,calc}
 
 
-\tcbset{
+\tcbset{ %pour les boîtes de définitions
   mydefstyle/.style={
     colback=white,
     colframe=black,
     fonttitle=\bfseries,
     boxrule=0.8pt,
     arc=4pt,
-    left=3mm, right=3mm, top=2mm, bottom=2mm,
+    left=3mm, right=3mm, top=5mm, bottom=5mm,
     breakable
   }
 }
+
+\tikzset{ %pour les chaine de permutations
+  state/.style={
+    draw,
+    rectangle,
+    rounded corners,
+    minimum height=8mm,
+    minimum width=14mm,
+    align=center,
+    font=\small,
+    fill=blue!20
+  },
+  hashstate/.style={
+    state,
+    fill=red!20
+  },
+  arrow/.style={
+    ->,
+    thick
+  }
+}
+
 
 % Environnement "définition encadrée"
 \newtcolorbox{defbox}[2][]{mydefstyle,title=#2,#1}
@@ -157,7 +179,23 @@ Eval((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0)
 \]
 
 L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à partir de l’état initial $ST_0$.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.2cm]
+  \node[state] (s0) {$ST_0$};
+  \node[state, right of=s0] (s1) {$ST_1$};
+  \node[right of=s1] (dots) {$\cdots$};
+  \node[state, right of=dots] (sn) {$ST_n$};
+
+  \draw[arrow] (s0) -- node[above] {$\pi^{-1}$} (s1);
+  \draw[arrow] (s1) -- node[above] {$\pi^{-1}$} (dots);
+  \draw[arrow] (dots) -- node[above] {$\pi^{-1}$} (sn);
+\end{tikzpicture}
+\end{center}
+
 \end{defbox}
+
+
 
 \addcontentsline{toc}{subsubsection}{Clé contrainte}
 \begin{defbox}{Génération de la clé contrainte}
@@ -183,6 +221,20 @@ Dans ce cas, la valeur de la CPRF est calculée comme suit :
 \]
 
 Cette valeur est égale à $Eval((SK, ST_0), c)$ par construction, ce qui assure la correction du schéma.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.2cm]
+  \node[state] (sn) {$ST_n$};
+  \node[state, right of=sn] (sn1) {$ST_{n-1}$};
+  \node[right of=sn1] (dots) {$\cdots$};
+  \node[state, right of=dots] (s0) {$ST_0$};
+
+  \draw[arrow] (sn) -- node[above] {$\pi$} (sn1);
+  \draw[arrow] (sn1) -- node[above] {$\pi$} (dots);
+  \draw[arrow] (dots) -- node[above] {$\pi$} (s0);
+\end{tikzpicture}
+\end{center}
+
 \end{defbox}
 
 
@@ -405,6 +457,9 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
 
 \paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.
 
+
+
+
 \subsection{Jeu de sécurité}
 \begin{defbox}{Jeu de sécurité pour les CPRF}
 L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire $G$. 
@@ -465,6 +520,26 @@ car ceux-ci seront hachés de manière irréversible.\\
 
 $\rightarrow$ \textbf{Le rôle de la fonction de hachage est de rendre impossible toute utilisation ou comparaison
 via les permutations publiques.}
+
+\begin{center}
+\begin{tikzpicture}[node distance=4cm]
+
+% CPRF normale
+\node[state] (a0) {$ST_x$};
+\node[state, right of=a0] (a1) {$ST_n$};
+\draw[arrow] (a0) -- node[above] {$\pi^{x-n}$} (a1);
+\node at ($(a0)!0.5!(a1)+(0,0.8)$) {\textbf{CPRF}};
+
+% Hashed CPRF
+\node[hashstate, below of=a0, node distance=2cm] (b0) {$H(ST_x)$};
+\node[hashstate, right of=b0] (b1) {$H(ST_n)$};
+\draw[dashed] (b0) -- node[above] {\large $\times$} (b1);
+\node at ($(b0)!0.5!(b1)+(0,0.8)$) {\textbf{Hashed CPRF}};
+
+\end{tikzpicture}
+\end{center}
+
+
 
 \subsection{Hachage de CJ25}
 
