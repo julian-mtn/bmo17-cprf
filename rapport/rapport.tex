@@ -420,7 +420,7 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
 \subsubsection{Permutation à trappe AES}
 \paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
-Contrairement à \(x \mapsto x^2 \bmod n\), AES est injectif et chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
+Contrairement à \(x \mapsto x^2 \bmod n\), chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
 Cependant, pour déchiffrer, il faut absolument connaître la clé \(k\) :
 \begin{itemize}
     \item Sans la clé, l'attaquant ne peut pas inverser la permutation.
