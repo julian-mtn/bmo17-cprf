@@ -1,5 +1,6 @@
 
 #include "../include/bmo17.h"
+#include <openssl/sha.h>
 
 /*
  * génère un nombre aléatoire sécurisé
@@ -199,6 +200,38 @@ void bmo17_eval_master_key_rabin(BIGNUM * out, bmo17_master_key_rabin * mk, int 
     BN_CTX_free(ctx);
 }
 
+void bmo17_eval_master_key_hash(BIGNUM * out, bmo17_master_key * mk, int c){
+
+    BN_CTX *ctx = BN_CTX_new();
+    if (!ctx){
+        printf("erreur bmo17_eval_master_key : ctx\n");
+        exit(1);
+    }
+
+    BN_copy(out, mk->ST0);
+
+    for(int i = 0; i < c; i++){
+        if(rsa_eval_private(out, out, mk->SK, ctx)==0){
+            printf("erreur rsa_eval_private\n");
+            exit(1);
+        }
+    }
+
+    int len = BN_num_bytes(out);
+    unsigned char *buf = malloc(len);
+    if (!buf) {
+        printf("erreur malloc\n");
+        exit(1);
+    }
+
+    BN_bn2bin(out, buf); //convertir le résultat de la CPRF en bytes pour le hasher
+    unsigned char hash[SHA256_DIGEST_LENGTH]; //
+    SHA256(buf, len, hash); //hasher le résultat de la CPRF
+    BN_bin2bn(hash, SHA256_DIGEST_LENGTH, out); //mettre le hash en bignum
+        
+    free(buf);
+    BN_CTX_free(ctx);
+}
 
 /*
 * Evaluation de la CPRF avec la clé contrainte : 
@@ -277,6 +310,57 @@ void bmo17_eval_constrained_key_rabin(BIGNUM * out, BIGNUM *N, BIGNUM * STn, uns
         BN_add_word(i, 1);
     }
 
+    BN_free(zero);
+    BN_free(nb_permutation);
+    BN_free(i);
+    BN_free(bn_n);
+    BN_CTX_free(ctx);
+}
+
+bmo17_eval_constrained_key_hash(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
+
+    BN_CTX *ctx = BN_CTX_new();
+    if (!ctx){
+        printf("erreur bmo17_eval_constrained_key : ctx\n");
+        exit(1);
+    }
+
+    BIGNUM *bn_n = BN_new();
+    BN_set_word(bn_n, n);
+
+    BIGNUM *zero = BN_new();
+    BN_zero(zero);
+
+    if(BN_cmp(c, zero) < 0 || BN_cmp(c, bn_n) > 0){
+        printf("erreur : c < 0 ou c > n\n");
+        exit(1);
+    }
+
+    BN_copy(out, STn);
+
+    BIGNUM* nb_permutation = BN_new();
+    BN_sub(nb_permutation, bn_n, c);
+
+    BIGNUM* i = BN_new();
+    BN_zero(i);
+    while (BN_cmp(i, nb_permutation) < 0) {
+        rsa_eval_public(out, out, e, N, ctx);
+        BN_add_word(i, 1);
+    }
+
+    int len = BN_num_bytes(out);
+    unsigned char *buf = malloc(len);
+    if (!buf) {
+        printf("erreur malloc\n");
+        exit(1);
+    }
+
+    BN_bn2bin(out, buf); //convertir le résultat de la CPRF en bytes pour le hasher
+    unsigned char hash[SHA256_DIGEST_LENGTH]; //
+    SHA256(buf, len, hash); //hasher le résultat de la CPRF
+    BN_bin2bn(hash, SHA256_DIGEST_LENGTH, out); //mettre le hash en bignum
+        
+    free(buf);
     BN_free(zero);
     BN_free(nb_permutation);
     BN_free(i);
