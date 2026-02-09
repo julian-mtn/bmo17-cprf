@@ -153,7 +153,7 @@ La clé publique associée $PK$ permet uniquement de calculer la permutation dir
     
 Avec la clé maîtresse $(ST_0, SK)$ et une entrée $c$, on peut évaluer la CPRF sur $c$ par :
 \[
-F((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0)
+Eval((SK, ST_0), c) = \pi_{SK}^{-c}(ST_0)
 \]
 
 L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à partir de l’état initial $ST_0$.
@@ -182,7 +182,7 @@ Dans ce cas, la valeur de la CPRF est calculée comme suit :
 \textsf{EvalC}((PK, ST_n, n), c) = \pi_{PK}^{\,n-c}(ST_n)
 \]
 
-Cette valeur est égale à $F((SK, ST_0), c)$ par construction, ce qui assure la correction du schéma.
+Cette valeur est égale à $Eval((SK, ST_0), c)$ par construction, ce qui assure la correction du schéma.
 \end{defbox}
 
 
@@ -210,6 +210,12 @@ tandis que l’inverse de la permutation est calculé via:
 \[
 x \mapsto x^d \bmod N.
 \]
+
+avec 
+
+\[
+x^{e \cdot d} = x \bmod N , \forall x \in \mathbb{Z}_N.
+\] 
 
 Afin de limiter les fuites par canaux auxiliaires, l’évaluation privée est réalisée à l’aide
 de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit un temps
@@ -447,7 +453,21 @@ Si l’attaquant trouve une correspondance, il peut conclure que l’oracle impl
 
 \section{CPRF hachée de CJ25}
 
+Afin d'améliorer la sécurité de la construction de BMO17 face à l'attaque CJ25,
+il est possible d'implémenter une version hachée de la CPRF.
+
 \subsection{Résumé}
+
+L’idée est d’introduire une fonction de hachage cryptographique $H$ dans le processus d’évaluation de la CPRF.
+L'attaquant pourra toujours évaluer la CPRF sur les entrées non contraintes, 
+mais il ne pourra pas exploiter les résultats pour distinguer la CPRF d’une fonction aléatoire
+car ceux-ci seront hachés de manière irréversible.
+
+\begin{itemize}
+  \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
+  \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
+\end{itemize}
+Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
 
 \subsection{Implémentation}
 
