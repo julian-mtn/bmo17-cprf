@@ -13,11 +13,11 @@
 \contentsline {subsubsection}{\numberline {2.2.2}Clé maîtresse}{5}{subsubsection.2.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.3}Clé contrainte}{5}{subsubsection.2.2.3}%
 \contentsline {subsection}{\numberline {2.3}Tests d'amélioration}{5}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Permutation à trappe Rabin}{5}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.1}Permutation à trappe de Rabin}{5}{subsubsection.2.3.1}%
 \contentsline {paragraph}{}{5}{section*.3}%
 \contentsline {paragraph}{Problème:}{7}{section*.4}%
 \contentsline {paragraph}{}{7}{section*.5}%
-\contentsline {subsubsection}{\numberline {2.3.2}AES}{7}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.2}Permutation à trappe AES}{7}{subsubsection.2.3.2}%
 \contentsline {paragraph}{}{7}{section*.6}%
 \contentsline {paragraph}{}{7}{section*.7}%
 \contentsline {section}{\numberline {3}L'attaque CJ25}{7}{section.3}%
@@ -33,5 +33,5 @@
 \contentsline {subsubsection}{\numberline {3.3.2}Attaquant (attack.c)}{9}{subsubsection.3.3.2}%
 \contentsline {section}{\numberline {4}CPRF hachée de CJ25}{9}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Résumé}{9}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Implémentation}{9}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Une preuve sur une définition des CPRF}{9}{section.5}%
+\contentsline {subsection}{\numberline {4.2}Hachage de CJ25}{9}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Implémentation}{10}{subsection.4.3}%

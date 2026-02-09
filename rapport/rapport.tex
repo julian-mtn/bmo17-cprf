@@ -66,7 +66,7 @@ Ohrimenko en 2017 (BMO17).
 
 Dans un second temps, nous nous intéressons aux travaux récents de Cheng et Jaeger
 en 2025 (CJ25), qui mettent en évidence une attaque contre cette CPRF et proposent une variante
-hachée assurant la sécurité dans un nouveau modèle. 
+hachée assurant la sécurité face à un tel attaquant. 
 
 \newpage
 
@@ -245,7 +245,7 @@ jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluati
 sont possibles.
 
 \subsection{Tests d'amélioration}
-\subsubsection{Permutation à trappe Rabin}
+\subsubsection{Permutation à trappe de Rabin}
 
 \paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
 
@@ -366,7 +366,7 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
   child {node {$X_3$}};
 \end{tikzpicture}
 
-\subsubsection{AES}
+\subsubsection{Permutation à trappe AES}
 \paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
 Contrairement à \(x \mapsto x^2 \bmod n\), AES est injectif et chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
@@ -401,9 +401,9 @@ provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction al�
 \paragraph{}
 À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
 publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
-Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction non aléatoire.
+Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
 
-\paragraph{}Il est donc possible pour un attaquant d'avoir des informations les résultats pour distinguer une fonction aléatoire d'une CPRF.
+\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.
 
 \subsection{Jeu de sécurité}
 \begin{defbox}{Jeu de sécurité pour les CPRF}
@@ -458,21 +458,73 @@ il est possible d'implémenter une version hachée de la CPRF.
 
 \subsection{Résumé}
 
-L’idée est d’introduire une fonction de hachage cryptographique $H$ dans le processus d’évaluation de la CPRF.
+L’idée est d’introduire une fonction de hachage cryptographique dans l'évaluation de la CPRF. 
 L'attaquant pourra toujours évaluer la CPRF sur les entrées non contraintes, 
 mais il ne pourra pas exploiter les résultats pour distinguer la CPRF d’une fonction aléatoire
-car ceux-ci seront hachés de manière irréversible.
+car ceux-ci seront hachés de manière irréversible.\\
+
+$\rightarrow$ \textbf{Le rôle de la fonction de hachage est de rendre impossible toute utilisation ou comparaison
+via les permutations publiques.}
+
+\subsection{Hachage de CJ25}
+
+Nous présentons ici la version hachée de la CPRF telle que proposée dans l'article CJ25.\\
+
+Notations utilisées :
+\begin{itemize}
+  \item $P$ : fonction de hachage idéale modélisée comme un oracle de hachage aléatoire.
+  \item $\sigma_P$ : état interne de $P$ (initialement vide) qui mémorise les paires $(x,y)$.
+  \item $\lambda$ : paramètre de sécurité (taille de la sortie de $P$).
+  \item $k$ : clé secrète de la \textsf{CPRF}.
+  \item $k_R$ : clé contrainte associée à un ensemble de restrictions $R$.
+  \item $x$ : entrée de la fonction.
+  \item $y \in \{0,1\}^{\lambda}$ : valeur de hachage associée à une entrée.
+\end{itemize}
+
+L'évaluation de la CPRF hachée est définie par :
+
+\[
+\textsf{Hashed[CPRF].Eval}(1^\lambda, k, x)
+\;=\;
+\textsf{$P$.LazySampling}(1^\lambda, \textsf{CPRF.Eval}(1^\lambda, k, x) : \sigma_P).
+\]
+\[
+\textsf{Hashed[CPRF].EvalC}(1^\lambda, k_R, R, x)
+\;=\;
+\textsf{$P$.LazySampling}(1^\lambda, \textsf{CPRF.EvalC}(1^\lambda, k_R, R, x) : \sigma_P).
+\]
+
+
+\begin{center}
+  \begin{tabular}{l}
+    \textbf{Lazy Sampling} \\
+    \hline \\
+    Chercher $x$ dans $\sigma_P$ \\
+    Si $x \notin \sigma_P$ : \\
+    \quad Choisir $y \leftarrow \{0,1\}^\lambda$ au hasard \\
+    \quad Mémoriser $(x,y)$ \\
+    Sinon : \\
+    \quad Récupérer $y$ associé à $x$ \\
+    Retourner $y$
+  \end{tabular}
+  
+  \vspace{1ex}
+  \textit{Algorithme de lazy sampling d'une primitive idéale.}
+\end{center}
+
+
+
+\subsection{Implémentation}
+
+Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage SHA-256 d’OpenSSL.
+L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
+De même pour l’évaluation avec la clé contrainte.
 
 \begin{itemize}
   \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
   \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
 \end{itemize}
 Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
-
-\subsection{Implémentation}
-
-
-\section{Une preuve sur une définition des CPRF}
 
 
 \end{document}
