@@ -10,6 +10,8 @@
 % chktex-file 26
 % chktex-file 13
 \usepackage{tikz}
+\usepackage{float}
+
 \usetikzlibrary{trees,calc}
 
 
@@ -602,11 +604,11 @@ Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé co
 
 
 \subsection{Résultats de l'attaque}
-
-
-\begin{figure}
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{./images/sorbonne.png}
+  \includegraphics[width=\textwidth]{./images/stat1.png}
+  \caption{Résultats de l'attaque CPRF}
 \end{figure}
+
 
 \end{document}
