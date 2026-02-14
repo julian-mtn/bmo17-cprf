@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <time.h> 
 
 #include "../include/rsa.h"
 #include "../include/bmo17.h"
@@ -10,7 +11,7 @@
 #define PORT 4242
 #define BUF_SIZE 4096
 #define MAX_TRIES 10 // = x 
-#define MAX_N 50
+#define MAX_N 100
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -74,11 +75,16 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
 }
 
 int main() {
+    FILE *log = fopen("attack_results.txt", "w"); // écriture dans un fichier
+    if (!log) {
+        perror("fopen");
+        exit(1);
+    }
 
     printf("[*] Connecté au serveur PORT %d\n", PORT);
     printf("[*] Attaque en cours ...\n");
     int found = 0;
-    for (int n = 2; n <= MAX_N; n++) {
+    for (int n = 2; n <= MAX_N+1; n++) {
 
         int sock;
         struct sockaddr_in addr;
@@ -117,9 +123,14 @@ int main() {
         //printf("[*] Clé contrainte reçue (n = %d)\n", n);
 
         /* ---- attaque ---- */
-        int tmp = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx); //Stx
+        clock_t start = clock(); 
+        int tmp = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx);
+        clock_t end = clock();
         if(tmp) found += 1;
 
+        double elapsed_ms = (double)(end - start) / CLOCKS_PER_SEC * 1000.0;
+
+        fprintf(log, "%d %d %.3f\n", n, tmp, elapsed_ms);  //écriture dans fichier
 
         BN_free(e);
         BN_free(N);
@@ -133,6 +144,8 @@ int main() {
     else
         printf("Aucune PRF détectée pour les %d testés\n", MAX_N);
 
+    fprintf(log, "# Total detected: %d/%d\n", found, MAX_N);
+    fclose(log);
     return 0;
 }
 

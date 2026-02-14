@@ -317,7 +317,7 @@ void bmo17_eval_constrained_key_rabin(BIGNUM * out, BIGNUM *N, BIGNUM * STn, uns
     BN_CTX_free(ctx);
 }
 
-bmo17_eval_constrained_key_hash(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
+void bmo17_eval_constrained_key_hash(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
 
     BN_CTX *ctx = BN_CTX_new();
     if (!ctx){
