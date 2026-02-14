@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <time.h> 
+#include <math.h>
 
 #include "../include/rsa.h"
 #include "../include/bmo17.h"
@@ -11,7 +12,7 @@
 #define PORT 4242
 #define BUF_SIZE 4096
 #define MAX_TRIES 10 // = x 
-#define MAX_N 100
+#define MAX_N 200
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -84,6 +85,7 @@ int main() {
     printf("[*] Connecté au serveur PORT %d\n", PORT);
     printf("[*] Attaque en cours ...\n");
     int found = 0;
+    int next_progress = 10;
     for (int n = 2; n <= MAX_N+1; n++) {
 
         int sock;
@@ -131,6 +133,13 @@ int main() {
         double elapsed_ms = (double)(end - start) / CLOCKS_PER_SEC * 1000.0;
 
         fprintf(log, "%d %d %.3f\n", n, tmp, elapsed_ms);  //écriture dans fichier
+
+        int progress = (int) floor((double)(n-1) / MAX_N * 100); // % accompli
+        if(progress >= next_progress) {
+            printf("[*] Progression : %3d%%\n", next_progress);
+            fflush(stdout);
+            next_progress += 10;
+        }
 
         BN_free(e);
         BN_free(N);
