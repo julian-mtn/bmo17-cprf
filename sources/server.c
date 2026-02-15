@@ -35,6 +35,7 @@ int main() {
     int server_fd, client_fd;
     struct sockaddr_in addr;
     char buffer[BUF_SIZE];
+    char buffer_answer[BUF_SIZE];
 
     printf("[Initialisation serveur BMO17]\n");
 
@@ -78,18 +79,20 @@ int main() {
 
         while (1) {
             memset(buffer, 0, BUF_SIZE);
+            
             int r = read(client_fd, buffer, BUF_SIZE - 1);
             if (r <= 0) {
                 printf("[*] Client déconnecté\n");
                 break;
             }
+            
 
             if (strncmp(buffer, "EVAL", 4) == 0) {
                 int x = atoi(buffer + 5);
                 BIGNUM *y = BN_new();
                 
                 
-                if (challenge_bit == 0) {
+                if (challenge_bit == 1) {
                     //  PRF
                     bmo17_eval_master_key(y, mk, x); //Stx
                 } else {
@@ -102,6 +105,31 @@ int main() {
                 send_bn(client_fd, y);
 
                 BN_free(y);
+
+                memset(buffer_answer, 0, BUF_SIZE);
+
+                r = 0;
+                int r = read(client_fd, buffer_answer, BUF_SIZE - 1);
+                if (r <= 0) {
+                    printf("[*] Client déconnecté\n");
+                    break;
+                }
+
+
+                if (strncmp(buffer_answer, "ANSWER", 6) == 0) {
+
+                    int answer_bit = atoi(buffer_answer + 7);
+
+                    if (answer_bit == challenge_bit){
+                        dprintf(client_fd, "1");
+                    } else {
+                        dprintf(client_fd, "0");
+                    }
+
+                } else {
+                    dprintf(client_fd, "UNKNOWN COMMAND\n");
+                }
+
             }
             else if (strncmp(buffer, "CONSTRAIN", 9) == 0) {
                 int n = atoi(buffer + 10);

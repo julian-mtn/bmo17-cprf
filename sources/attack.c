@@ -30,8 +30,9 @@ void recv_line(int sock, char *buf, size_t size) {
 /*
  * effectuer une attaque sur la cprf
 */
-int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
+int attaque_cprf(int sock, int n, int max_tries, int *guess, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
     char buffer[BUF_SIZE];
+    char buffer_ans[BUF_SIZE];
     int found = 0;
 
     for (int x = n + 1; x < n + max_tries; x++) {
@@ -57,19 +58,26 @@ int attaque_cprf(int sock, int n, int max_tries, BIGNUM *e, BIGNUM *N, BIGNUM *S
                 exit(1);
             }
         }
-
+        
         if (BN_cmp(tmp, STn) == 0) {
             //printf("[!!!] PRF détectée pour x = %d\n", x);
             found = 1;
-            BN_free(STx);
-            BN_free(tmp);
-            break; // on arrête dès détection
         }
 
         BN_free(STx);
         BN_free(tmp);
-
         //printf("[*] x = %d : pas de PRF détectée\n", x);
+
+        dprintf(sock, "ANSWER %d\n", found);
+
+        int r = 0;
+        r = read(sock, buffer_ans, BUF_SIZE - 1);
+        if(r<=0){
+            printf("[*] Erreur lecture réponse du serveur");
+            break;
+        }
+
+        *guess = atoi(buffer_ans);
     }
 
     return found;
@@ -89,6 +97,7 @@ int main() {
     for (int n = 2; n <= MAX_N+1; n++) {
 
         int sock;
+        int guess;
         struct sockaddr_in addr;
         char buffer[BUF_SIZE];
 
@@ -126,13 +135,13 @@ int main() {
 
         /* ---- attaque ---- */
         clock_t start = clock(); 
-        int tmp = attaque_cprf(sock, n, MAX_TRIES, e, N, STn, ctx);
+        int tmp = attaque_cprf(sock, n, MAX_TRIES, &guess, e, N, STn, ctx);
         clock_t end = clock();
         if(tmp) found += 1;
 
         double elapsed_ms = (double)(end - start) / CLOCKS_PER_SEC * 1000.0;
 
-        fprintf(log, "%d %d %.3f\n", n, tmp, elapsed_ms);  //écriture dans fichier
+        fprintf(log, "%d %d %d %.3f\n", n, tmp, guess, elapsed_ms);  //écriture dans fichier
 
         int progress = (int) floor((double)(n-1) / MAX_N * 100); // % accompli
         if(progress >= next_progress) {
