@@ -78,8 +78,8 @@ ax2.plot(n_values, guesss, alpha=0.6)
 ax2.set_xlabel("n")
 ax2.set_ylabel("Attaque réussie (1=oui, 0=non)")
 ax2.set_title("Résultats des attaques réussies")
-ax1.set_ylim(0, 1.2)
-ax1.set_yticks([0, 1])
+ax2.set_ylim(0, 1.2)
+ax2.set_yticks([0, 1])
 
 # ======================
 # Texte statistiques

@@ -12,7 +12,7 @@
 #define PORT 4242
 #define BUF_SIZE 4096
 #define MAX_TRIES 10 // = x 
-#define MAX_N 200
+#define MAX_N 100
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
