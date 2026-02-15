@@ -67,7 +67,7 @@ plt.subplots_adjust(hspace=0.4, bottom=0.18)  # espace entre graphes + texte
 ax1.bar(n_values, results, alpha=0.6)
 ax1.set_xlabel("n")
 ax1.set_ylabel("PRF détectée (1=oui, 0=non)")
-ax1.set_title("Résultats de l'attaque CPRF")
+ax1.set_title("Résultats de l'attaque")
 ax1.set_ylim(0, 1.2)
 ax1.set_yticks([0, 1])
 
@@ -77,7 +77,7 @@ ax1.set_yticks([0, 1])
 ax2.plot(n_values, guesss, alpha=0.6)
 ax2.set_xlabel("n")
 ax2.set_ylabel("Attaque réussie (1=oui, 0=non)")
-ax2.set_title("Résultats des attaques réussies")
+ax2.set_title("Aboutissement des attaques")
 ax2.set_ylim(0, 1.2)
 ax2.set_yticks([0, 1])
 
