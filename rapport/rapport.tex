@@ -89,7 +89,13 @@ Ohrimenko en 2017 (BMO17).
 
 Dans un second temps, nous nous intéressons aux travaux récents de Cheng et Jaeger
 en 2025 (CJ25), qui mettent en évidence une attaque contre cette CPRF et proposent une variante
-hachée assurant la sécurité face à un tel attaquant. 
+hachée assurant la sécurité face à un tel attaquant.\\\\
+
+
+
+\small \textit{Le code source est disponible sur GitHub : 
+\href{https://github.com/julian-mtn/bmo17-cprf.git}{https://github.com/julian-mtn/bmo17-cprf.git}}
+
 
 \newpage
 
@@ -419,6 +425,12 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
   child {node {$X_3$}};
 \end{tikzpicture}
 
+\paragraph{Conclusion :}
+La permutation de Rabin n'est pas adaptée pour notre CPRF car chaque valeur a quatre pré-images possibles. 
+Même avec la clé privée, il est impossible de savoir laquelle correspond à l'entrée originale, ce qui empêche 
+l'application répétée de l'inverse $(n-c)$ fois pour retrouver correctement le résultat de la CPRF.
+
+
 \subsubsection{Permutation à trappe AES}
 \paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
@@ -446,12 +458,11 @@ tout en conservant l’accès à un oracle d’évaluation global.
 Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
 clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
 entrée $x$ telle que $x > n$ à l’aide des permutations publiques associées.
-\paragraph{}
+
 Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
 $x > n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
 provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
 
-\paragraph{}
 À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
 publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
 Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
@@ -604,11 +615,19 @@ Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé co
 
 
 \subsection{Résultats de l'attaque}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{./images/stat1.png}
-  \caption{Résultats de l'attaque CPRF}
+  \caption{Attaque version non hachée}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{./images/stat2.png}
+  \caption{Attaque version hachée}
+\end{figure}
+
 
 
 \end{document}

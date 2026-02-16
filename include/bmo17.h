@@ -9,6 +9,13 @@
 #include "rsa.h"
 #include "rabin.h"
 
+typedef enum {
+    MODE_NORMAL,
+    MODE_HASHED,
+    MODE_LAZY
+} oracle_mode;
+
+
 typedef struct {
     BIGNUM *ST0;     // état initial
     rsa_key *SK;   // clé privée RSA pour la permutation

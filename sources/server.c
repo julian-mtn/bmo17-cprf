@@ -33,9 +33,22 @@ void send_constrained_key(int sock, bmo17_constrained_key *ck) {
 
 int main(int argc, char * argv[]) {
 
-    int hashed = 0;
-    if(argc > 1){
-        hashed = atoi(argv[1]);
+    if (argc != 2) {
+    fprintf(stderr, "Usage: %s -n|-h|-l\n", argv[0]);
+    exit(1);
+    }
+
+    oracle_mode mode;
+
+    if (strcmp(argv[1], "-n") == 0) {
+        mode = MODE_NORMAL;
+    } else if (strcmp(argv[1], "-h") == 0) {
+        mode = MODE_HASHED;
+    } else if (strcmp(argv[1], "-l") == 0) {
+        mode = MODE_LAZY;
+    } else {
+        fprintf(stderr, "Mode invalide: %s\n", argv[1]);
+        exit(1);
     }
 
     int server_fd, client_fd;
@@ -97,15 +110,19 @@ int main(int argc, char * argv[]) {
                 int x = atoi(buffer + 5);
                 BIGNUM *y = BN_new();
                 
-                
                 if (challenge_bit == 1) {
-                    //  PRF
-                    if(hashed){
-                        bmo17_eval_master_key_hash(y,mk,x);
+                    switch(mode) {
+                        case MODE_NORMAL:
+                            bmo17_eval_master_key(y, mk, x);
+                            break;
+                        case MODE_HASHED:
+                            bmo17_eval_master_key_hash(y, mk, x);
+                            break;
+                        case MODE_LAZY:
+                            bmo17_eval_master_key(y, mk, x);
+                            break;
                     }
-                    else{
-                        bmo17_eval_master_key(y, mk, x); //Stx
-                    }
+
                 } else {
                     //  aléatoire
                     BN_rand(y, 256, 0, 0); // même taille que Stx
