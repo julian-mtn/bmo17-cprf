@@ -31,7 +31,13 @@ void send_constrained_key(int sock, bmo17_constrained_key *ck) {
 
 
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    int hashed = 0;
+    if(argc > 1){
+        hashed = atoi(argv[1]);
+    }
+
     int server_fd, client_fd;
     struct sockaddr_in addr;
     char buffer[BUF_SIZE];
@@ -94,7 +100,12 @@ int main() {
                 
                 if (challenge_bit == 1) {
                     //  PRF
-                    bmo17_eval_master_key(y, mk, x); //Stx
+                    if(hashed){
+                        bmo17_eval_master_key_hash(y,mk,x);
+                    }
+                    else{
+                        bmo17_eval_master_key(y, mk, x); //Stx
+                    }
                 } else {
                     //  aléatoire
                     BN_rand(y, 256, 0, 0); // même taille que Stx

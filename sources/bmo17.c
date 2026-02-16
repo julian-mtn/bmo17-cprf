@@ -235,7 +235,7 @@ void bmo17_eval_master_key_hash(BIGNUM * out, bmo17_master_key * mk, int c){
 
 /*
 * Evaluation de la CPRF avec la clé contrainte : 
-* applique c-n fois la permutation à partir de l’état STn
+* applique n-c fois la permutation à partir de l’état STn
 */
 void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c){
 

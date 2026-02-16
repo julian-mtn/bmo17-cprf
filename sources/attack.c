@@ -12,7 +12,7 @@
 #define PORT 4242
 #define BUF_SIZE 4096
 #define MAX_TRIES 10 // = x 
-#define MAX_N 100
+#define MAX_N 50
 
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
@@ -30,7 +30,7 @@ void recv_line(int sock, char *buf, size_t size) {
 /*
  * effectuer une attaque sur la cprf
 */
-int attaque_cprf(int sock, int n, int max_tries, int *guess, BIGNUM *e, BIGNUM *N, BIGNUM *STn, BN_CTX *ctx) {
+int attaque_cprf(int sock, int n, int max_tries, int *guess, BIGNUM *e, BIGNUM *N, BIGNUM *STn, int ishashed) {
     char buffer[BUF_SIZE];
     char buffer_ans[BUF_SIZE];
     int found = 0;
@@ -52,11 +52,13 @@ int attaque_cprf(int sock, int n, int max_tries, int *guess, BIGNUM *e, BIGNUM *
         BIGNUM *tmp = BN_dup(STx);
 
         /* appliquer les permutations */
-        for (int i = 0; i < x - n; i++) {
-            if(rsa_eval_public(tmp, tmp, e, N, ctx)==0){
-                printf("erreur rsa_eval_public\n");
-                exit(1);
-            }
+        BIGNUM *bn_n = BN_new();
+        BN_set_word(bn_n, n);
+        if(ishashed){
+            bmo17_eval_constrained_key_hash(tmp,e,N,STx,x, bn_n);
+        }
+        else{
+            bmo17_eval_constrained_key(tmp,e,N,STx,x,bn_n);
         }
         
         if (BN_cmp(tmp, STn) == 0) {
@@ -83,7 +85,13 @@ int attaque_cprf(int sock, int n, int max_tries, int *guess, BIGNUM *e, BIGNUM *
     return found;
 }
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    int hashed = 0;
+    if(argc > 1){
+        hashed = atoi(argv[1]);
+    }
+
     FILE *log = fopen("attack_results.txt", "w"); // écriture dans un fichier
     if (!log) {
         perror("fopen");
@@ -100,8 +108,6 @@ int main() {
         int guess;
         struct sockaddr_in addr;
         char buffer[BUF_SIZE];
-
-        BN_CTX *ctx = BN_CTX_new();
 
         /* --- connexion --- */
         sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -135,7 +141,7 @@ int main() {
 
         /* ---- attaque ---- */
         clock_t start = clock(); 
-        int tmp = attaque_cprf(sock, n, MAX_TRIES, &guess, e, N, STn, ctx);
+        int tmp = attaque_cprf(sock, n, MAX_TRIES, &guess, e, N, STn, hashed);
         clock_t end = clock();
         if(tmp) found += 1;
 
@@ -153,7 +159,6 @@ int main() {
         BN_free(e);
         BN_free(N);
         BN_free(STn);
-        BN_CTX_free(ctx);
         close(sock);
     }
     printf("[*] Attaque terminée\n");

@@ -74,7 +74,7 @@ void bmo17_eval_master_key_rabin(BIGNUM * out, bmo17_master_key_rabin * mk, int 
 * Evaluation de la CPRF avec la clé contrainte : 
 * applique c-n fois la permutation à partir de l’état STn
 */
-void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e,  BIGNUM *N, BIGNUM * STn,  unsigned int n, BIGNUM * c);
+void bmo17_eval_constrained_key(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c);
 
 /*
 * Evaluation de la CPRF avec la clé contrainte de rabin : 
@@ -87,6 +87,10 @@ void bmo17_master_key_free(bmo17_master_key *mk);
 void bmo17_master_key_rabin_free(bmo17_master_key_rabin *mk);
 void bmo17_constrained_key_free(bmo17_constrained_key *ck);
 void bmo17_constrained_key_rabin_free(bmo17_constrained_key_rabin *ck);
+
+void bmo17_eval_constrained_key_hash(BIGNUM * out, BIGNUM *e, BIGNUM *N, BIGNUM * STn, unsigned int n, BIGNUM * c);
+void bmo17_eval_master_key_hash(BIGNUM * out, bmo17_master_key * mk, int c);
+
 
 
 #endif

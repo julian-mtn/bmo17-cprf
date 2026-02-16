@@ -9,18 +9,18 @@ COMMON_SRC = $(SRC_DIR)/bmo17.c $(SRC_DIR)/rsa.c $(SRC_DIR)/rabin.c
 
 SERVER_SRC = $(SRC_DIR)/server.c
 ATTACK_SRC  = $(SRC_DIR)/attack.c
-TEST_SRC       = $(SRC_DIR)/tests.c
+TEST_SRC   = $(SRC_DIR)/tests.c
 
 SERVER = server
 ATTACK  = attack
-TEST       = tests
+TEST    = tests
 
 all: $(SERVER) $(ATTACK) $(TEST)
 
 $(SERVER): $(SERVER_SRC) $(COMMON_SRC)
 	$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ $(LIBS)
 
-$(ATTACK): $(ATTACK_SRC) $(SRC_DIR)/rsa.c
+$(ATTACK): $(ATTACK_SRC) $(COMMON_SRC)
 	$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ $(LIBS)
 
 $(TEST): $(TEST_SRC) $(COMMON_SRC)
