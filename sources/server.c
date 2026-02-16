@@ -6,6 +6,7 @@
 #include <time.h>
 #include "../include/bmo17.h"
 #include "../include/rsa.h"
+#include "../include/lazy_sampling.h"
 
 #define PORT 4242
 #define BUF_SIZE 1024
@@ -119,7 +120,8 @@ int main(int argc, char * argv[]) {
                             bmo17_eval_master_key_hash(y, mk, x);
                             break;
                         case MODE_LAZY:
-                            bmo17_eval_master_key(y, mk, x);
+                            bmo17_eval_master_key(y, mk, x); // CPRF normale
+                            lazy_sampling_hash(y, y); // post-traitement lazy sampling
                             break;
                     }
 

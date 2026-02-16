@@ -5,15 +5,18 @@ LIBS    = -lcrypto
 SRC_DIR = sources
 INC_DIR = include
 
-COMMON_SRC = $(SRC_DIR)/bmo17.c $(SRC_DIR)/rsa.c $(SRC_DIR)/rabin.c
+COMMON_SRC = $(SRC_DIR)/bmo17.c \
+             $(SRC_DIR)/rsa.c \
+             $(SRC_DIR)/rabin.c \
+             $(SRC_DIR)/lazy_sampling.c
 
 SERVER_SRC = $(SRC_DIR)/server.c
-ATTACK_SRC  = $(SRC_DIR)/attack.c
+ATTACK_SRC = $(SRC_DIR)/attack.c
 TEST_SRC   = $(SRC_DIR)/tests.c
 
 SERVER = server
-ATTACK  = attack
-TEST    = tests
+ATTACK = attack
+TEST   = tests
 
 all: $(SERVER) $(ATTACK) $(TEST)
 
