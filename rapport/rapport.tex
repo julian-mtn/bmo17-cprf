@@ -11,6 +11,8 @@
 % chktex-file 13
 \usepackage{tikz}
 \usepackage{float}
+\usepackage{lastpage}
+
 
 \usetikzlibrary{trees,calc}
 
@@ -52,19 +54,23 @@
 \newtcolorbox{defbox}[2][]{mydefstyle,title=#2,#1}
 
 \title{Constrained Pseudorandom Functions, Revisited}
-\author{\textbf{Julian Mouthon, Mario Razafinony}}
+\author{
+\textbf{Julian Mouthon, Mario Razafinony}\\
+\small Master 1 Cryptologie, Calcul haute-performance et Algorithmique\\
+\small Sorbonne Université
+}
 \date{\today}
 
 \usepackage{fancyhdr}
 \setlength{\headheight}{13.59999pt}
 \pagestyle{fancy}
 
+
 \fancyhf{}
 
 \fancyhead[L]{Constrained Pseudorandom Functions, Revisited}
 \fancyhead[R]{Sorbonne Université}
-\fancyfoot[C]{\thepage}
-
+\fancyfoot[C]{\thepage\ /\ \pageref{LastPage}}
 
 \begin{document}
 
@@ -167,7 +173,7 @@ La CPRF de BMO17 est basée sur l'itération successive d'une permutation à tra
 c’est-à-dire une fonction bijective facile à calculer mais difficile à inverser sans information secrète.
 On note cette permutation $\pi$.
 
-\addcontentsline{toc}{subsubsection}{Clé maîtresse}
+\addcontentsline{toc}{subsubsection}{Génération et structure de la clé maîtresse}
 \begin{defbox}{Génération de la clé maîtresse}
 La clé maîtresse est composée des éléments suivants :
 \begin{itemize}
@@ -177,7 +183,7 @@ La clé maîtresse est composée des éléments suivants :
 La clé publique associée $PK$ permet uniquement de calculer la permutation directe $\pi$.
 \end{defbox}
 
-\addcontentsline{toc}{subsubsection}{Evaluation avec clé maîtresse}
+\addcontentsline{toc}{subsubsection}{Évaluation de la CPRF avec la clé maîtresse}
 \begin{defbox}{Evaluation de la CPRF avec la clé maîtresse}
     
 Avec la clé maîtresse $(ST_0, SK)$ et une entrée $c$, on peut évaluer la CPRF sur $c$ par :
@@ -204,7 +210,7 @@ L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à 
 
 
 
-\addcontentsline{toc}{subsubsection}{Clé contrainte}
+\addcontentsline{toc}{subsubsection}{Dérivation et structure de la clé contrainte}
 \begin{defbox}{Génération de la clé contrainte}
 À partir de la clé maîtresse $(ST_0, SK)$ et d’un entier $n$, correspondant à la contrainte
 $C(c) = [c < n]$, la clé contrainte est composée des éléments suivants :
@@ -217,7 +223,7 @@ $C(c) = [c < n]$, la clé contrainte est composée des éléments suivants :
 La clé secrète $SK$ n’est pas incluse dans la clé contrainte.
 \end{defbox}
 
-\addcontentsline{toc}{subsubsection}{Évaluation avec clé contrainte}
+\addcontentsline{toc}{subsubsection}{Évaluation restreinte avec une clé contrainte}
 \begin{defbox}{Évaluation de la CPRF avec la clé contrainte}
     
 Avec la clé contrainte $(PK, ST_n, n)$ et une entrée $c$, l’évaluation est possible uniquement si
@@ -246,19 +252,19 @@ Cette valeur est égale à $Eval((SK, ST_0), c)$ par construction, ce qui assure
 
 
 
-\subsection{Implémentation}
+\subsection{Choix d’implémentation}
 
 Nous utilisons la bibliothèque OpenSSL pour la gestion des grands entiers
-(\texttt{BIGNUM}), les opérations modulaires et le calcul de hachage SHA-256.
+(\texttt{BIGNUM}), les opérations modulaires et le hachage SHA-256.
 
 L’aléa est sécurisé et est obtenu à partir de \texttt{/dev/urandom}, ce qui
-permet de générer l’état initial $ST_0$ ainsi que les paramètres RSA de manière sûre.
+permet de générer l’état initial $ST_0$ ainsi que les paramètres RSA de manière plus sûre.
 
 
-\subsubsection{Permutation RSA}
+\subsubsection{Implémentation de la permutation à trappe RSA}
 
 La permutation à trappe utilisée dans BMO17 est défini à l’aide de RSA.
-Nous implémentons la génération de clés RSA de taille 2048 bits, ainsi que l’évaluation
+Nous implémentons la génération de clés RSA de taille 4096 bits, ainsi que l’évaluation
 de la permutation dans les deux sens.
 
 Plus précisément, la fonction publique correspond à:
@@ -281,7 +287,7 @@ de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit 
 d’exécution indépendant des données.
 
 
-\subsubsection{Clé maîtresse}
+\subsubsection{Implémentation de la clé maîtresse et génération de l’état initial}
 
 La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
 privée RSA. L’état initial est généré comme un entier aléatoire de 256 bits à partir de
@@ -290,7 +296,7 @@ privée RSA. L’état initial est généré comme un entier aléatoire de 256 b
 L’évaluation avec la clé maîtresse consiste à appliquer $c$ fois l’inverse de la permutation
 RSA à partir de $ST_0$.
 
-\subsubsection{Clé contrainte}
+\subsubsection{Implémentation de la dérivation des clés contraintes}
 
 À partir de la clé maîtresse et d’un paramètre de contrainte $n$, nous dérivons une clé
 contrainte composée de la clé publique RSA $(e, N)$ et de l’état
@@ -303,7 +309,8 @@ appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé pri
 jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
 sont possibles.
 
-\subsection{Tests d'amélioration}
+\subsection{Étude de permutations alternatives à RSA}
+
 \subsubsection{Permutation à trappe de Rabin}
 
 \paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
@@ -447,7 +454,7 @@ Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour not
 
 \section{L'attaque CJ25}
 
-\subsection{Résumé}
+\subsection{Description générale et intuition de l’attaque}
 
 \paragraph{}
 L’attaque CJ25 exploite le fait qu’un attaquant peut obtenir une clé contrainte
@@ -472,9 +479,9 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
 
 
 
-\subsection{Jeu de sécurité}
+\subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
 \begin{defbox}{Jeu de sécurité pour les CPRF}
-L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire $G$. 
+L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire. 
 L’objectif de l'attaquant est de distinguer les deux cas.
 \begin{itemize}
 \item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C = (PK, ST_n, n)$ pour une contrainte $n$ de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
@@ -483,17 +490,49 @@ L’objectif de l'attaquant est de distinguer les deux cas.
 \item \textbf{Décision :} $\mathcal{A}$ décide que $O$ est la $CPRF$ si $ST_a = ST_n$, sinon il décide que $O$ est une fonction aléatoire.
 \end{itemize}
 Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
-L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.
+L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.\\
+
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+  % Etats
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
+  \node[right of=stnp2] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_a$};
+
+  % Flèches directes CPRF avec pi écrit au-dessus
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
+  \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
+  \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Flèches de l'attaquant (en rouge, dashed) sous les cases
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
+    node[below, red, align=center] {Attaquant applique la permutation inverse \\ pour vérifier $ST_a = ST_n$} (stn.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
+    node[below, red, align=center] {} (stnp1.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.2,-1) and +(0,-1) .. 
+    node[below, red, align=center] {} (stnp2.south);
+
+\end{tikzpicture}
+\end{center}
+
+
+
+
 \end{defbox}
 
-\subsection{Implémentation}
+\subsection{Mise en œuvre expérimentale de l’attaque}
 
 Pour simuler le jeu de sécurité, nous avons mis en place une architecture client–serveur locale 
 reposant sur TCP. Le serveur implémente l’oracle du jeu 
 (évaluation et génération de clés contraintes), 
 le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
 
-\subsubsection{Oracle (server.c)}
+\subsubsection{Implémentation de l’oracle de sécurité}
 
 L’oracle met à disposition deux interfaces accessibles à l’attaquant :
 \begin{itemize}
@@ -506,7 +545,7 @@ L’oracle met à disposition deux interfaces accessibles à l’attaquant :
 \end{itemize}
 
 
-\subsubsection{Attaquant (attack.c)}
+\subsubsection{Implémentation de l’attaquant et stratégie}
 
 L’attaquant choisit un indice $n$ et demande à l’oracle la clé
 contrainte correspondante. Cette clé lui permet d’évaluer la fonction sur des entrées
@@ -518,12 +557,12 @@ applique les permutations publiques afin de tester la cohérence de la structure
 
 Si l’attaquant trouve une correspondance, il peut conclure que l’oracle implémente une CPRF plutôt qu’une fonction aléatoire.
 
-\section{CPRF hachée de CJ25}
+\section{Renforcement de la CPRF par hachage}
 
 Afin d'améliorer la sécurité de la construction de BMO17 face à l'attaque CJ25,
 il est possible d'implémenter une version hachée de la CPRF.
 
-\subsection{Résumé}
+\subsection{Principe général de la CPRF hachée}
 
 L’idée est d’introduire une fonction de hachage cryptographique dans l'évaluation de la CPRF. 
 L'attaquant pourra toujours évaluer la CPRF sur les entrées non contraintes, 
@@ -553,7 +592,7 @@ via les permutations publiques.}
 
 
 
-\subsection{Hachage de CJ25}
+\subsection{Construction explicite de la CPRF hachée de Cheng et Jaeger}
 
 Nous présentons ici la version hachée de la CPRF telle que proposée dans l'article CJ25.\\
 
@@ -601,7 +640,7 @@ L'évaluation de la CPRF hachée est définie par :
 
 
 
-\subsection{Implémentation}
+\subsection{Implémentation de la CPRF hachée}
 
 Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage SHA-256 d’OpenSSL.
 L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
@@ -614,7 +653,7 @@ De même pour l’évaluation avec la clé contrainte.
 Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
 
 
-\subsection{Résultats de l'attaque}
+\subsection{Évaluation expérimentale et comparaison des attaques}
 
 \begin{figure}[H]
   \centering

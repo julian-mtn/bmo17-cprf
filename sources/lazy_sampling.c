@@ -16,7 +16,9 @@ typedef struct lazy_entry {
 
 static lazy_entry *lazy_table[LAZY_HASHMAP_SIZE] = {0};
 
-
+/*
+Retourne le h associé à l'entrée
+*/
 static unsigned int bn_hash(BIGNUM *bn) {
     // somme des bytes modulo taille table
     int num_bytes = BN_num_bytes(bn);
@@ -41,8 +43,8 @@ void lazy_sampling_hash(BIGNUM *out, BIGNUM *in) {
         cur = cur->next;
     }
 
-    //si pas dans le hashmap, on renvoit un élément aléatoire
-    BN_rand(out, 256, -1, 0);  // ajuster λ
+    //si pas dans le hashmap, on renvoit un élément aléatoire de 256 bits
+    BN_rand(out, 256, -1, 0); 
 
     // insertion dans la hashmap
     lazy_entry *entry = malloc(sizeof(lazy_entry));
