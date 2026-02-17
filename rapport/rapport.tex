@@ -499,7 +499,7 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
   \node[right of=stnp2] (dots) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_a$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
 
   % Flèches directes CPRF avec pi écrit au-dessus
   \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
@@ -531,6 +531,7 @@ Pour simuler le jeu de sécurité, nous avons mis en place une architecture clie
 reposant sur TCP. Le serveur implémente l’oracle du jeu 
 (évaluation et génération de clés contraintes), 
 le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
+
 
 \subsubsection{Implémentation de l’oracle de sécurité}
 
@@ -640,7 +641,7 @@ L'évaluation de la CPRF hachée est définie par :
 
 
 
-\subsection{Implémentation de la CPRF hachée}
+\subsection{Implémentation d'une CPRF hachée}
 
 Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage SHA-256 d’OpenSSL.
 L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
@@ -667,6 +668,28 @@ Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé co
   \caption{Attaque version hachée}
 \end{figure}
 
+
+\section{Comment lancer le programme}
+
+\begin{center}
+\begin{tabular}{|l|p{10cm}|}
+\hline
+\textbf{Commande} & \textbf{Description} \\
+\hline
+\texttt{make} & Compile le projet. \\
+\hline
+\texttt{./start.sh -n <size>} & Lance les tests avec la CPRF normale. \\
+\hline
+\texttt{./start.sh -h <size>} & Lance les tests avec la CPRF hachée. \\
+\hline
+\texttt{./start.sh -l <size>} & Lance les tests avec le lazy sampling. \\
+\hline
+\texttt{<size>} & Nombre de tests à exécuter. \\
+\hline
+\texttt{python3 display.py} & Trace les courbes à partir des résultats enregistrés dans \texttt{attack\_results.txt}. \\
+\hline
+\end{tabular}
+\end{center}
 
 
 \end{document}
