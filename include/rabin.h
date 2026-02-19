@@ -16,7 +16,7 @@ typedef struct {
  * Génère une clé Rabin de taille `bits` pour n
  * p et q ≡ 3 (mod 4)
  */
-rabin_key *rabin_keygen(int bits);
+rabin_key *rabin_keygen();
 
 /*
  * Libère la mémoire d'une clé Rabin

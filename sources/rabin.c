@@ -4,7 +4,9 @@
  * Génère une clé Rabin de taille `bits` pour n
  * p et q ≡ 3 (mod 4)
  */
-rabin_key *rabin_keygen(int bits) {
+rabin_key *rabin_keygen() {
+
+    int bits = 4096;
     BN_CTX *ctx = BN_CTX_new();
     if (!ctx) return NULL;
 

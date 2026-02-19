@@ -6,7 +6,7 @@
 */
 rsa_key *rsa_keygen() {
 
-    int bits = 2048; //TODO : changer à 4096
+    int bits = 4096; //TODO : changer à 4096
 
     //mémoire temporaire pour BIGNUM
     BN_CTX *ctx = BN_CTX_new();

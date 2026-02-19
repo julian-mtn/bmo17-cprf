@@ -39,7 +39,7 @@ bmo17_master_key * bmo17_master_keygen(){
     bmo17_master_key * mk = malloc(sizeof(bmo17_master_key));
     if (!mk) return NULL;
 
-    mk->SK = rsa_keygen(2048);
+    mk->SK = rsa_keygen();
     if (!mk->SK) {
         printf("Erreur génération clé RSA\n");
         exit(1);
@@ -69,7 +69,7 @@ bmo17_master_key_rabin * bmo17_master_keygen_rabin(){
     bmo17_master_key_rabin * mk = malloc(sizeof(bmo17_master_key_rabin));
     if (!mk) return NULL;
 
-    mk->SK = rabin_keygen(2048);
+    mk->SK = rabin_keygen();
     if (!mk->SK) {
         printf("Erreur génération clé Rabin\n");
         exit(1);
