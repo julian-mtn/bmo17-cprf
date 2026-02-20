@@ -54,6 +54,7 @@ int attaque_cprf(int sock, int n, int *guess, BIGNUM *e, BIGNUM *N, BIGNUM *STn,
 
         /* appliquer les permutations */
         BIGNUM *bn_n = BN_new();
+        BN_set_word(bn_n, n);
         
         switch (mode) {
         case MODE_NORMAL:

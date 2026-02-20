@@ -30,7 +30,7 @@ esac
 
 # Lancer le serveur dans un nouveau terminal
 gnome-terminal -- bash -c "./server $MODE; exec bash"
-sleep 1
+sleep 2
 
 # Lancer l'attaque dans un autre terminal
 gnome-terminal -- bash -c "./attack $MODE $TAILLE && python3 display.py; exec bash"
