@@ -12,6 +12,7 @@
 \usepackage{tikz}
 \usepackage{float}
 \usepackage{lastpage}
+\usetikzlibrary{decorations.pathreplacing}
 
 
 \usetikzlibrary{trees,calc}
@@ -474,9 +475,37 @@ provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction al�
 publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
 Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
 
-\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.
+\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.\\
 
 
+\begin{center}
+\begin{tikzpicture}[node distance=3cm]
+  % Etats
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
+  \node[right of=st0] (dots1) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stn1) {$ST_{n+1}$};
+  \node[right of=stn1] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
+
+  % Flèches directes avec π
+  \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
+  \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
+  \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Flèches de l'attaquant (en rouge, dashed)
+ \draw[decorate, decoration={brace, mirror, amplitude=6pt}, red]
+  (st0.south west) -- (stn.south east)
+  node[midway, below=6pt, red] {zone contrainte};
+
+\draw[decorate, decoration={brace, mirror, amplitude=6pt}, blue]
+  (stn1.south west) -- (stx.south east)
+  node[midway, below=6pt, blue] {zone d'évaluation hors contrainte};
+
+\end{tikzpicture}
+\end{center}
 
 
 \subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
@@ -509,7 +538,7 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
 
   % Flèches de l'attaquant (en rouge, dashed) sous les cases
   \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
-    node[below, red, align=center] {Attaquant applique la permutation inverse \\ pour vérifier $ST_a = ST_n$} (stn.south);
+    node[below, red, align=center] {Attaquant applique la permutation \\ pour vérifier $ST_a = ST_n$} (stn.south);
 
   \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
     node[below, red, align=center] {} (stnp1.south);
@@ -591,6 +620,17 @@ via les permutations publiques.}
 \end{tikzpicture}
 \end{center}
 
+\subsubsection{Implémentation}
+
+Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage \textbf{SHA-256} d’OpenSSL.
+L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
+De même pour l’évaluation avec la clé contrainte.
+
+\begin{itemize}
+  \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
+  \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
+\end{itemize}
+Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
 
 
 \subsection{Construction explicite de la CPRF hachée de Cheng et Jaeger}
@@ -641,17 +681,6 @@ L'évaluation de la CPRF hachée est définie par :
 
 
 
-\subsection{Implémentation d'une CPRF hachée}
-
-Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage SHA-256 d’OpenSSL.
-L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
-De même pour l’évaluation avec la clé contrainte.
-
-\begin{itemize}
-  \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
-  \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
-\end{itemize}
-Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
 
 
 \subsection{Évaluation expérimentale et comparaison des attaques}

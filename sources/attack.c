@@ -126,6 +126,7 @@ int main(int argc, char *argv[]) {
     printf("[*] Attaque en cours ...\n");
     int found = 0;
     int next_progress = 10;
+    
     for (int n = 2; n <= MAX_N+1; n++) {
 
         int sock;
