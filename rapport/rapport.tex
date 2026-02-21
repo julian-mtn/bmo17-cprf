@@ -1,24 +1,31 @@
 \documentclass[11pt]{article}
+
+% Encodage et langues
 \usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+% Mathématiques
 \usepackage{amsmath,amssymb}
+% Hyperliens et PDF
 \usepackage{hyperref}
 \usepackage{bookmark}
+% Listes
 \usepackage{enumitem}
-\usepackage{geometry}
-\usepackage[many]{tcolorbox}
-\geometry{margin=2.5cm}
-% chktex-file 26
-% chktex-file 13
+% Marges et mise en page
+\usepackage[a4paper, margin=2.5cm]{geometry}
+% Interligne et espacement
+\usepackage{setspace}
+\onehalfspacing             % interligne 1,5 pour un article scientifique
+\setlength{\parindent}{0pt} % pas d'indentation
+\setlength{\parskip}{6pt}   % espace vertical entre paragraphes
+% Figures et TikZ
 \usepackage{tikz}
 \usepackage{float}
-\usepackage{lastpage}
-\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{decorations.pathreplacing,trees,calc}
 
-
-\usetikzlibrary{trees,calc}
-
-
-\tcbset{ %pour les boîtes de définitions
+% Couleurs et boîtes
+\usepackage[many]{tcolorbox}
+\tcbset{
   mydefstyle/.style={
     colback=white,
     colframe=black,
@@ -29,8 +36,26 @@
     breakable
   }
 }
+\newtcolorbox{defbox}[2][]{mydefstyle,title=#2,#1}
 
-\tikzset{ %pour les chaine de permutations
+% Titres des sections
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{1.5ex plus 1ex minus .2ex}{1ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{1ex plus .5ex minus .2ex}{0.5ex plus .2ex}
+\titlespacing*{\subsubsection}{0pt}{0.8ex plus .3ex minus .1ex}{0.3ex plus .1ex}
+
+% En-têtes et pieds de page
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Constrained Pseudorandom Functions, Revisited}
+\fancyhead[R]{Sorbonne Université}
+\fancyfoot[C]{\thepage\ /\ \pageref{LastPage}}
+
+% TikZ pour les états et flèches
+\tikzset{
   state/.style={
     draw,
     rectangle,
@@ -50,9 +75,7 @@
   }
 }
 
-
-% Environnement "définition encadrée"
-\newtcolorbox{defbox}[2][]{mydefstyle,title=#2,#1}
+%========================================================================================
 
 \title{Constrained Pseudorandom Functions, Revisited}
 \author{
@@ -61,17 +84,6 @@
 \small Sorbonne Université
 }
 \date{\today}
-
-\usepackage{fancyhdr}
-\setlength{\headheight}{13.59999pt}
-\pagestyle{fancy}
-
-
-\fancyhf{}
-
-\fancyhead[L]{Constrained Pseudorandom Functions, Revisited}
-\fancyhead[R]{Sorbonne Université}
-\fancyfoot[C]{\thepage\ /\ \pageref{LastPage}}
 
 \begin{document}
 
@@ -331,7 +343,7 @@ n = p \cdot q
 
 La clé privée est le couple $(p, q)$.
 
-Cette condition sur $p$ et $q$ permet un calcul efficace des racines carrées modulo ces nombres premiers.
+Cette condition sur $p$ et $q$ permet un calcul efficace des racines carrées modulo ces nombres premiers.\\
 
 \item\textbf{Permutation de Rabin :}
 
@@ -344,7 +356,7 @@ définie par :
 f(x) = x^2 \bmod n
 \]
 
-Cette fonction est facile à calculer, mais difficile à inverser sans connaître la factorisation de $n$.
+Cette fonction est facile à calculer, mais difficile à inverser sans connaître la factorisation de $n$.\\
 
 \item\textbf{Inverser la permutation de Rabin :}
 
@@ -399,10 +411,12 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
 
 
 
+\begin{figure}[H]
+  \centering
 \begin{tikzpicture}[
   grow=down,
   sibling distance=20mm,
-  level distance=15mm,
+  level distance=20mm,
   every node/.style={fill=red!20,draw=red!30, circle, rounded corners, align=center, minimum width=10mm},
   correct/.style={draw=green!30, fill=green!20},
   level label/.style={font=\small, anchor=west, align=left}
@@ -412,7 +426,9 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
   % Niveau 1
   child {node[correct] {$X_0$} 
     % Niveau 2
-    child {node[correct] {$X_0$} 
+    child {node {$X_0$}} 
+    child {node {$X_1$}}
+    child {node[correct] {$X_2$} 
       % Niveau 3 
       child {node[correct] {$\dots$} 
         child {node[correct] {$ST_n$}}
@@ -424,14 +440,14 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
       child {node {$X_2$}}
       child {node {$X_3$}}
     }
-    child {node {$X_1$}} 
-    child {node {$X_2$}}
     child {node {$X_3$}}
   }
   child {node {$X_1$}} 
   child {node {$X_2$}}
   child {node {$X_3$}};
 \end{tikzpicture}
+\caption{Arbre des pré-images dans la permutation de Rabin.}\label{fig:rabin-tree}
+\end{figure}
 
 \paragraph{Conclusion :}
 La permutation de Rabin n'est pas adaptée pour notre CPRF car chaque valeur a quatre pré-images possibles. 
@@ -443,7 +459,7 @@ l'application répétée de l'inverse $(n-c)$ fois pour retrouver correctement l
 \paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
 Contrairement à \(x \mapsto x^2 \bmod n\), chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
-Cependant, pour déchiffrer, il faut absolument connaître la clé \(k\) :
+Cependant, pour déchiffrer, \textbf{il faut absolument connaître la clé k} :
 \begin{itemize}
     \item Sans la clé, l'attaquant ne peut pas inverser la permutation.
     \item AES reste sécurisé grâce à la clé secrète.
@@ -478,8 +494,9 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
 \paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.\\
 
 
-\begin{center}
-\begin{tikzpicture}[node distance=3cm]
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=2.5cm]
   % Etats
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
   \node[right of=st0] (dots1) {$\dots$};
@@ -496,16 +513,24 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
   \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
 
   % Flèches de l'attaquant (en rouge, dashed)
- \draw[decorate, decoration={brace, mirror, amplitude=6pt}, red]
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  red
+]
   (st0.south west) -- (stn.south east)
-  node[midway, below=6pt, red] {zone contrainte};
+  node[midway, below=14pt, red] {zone contrainte};
 
-\draw[decorate, decoration={brace, mirror, amplitude=6pt}, blue]
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  blue
+]
   (stn1.south west) -- (stx.south east)
-  node[midway, below=6pt, blue] {zone d'évaluation hors contrainte};
-
+  node[midway, below=14pt, blue] {zone d'évaluation hors contrainte};
 \end{tikzpicture}
-\end{center}
+\caption{Schéma général de l’attaque CJ25}
+\end{figure}
 
 
 \subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
@@ -521,7 +546,8 @@ L’objectif de l'attaquant est de distinguer les deux cas.
 Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
 L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.\\
 
-\begin{center}
+\begin{figure}[H]
+  \centering
 \begin{tikzpicture}[node distance=3cm]
   % Etats
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
@@ -547,7 +573,8 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
     node[below, red, align=center] {} (stnp2.south);
 
 \end{tikzpicture}
-\end{center}
+\caption{Schéma des permutation de l'attaque dans la zone hors contrainte}
+\end{figure}
 
 
 
@@ -563,6 +590,7 @@ le client joue le rôle de l’attaquant (requêtes d’évaluation et de contra
 
 
 \subsubsection{Implémentation de l’oracle de sécurité}
+
 
 L’oracle met à disposition deux interfaces accessibles à l’attaquant :
 \begin{itemize}
@@ -594,7 +622,7 @@ il est possible d'implémenter une version hachée de la CPRF.
 
 \subsection{Principe général de la CPRF hachée}
 
-L’idée est d’introduire une fonction de hachage cryptographique dans l'évaluation de la CPRF. 
+L’idée est d’introduire une fonction de hachage cryptographique dans l'évaluation. 
 L'attaquant pourra toujours évaluer la CPRF sur les entrées non contraintes, 
 mais il ne pourra pas exploiter les résultats pour distinguer la CPRF d’une fonction aléatoire
 car ceux-ci seront hachés de manière irréversible.\\
@@ -622,20 +650,25 @@ via les permutations publiques.}
 
 \subsubsection{Implémentation}
 
-Pour implémenter cette version hachée, nous avons utilisé la fonction de hachage \textbf{SHA-256} d’OpenSSL.
-L’évaluation de la CPRF est effectuée normalement, puis le résultat est converti en bytes et est haché avant d’être retourné à l’attaquant.
-De même pour l’évaluation avec la clé contrainte.
+Nous avons implémenté deux versions de la CPRF hachée :
 
 \begin{itemize}
-  \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
-  \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation de la CPRF sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
+  \item \textbf{CPRF hachée simple} : l’évaluation est effectuée normalement,
+  puis le résultat est haché à l’aide de \texttt{SHA-256} avant d’être retourné.
+    \begin{itemize}
+      \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
+      \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
+    \end{itemize}
+
+  \item \textbf{CPRF hachée avec lazy sampling} : afin de se rapprocher du modèle
+  théorique d’un oracle de hachage idéal utilisé dans l'article CJ25, nous avons également implémenté
+  une version reposant sur le lazy sampling décrite dans la section suivante.
 \end{itemize}
-Avec $Eval$ l'évaluation de la CPRF normale, $EvalC$ l'évaluation avec clé contrainte et $H$ une fonction de hachage cryptographique.
 
 
 \subsection{Construction explicite de la CPRF hachée de Cheng et Jaeger}
 
-Nous présentons ici la version hachée de la CPRF telle que proposée dans l'article CJ25.\\
+Nous présentons ici la version hachée proposée dans l'article CJ25.\\
 
 Notations utilisées :
 \begin{itemize}
@@ -648,7 +681,7 @@ Notations utilisées :
   \item $y \in \{0,1\}^{\lambda}$ : valeur de hachage associée à une entrée.
 \end{itemize}
 
-L'évaluation de la CPRF hachée est définie par :
+L'évaluation est définie par :
 
 \[
 \textsf{Hashed[CPRF].Eval}(1^\lambda, k, x)

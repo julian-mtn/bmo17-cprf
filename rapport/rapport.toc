@@ -1,3 +1,4 @@
+\babel@toc {french}{}\relax 
 \contentsline {section}{\numberline {1}Définitions}{3}{section.1}%
 \contentsline {subsection}{Fonction pseudo-aléatoire}{3}{section.1}%
 \contentsline {subsection}{Contrainte}{3}{section.1}%
@@ -12,27 +13,27 @@
 \contentsline {subsubsection}{\numberline {2.2.1}Implémentation de la permutation à trappe RSA}{5}{subsubsection.2.2.1}%
 \contentsline {subsubsection}{\numberline {2.2.2}Implémentation de la clé maîtresse et génération de l’état initial}{5}{subsubsection.2.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.3}Implémentation de la dérivation des clés contraintes}{5}{subsubsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.3}Étude de permutations alternatives à RSA}{5}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Permutation à trappe de Rabin}{5}{subsubsection.2.3.1}%
-\contentsline {paragraph}{}{5}{section*.3}%
-\contentsline {paragraph}{Problème:}{6}{section*.4}%
-\contentsline {paragraph}{}{6}{section*.5}%
-\contentsline {paragraph}{Conclusion :}{7}{section*.6}%
+\contentsline {subsection}{\numberline {2.3}Étude de permutations alternatives à RSA}{6}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Permutation à trappe de Rabin}{6}{subsubsection.2.3.1}%
+\contentsline {paragraph}{}{6}{subsubsection.2.3.1}%
+\contentsline {paragraph}{Problème:}{7}{subsubsection.2.3.1}%
+\contentsline {paragraph}{}{7}{subsubsection.2.3.1}%
+\contentsline {paragraph}{Conclusion :}{7}{figure.1}%
 \contentsline {subsubsection}{\numberline {2.3.2}Permutation à trappe AES}{7}{subsubsection.2.3.2}%
-\contentsline {paragraph}{}{7}{section*.7}%
-\contentsline {paragraph}{}{7}{section*.8}%
-\contentsline {section}{\numberline {3}L'attaque CJ25}{7}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Description générale et intuition de l’attaque}{7}{subsection.3.1}%
-\contentsline {paragraph}{}{7}{section*.9}%
-\contentsline {paragraph}{}{7}{section*.10}%
-\contentsline {paragraph}{}{8}{section*.11}%
+\contentsline {paragraph}{}{7}{subsubsection.2.3.2}%
+\contentsline {paragraph}{}{8}{subsubsection.2.3.2}%
+\contentsline {section}{\numberline {3}L'attaque CJ25}{8}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Description générale et intuition de l’attaque}{8}{subsection.3.1}%
+\contentsline {paragraph}{}{8}{subsection.3.1}%
+\contentsline {paragraph}{}{8}{subsection.3.1}%
+\contentsline {paragraph}{}{8}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Modélisation du jeu de sécurité et avantage de l’attaquant}{8}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Mise en œuvre expérimentale de l’attaque}{8}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Implémentation de l’oracle de sécurité}{8}{subsubsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3}Mise en œuvre expérimentale de l’attaque}{9}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Implémentation de l’oracle de sécurité}{9}{subsubsection.3.3.1}%
 \contentsline {subsubsection}{\numberline {3.3.2}Implémentation de l’attaquant et stratégie}{9}{subsubsection.3.3.2}%
-\contentsline {section}{\numberline {4}Renforcement de la CPRF par hachage}{9}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Principe général de la CPRF hachée}{9}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Implémentation}{9}{subsubsection.4.1.1}%
+\contentsline {section}{\numberline {4}Renforcement de la CPRF par hachage}{10}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Principe général de la CPRF hachée}{10}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Implémentation}{10}{subsubsection.4.1.1}%
 \contentsline {subsection}{\numberline {4.2}Construction explicite de la CPRF hachée de Cheng et Jaeger}{10}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Évaluation expérimentale et comparaison des attaques}{11}{subsection.4.3}%
 \contentsline {section}{\numberline {5}Comment lancer le programme}{12}{section.5}%
