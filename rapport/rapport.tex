@@ -7,6 +7,7 @@
 % Mathématiques
 \usepackage{amsmath,amssymb}
 % Hyperliens et PDF
+\usepackage{lastpage}
 \usepackage{hyperref}
 \usepackage{bookmark}
 % Listes
@@ -19,6 +20,7 @@
 \setlength{\parindent}{0pt} % pas d'indentation
 \setlength{\parskip}{6pt}   % espace vertical entre paragraphes
 % Figures et TikZ
+\usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{float}
 \usetikzlibrary{decorations.pathreplacing,trees,calc}
@@ -46,7 +48,6 @@
 
 % En-têtes et pieds de page
 \usepackage{fancyhdr}
-\usepackage{lastpage}
 \setlength{\headheight}{14pt}
 \pagestyle{fancy}
 \fancyhf{}
@@ -718,18 +719,36 @@ L'évaluation est définie par :
 
 \subsection{Évaluation expérimentale et comparaison des attaques}
 
+\paragraph{}Après avoir implémenté les différentes versions de la CPRF (normale, hachée avec SHA-256 et hachée avec lazy sampling), nous avons mené des expériences pour évaluer l’efficacité de l’attaque CJ25 contre chacune d’elles.
+Les tests ont été réalisés en exécutant 100 requêtes d’évaluation pour chaque version, et en enregistrant le taux de succès de l’attaque à chaque étape.
+
+\paragraph{}Dans la figure \ref{fig:stat1}, on constate les résultats sur les attaques sur la version non hachée de la CPRF. On observe que l'attaque CJ25 est très efficace contre la CPRF non hachée, avec une probabilité de succès proche de 1 dès les premières requêtes d'évaluation. Avec $N$ de l'ordre de $2^{4096}$, la probabilité de se tromper est de $1/N$, ce qui est pratiquement nul.
+Le taux d'attaque réussie à 100\% s'explique par le fait que l'attaquant doit faire en espérance $N = 2^{4096}$ requêtes pour se tromper une fois.
+
+\paragraph{}Sur les figures \ref{fig:stat2} et \ref{fig:stat3}, on a utilisé le même modèle d'attaque contre les versions hachées avec SHA-256 et avec le lazy sampling.
+On observe que l'attaque est complètement inefficace, avec un taux de succès proche de 0.5, ce qui correspond à une attaque aléatoire car l'attaquant ne détecte jamais de CPRF et se trompe dans la moitié des cas.
+Ces deux figures montrent aussi que le choix du hachage n'a pas d'impact significatif sur l'efficacité de l'attaque, ce qui confirme que l'introduction du hachage rend la structure de la CPRF indiscernable pour l'attaquant.
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{./images/stat1.png}
+  \includegraphics[width=0.95\textwidth]{./images/stat1.png}
   \caption{Attaque version non hachée}
+  \label{fig:stat1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{./images/stat2.png}
-  \caption{Attaque version hachée}
+  \includegraphics[width=0.95\textwidth]{./images/stat2.png}
+  \caption{Attaque version hachée avec SHA-256}
+  \label{fig:stat2}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.95\textwidth]{./images/stat3.png}
+  \caption{Attaque version hachée avec lazy sampling}
+  \label{fig:stat3}
+\end{figure}
 
 \section{Comment lancer le programme}
 
