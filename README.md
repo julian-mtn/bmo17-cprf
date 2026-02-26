@@ -1,8 +1,7 @@
 # bmo17-cprf
 Study and implementation of constrained PRFs: construction of BMO17, CJ25 attack, hashed CPRF correction and security analysis
 
-
-
+---
 
 ### Compile
 
@@ -29,29 +28,4 @@ Use the launcher script:
 
 ---
 
-### Output
 
-Results are written to:
-
-```
-attack_results.txt
-```
-
----
-
-### Display results
-
-A Python script is provided to plot the curves from the results file:
-
-```bash
-python3 display.py
-```
-
----
-
-### Examples
-
-```bash
-./start.sh -h 100
-python3 display.py
-```
