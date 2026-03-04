@@ -24,6 +24,8 @@
 \usepackage{tikz}
 \usepackage{float}
 \usetikzlibrary{decorations.pathreplacing,trees,calc}
+\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{matrix, positioning, arrows.meta}
 
 % Couleurs et boîtes
 \usepackage[many]{tcolorbox}
@@ -56,7 +58,7 @@
 \fancyfoot[C]{\thepage\ /\ \pageref{LastPage}}
 
 % TikZ pour les états et flèches
-\tikzset{
+\tikzset{ 
   state/.style={
     draw,
     rectangle,
@@ -266,7 +268,7 @@ Cette valeur est égale à $Eval((SK, ST_0), c)$ par construction, ce qui assure
 
 
 
-\subsection{Choix d’implémentation}
+\subsection{CPRF avec la permutation à trappe RSA}
 
 Nous utilisons la bibliothèque OpenSSL pour la gestion des grands entiers
 (\texttt{BIGNUM}), les opérations modulaires et le hachage SHA-256.
@@ -323,7 +325,201 @@ appliquant $(n-c)$ fois la permutation publique à partir de $ST_n$. La clé pri
 jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluations autorisées
 sont possibles.
 
-\subsection{Étude de permutations alternatives à RSA}
+
+\subsection{CPRF avec une permutation linéaire $F^{WEAK}$}
+
+Dans cette section, nous allons voir une implémentation d'une CPRF dont l'entrée et la sortie seront des vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N $ et $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^M$ où $p$ est un nombre premier et $N$ et $M$ les dimensions des vecteurs.
+
+\subsubsection{Implémentation de la permutation}
+Ici, l'évaluation de la permutation à trappe est définie par :
+\[Eval(F^{WEAK},\vec{x}) = Eval(S,\vec{x}) = S \cdot \vec{x}\] 
+
+où S est une matrice de taille $M \times N$ à coefficients dans $\mathbb{Z}/p\mathbb{Z}$ où $M << N$.
+
+S est la clé maîtresse et elle est choisie aléatoirement lors de la génération de la clé maîtresse.
+
+\subsubsection{Implémentation de la clé contraintes}
+
+Pour générer la clé contrainte :
+\begin{itemize}
+  \item l'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$
+  \item l'oracle tire au hasard un vecteur $\vec{d} \in (\mathbb{Z}/p\mathbb{Z})^M$ tel que $\vec(d) \neq \vec(0)$
+  \item l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$
+\end{itemize}
+
+En posant 
+
+\[CEval(S_{\vec{y}}, \vec{x}) =  S_{\vec{y}} \cdot \vec{x}\]
+
+on remarque que l'ensemble des vecteurs contraints sont les $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N $ tel que $<\vec{x},\vec{y}> = 0$.
+
+En effet,
+
+\[CEval(S_{\vec{y}}, \vec{x}) =  S_{\vec{y}} \cdot \vec{x}\]
+\[CEval(S_{\vec{y}}, \vec{x}) =  S \cdot \vec{x} + d \cdot \vec{y}^T \cdot \vec{x}\]
+\[CEval(S_{\vec{y}}, \vec{x}) =  S \cdot \vec{x} + d \cdot <\vec{x},\vec{y}>\]
+\[CEval(S_{\vec{y}}, \vec{x}) =  S \cdot \vec{x} \iff <\vec{x},\vec{y}> = 0\]
+
+\subsubsection{Approche d'une attaque à base d'un système linéaire}
+
+Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
+
+Pour un $\vec{x}$ orthogonal à $\vec{y}$, pour chaque $\vec{Si}$, notons $k_i = \vec{Si} \cdot \vec{x} = \vec{Si}_{\vec{y}} \cdot \vec{x}$.
+
+
+
+
+\newpage
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+
+% --- Matrice S M x N ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.2cm, minimum height=0.8cm, anchor=center}] (S) 
+{
+\vec{S_1} \\ \vec{S_2} \\ \vdots \\ \vec{S_M} \\
+};
+
+% --- Signe multiplié ---
+\node[right=0.3cm of S] (times) {$\cdot$};
+
+% --- Vecteur X N x 1 ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=0.8cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of times] (X) 
+{
+x_1 \\ x_2 \\ \vdots \\ x_N \\
+};
+
+% --- Signe égal ---
+\node[right=0.3cm of X] (eq) {$=$};
+
+% --- Vecteur B M x 1 ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=0.8cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of eq] (B) 
+{
+k_1 \\ k_2 \\ \vdots \\ k_M \\
+};
+
+% --- Labels au-dessus ---
+\node[above=0.3cm of S] {$S$};
+\node[above=0.3cm of X] {$\vec{x}$};
+\node[above=0.3cm of B] {$\vec{k}$};
+
+\end{tikzpicture}
+\caption{Représentation du système linéaire $S \cdot \vec{x} = \vec{k}$}
+\end{figure}
+
+
+
+
+
+
+En choisissant une famille libre de $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j},\vec{y}> = 0, \forall j$, on peut construire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ tel que la jème ligne de $X$ soit $\vec{x_j}^T$
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Latex]
+
+% Matrice X N x N
+\matrix[matrix of math nodes,left delimiter={[},right delimiter={]},nodes={minimum width=0.7cm, minimum height=0.7cm}] (X) 
+{
+\vec{x_1} \\
+\vec{x_2} \\
+\vdots \\
+\vec{x_N} \\
+};
+
+\node[above=0.5cm of X] {Matrice $X$ construite avec $\{\vec{x_j}\}$ orthogonaux à $\vec{y}$, $rang(X)=N$};
+
+\end{tikzpicture}
+\caption{Matrice $X$ pour l'attaque}
+\end{figure}
+
+
+
+Comme $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, on a $rang(X) = N$ donc $X$ est inversible. 
+
+Il est donc possible de trouver une solution au système linéaire $X \cdot \vec{Si}^T = \vec{k_i}$ où le jème élément de $\vec{k_i}$ est $k_{i_j} = \vec{Si} \cdot \vec{x_j}$.
+
+
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+
+% --- Matrice X N x N ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.4cm, minimum height=0.8cm, anchor=center}] (X)
+{
+\vec{x_1} \\ \vec{x_2} \\ \vdots \\ \vec{x_N} \\
+};
+
+% --- Signe multiplié ---
+\node[right=0.3cm of X] (times) {$\cdot$};
+
+% --- Vecteur Si^T (N x 1) ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.0cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of times] (Si)
+{
+S_{i,1} \\ S_{i,2} \\ \vdots \\ S_{i,N} \\
+};
+
+% --- Signe égal ---
+\node[right=0.3cm of Si] (eq) {$=$};
+
+% --- Vecteur k_i (N x 1) ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.0cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of eq] (Ki)
+{
+k_{i_1} \\ k_{i_2} \\ \vdots \\ k_{i_N} \\
+};
+
+% --- Labels au-dessus ---
+\node[above=0.3cm of X]  {$X$};
+\node[above=0.3cm of Si] {$\vec{S_i}^T$};
+\node[above=0.3cm of Ki] {$\vec{k_i}$};
+
+% --- Labels dimensions en dessous ---
+\node[below=0.3cm of X]  {\small $N \times N$};
+\node[below=0.3cm of Si] {\small $N \times 1$};
+\node[below=0.3cm of Ki] {\small $N \times 1$};
+
+% --- Accolade pour montrer le produit scalaire ligne i ---
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick]
+    (X.south west) -- (X.south east)
+    node[midway, below=8pt] {};
+
+\end{tikzpicture}
+\caption{Représentation du système linéaire $X \cdot \vec{S_i}^T = \vec{k_i}$,
+où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
+\end{figure}
+
+
+On répètera $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
+
+
+
+
+\subsection{Étude d'autres permutations alternatives}
 
 \subsubsection{Permutation à trappe de Rabin}
 
