@@ -424,7 +424,7 @@ k_1 \\ k_2 \\ \vdots \\ k_M \\
 
 
 
-En choisissant une famille libre de $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j},\vec{y}> = 0, \forall j$, on peut construire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ tel que la jème ligne de $X$ soit $\vec{x_j}^T$
+En choisissant $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j},\vec{y}> = 0, \forall j$, on peut construire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ tel que la jème ligne de $X$ soit $\vec{x_j}^T$
 
 
 \begin{figure}[h]
@@ -448,9 +448,9 @@ En choisissant une famille libre de $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N
 
 
 
-Comme $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, on a $rang(X) = N$ donc $X$ est inversible. 
+%Comme $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, on a $rang(X) = N$ donc $X$ est inversible. 
 
-Il est donc possible de trouver une solution au système linéaire $X \cdot \vec{Si}^T = \vec{k_i}$ où le jème élément de $\vec{k_i}$ est $k_{i_j} = \vec{Si} \cdot \vec{x_j}$.
+Pour retrouver la matrice $S$, il suffit donc de résoudre le système linéaire $X \cdot \vec{Si}^T = \vec{k_i}$ où le jème élément de $\vec{k_i}$ est $k_{i_j} = \vec{Si} \cdot \vec{x_j}$, pour chaque ligne $S_i$ de $S$.
 
 
 
@@ -515,6 +515,12 @@ où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 
 
 On répètera $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
+
+Or, ce système linéaire possède une unique solution si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $rang(X) = N$.
+Pour trouver une solution à chacun de ces système, il faut donc choisir des vecteurs $\vec{x_j}$ tel que $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, ce qui est équivalent au fait que $\{\vec{x_j}\}_{1 \leq j \leq N}$ génère un espace de dimension $N$.
+Et comme il est nécessaire que tous les vecteurs $\vec{x_j}$ sont orthogonaux à $\vec{y}$, l'ensemble $\{\vec{y}\} \cup \{\vec{x_j}\}_{1 \leq j \leq N}$ génère un espace de dimension $N+1$.
+
+Cela est absurde car les vecteurs $\vec{x_j}$ et $\vec{y}$ sont composés de $N$ éléments
 
 
 
