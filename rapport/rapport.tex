@@ -514,18 +514,25 @@ où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 \end{figure}
 
 
-On répètera $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
+On répète $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
 
-Or, ce système linéaire possède une unique solution si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $rang(X) = N$.
-Pour trouver une solution à chacun de ces système, il faut donc choisir des vecteurs $\vec{x_j}$ tel que $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, ce qui est équivalent au fait que $\{\vec{x_j}\}_{1 \leq j \leq N}$ génère un espace de dimension $N$.
-Et comme il est nécessaire que tous les vecteurs $\vec{x_j}$ sont orthogonaux à $\vec{y}$, l'ensemble $\{\vec{y}\} \cup \{\vec{x_j}\}_{1 \leq j \leq N}$ génère un espace de dimension $N+1$.
+\paragraph{Problème:}
 
-Cela est absurde car les vecteurs $\vec{x_j}$ et $\vec{y}$ sont composés de $N$ éléments
+Le système linéaire admet une solution unique si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $\mathrm{rang}(X) = N$. 
+Afin de garantir cette inversibilité, il est nécessaire de choisir des vecteurs $\vec{x_j}$ tels que la famille $\{\vec{x_j}\}_{1 \leq j \leq N}$ soit libre, 
+c’est-à-dire qu’elle engendre un espace vectoriel de dimension $N$.
 
+Par ailleurs, chaque vecteur $\vec{x_j}$ doit être orthogonal à $\vec{y}$. 
+On a alors que l’ensemble $\{\vec{y}\} \cup \{\vec{x_j}\}_{1 \leq j \leq N}$ est constitué de $N+1$ vecteurs deux à deux linéairement indépendants, 
+et engendrerait donc un espace de dimension $N+1$.
 
+Ceci est impossible, puisque ces vecteurs appartiennent tous à $(\mathbb{Z}/p\mathbb{Z})^N$, qui est de dimension $N$. Cette contradiction montre qu’il est impossible de construire une telle famille de vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ satisfaisant simultanément ces conditions.
 
+\paragraph{Alternative:}
 
-\subsection{Étude d'autres permutations alternatives}
+TODO expliquer qu'on peut quand même avoir de l'information et distinguer une sortie aléatoire de la CPRF
+
+\subsection{Étude de permutations alternatives}
 
 \subsubsection{Permutation à trappe de Rabin}
 
