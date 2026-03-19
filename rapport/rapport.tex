@@ -440,7 +440,7 @@ En choisissant $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j
 \vec{x_N} \\
 };
 
-\node[above=0.5cm of X] {Matrice $X$ construite avec $\{\vec{x_j}\}$ orthogonaux à $\vec{y}$, $rang(X)=N$};
+\node[above=0.5cm of X] {Matrice $X$ construite avec $\{\vec{x_j}\}$ orthogonaux à $\vec{y}$};
 
 \end{tikzpicture}
 \caption{Matrice $X$ pour l'attaque}
@@ -530,7 +530,80 @@ Ceci est impossible, puisque ces vecteurs appartiennent tous à $(\mathbb{Z}/p\m
 
 \paragraph{Alternative:}
 
-TODO expliquer qu'on peut quand même avoir de l'information et distinguer une sortie aléatoire de la CPRF
+%TODO expliquer qu'on peut quand même avoir de l'information et distinguer une sortie aléatoire de la CPRF
+
+On remarque tout de même que $\vec{y}$ engendre un espace de dimension $1$, ce qui implique qu'il est possible de choisir $N-1$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ tel que chaque vecteur $\vec{x_j}$ soit orthogonal à $\vec{y}$.
+
+On peut donc reconstruire une autre matrice $X$ de taille $(N-1) \times (N-1)$ puis poser le système linéaire suivant :
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+
+% --- Matrice X N x N ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.4cm, minimum height=0.8cm, anchor=center}] (X)
+{
+x_{1,1} & \ldots & x_{1,N-1}  \\ x_{2,1} & \ldots & x_{2,N-1} \\ \vdots & \vdots & \vdots \\ x_{N-1,1} & \ldots & x_{N-1,N-1} \\
+};
+
+% --- Signe multiplié ---
+\node[right=0.3cm of X] (times) {$\cdot$};
+
+% --- Vecteur Si^T (N x 1) ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.0cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of times] (Si)
+{
+S_{i,1} \\ S_{i,2} \\ \vdots \\ S_{i,N-1} \\
+};
+
+% --- Signe égal ---
+\node[right=0.3cm of Si] (eq) {$=$};
+
+% --- Vecteur k_i (N x 1) ---
+\matrix[matrix of math nodes,
+        left delimiter={[},
+        right delimiter={]},
+        nodes={minimum width=1.0cm, minimum height=0.8cm, anchor=center},
+        right=0.6cm of eq] (Ki)
+{
+k_{i_1} - x_{1,N} \cdot S_{i,N} \\ k_{i_2} - x_{2,N} \cdot S_{i,N} \\ \vdots \\ k_{i_N-1} - x_{N-1,N} \cdot S_{i,N} \\
+};
+
+% --- Labels au-dessus ---
+\node[above=0.3cm of X]  {$X$};
+\node[above=0.3cm of Si] {$\vec{S_i}^T$};
+\node[above=0.3cm of Ki] {$\vec{k_i}$};
+
+% --- Labels dimensions en dessous ---
+\node[below=0.3cm of X]  {\small $N-1 \times N-1$};
+\node[below=0.3cm of Si] {\small $N-1 \times 1$};
+\node[below=0.3cm of Ki] {\small $N-1 \times 1$};
+
+% --- Accolade pour montrer le produit scalaire ligne i ---
+\draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick]
+    (X.south west) -- (X.south east)
+    node[midway, below=8pt] {};
+
+\end{tikzpicture}
+\caption{Représentation du nouveau système linéaire $X \cdot \vec{S_i}^T = \vec{k_i}$,
+où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
+\end{figure}
+
+Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famille libre, donc $rang(X) = N-1$, donc $X$ est inversible, donc ce système linéaire possède une unique solution. Cependant, cet unique solution est calculée en fonction de $S_{i,N}$.
+
+En répétant ce procédé $M$ fois, on peut donc réécrire chaque ligne $S_i$ de $S$ en fonction d'un élément $S_{i,N}$.
+
+\paragraph{Remarque :} Le choix d'utiliser un élément $S_{i,N}$ pour écrire chaque ligne $S_i$ de $S$ est arbitraire. On aurait pu réécrire chaque ligne $S_i$ de $S$ avec n'importe quel élément $S_{i,l}$.
+Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de $X$ sera $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, le vecteur $\vec{S_i}^T$ sera $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$ et chaque élément de $\vec{k_i}$ sera $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
+
+
+TODO : Trouver une attaque qui permet de distingue une fonction aléatoire de l'application de $S$ à un vecteur à partir de cette reconstruction de $S$.
 
 \subsection{Étude de permutations alternatives}
 
