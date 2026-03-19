@@ -360,6 +360,16 @@ En effet,
 \[CEval(S_{\vec{y}}, \vec{x}) =  S \cdot \vec{x} + d \cdot <\vec{x},\vec{y}>\]
 \[CEval(S_{\vec{y}}, \vec{x}) =  S \cdot \vec{x} \iff <\vec{x},\vec{y}> = 0\]
 
+Donc :
+\[
+S_{\vec{y}} \cdot \vec{x} =
+\begin{cases}
+S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
+\text{résultat 'brouillé'} & \text{sinon}
+\end{cases}
+\]
+Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$.
+
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
@@ -440,10 +450,9 @@ En choisissant $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j
 \vec{x_N} \\
 };
 
-\node[above=0.5cm of X] {Matrice $X$ construite avec $\{\vec{x_j}\}$ orthogonaux à $\vec{y}$};
 
 \end{tikzpicture}
-\caption{Matrice $X$ pour l'attaque}
+\caption{Matrice $X$ pour l'attaque construite avec $\{\vec{x_j}\}$ orthogonaux à $\vec{y}$}
 \end{figure}
 
 
@@ -581,9 +590,9 @@ k_{i_1} - x_{1,N} \cdot S_{i,N} \\ k_{i_2} - x_{2,N} \cdot S_{i,N} \\ \vdots \\ 
 \node[above=0.3cm of Ki] {$\vec{k_i}$};
 
 % --- Labels dimensions en dessous ---
-\node[below=0.3cm of X]  {\small $N-1 \times N-1$};
-\node[below=0.3cm of Si] {\small $N-1 \times 1$};
-\node[below=0.3cm of Ki] {\small $N-1 \times 1$};
+\node[below=0.3cm of X]  {\small ($N-1)\times (N-1)$};
+\node[below=0.3cm of Si] {\small ($N-1) \times 1$};
+\node[below=0.3cm of Ki] {\small ($N-1) \times 1$};
 
 % --- Accolade pour montrer le produit scalaire ligne i ---
 \draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick]
@@ -595,7 +604,7 @@ k_{i_1} - x_{1,N} \cdot S_{i,N} \\ k_{i_2} - x_{2,N} \cdot S_{i,N} \\ \vdots \\ 
 où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 \end{figure}
 
-Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famille libre, donc $rang(X) = N-1$, donc $X$ est inversible, donc ce système linéaire possède une unique solution. Cependant, cet unique solution est calculée en fonction de $S_{i,N}$.
+Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famille libre, donc $rang(X) = N-1$, donc $X$ est inversible, donc ce système linéaire possède une unique solution. Cependant, cette unique solution est calculée en fonction de $S_{i,N}$.
 
 En répétant ce procédé $M$ fois, on peut donc réécrire chaque ligne $S_i$ de $S$ en fonction d'un élément $S_{i,N}$.
 
@@ -605,7 +614,7 @@ Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de
 
 TODO : Trouver une attaque qui permet de distingue une fonction aléatoire de l'application de $S$ à un vecteur à partir de cette reconstruction de $S$.
 
-\subsection{Étude de permutations alternatives}
+\subsection{Étude d'autres permutations alternatives}
 
 \subsubsection{Permutation à trappe de Rabin}
 
