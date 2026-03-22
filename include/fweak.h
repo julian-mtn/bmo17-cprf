@@ -29,28 +29,28 @@ typedef struct {
     int N;
 } fweak_constrained_key;
 
+BIGNUM **fweak_random_vector(BIGNUM *p, int len);
+
+BIGNUM **fweak_copy_vector(BIGNUM **src, int len);
+
 /*///////////////////// key generation ////////////////////////*/
 
 fweak_master_key *fweak_master_keygen(int M, int N);
 fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y, int y_len);
 
-/*///////////////////// CPRF evaluation — master key ////////////////////////*/
+/*///////////////////// CPRF evaluation: master key ////////////////////////*/
 
 void fweak_eval_master_key(BIGNUM **out, fweak_master_key *mk, BIGNUM **x);
 
-/*///////////////////// CPRF evaluation — constrained key ////////////////////////*/
+/*///////////////////// CPRF evaluation: constrained key ////////////////////////*/
 
 void fweak_eval_constrained_key(BIGNUM **out, fweak_constrained_key *ck, BIGNUM **x);
 
-/*///////////////////// memory management ////////////////////////*/
+/*///////////////////// memory ////////////////////////*/
 
 void fweak_master_key_free(fweak_master_key *mk);
 void fweak_constrained_key_free(fweak_constrained_key *ck);
-
-/*///////////////////// utilitaires ////////////////////////*/
-
-BIGNUM **fweak_random_vector(BIGNUM *p, int len);
 void fweak_free_vector(BIGNUM **vec, int len);
-BIGNUM **fweak_copy_vector(BIGNUM **src, int len);
 
-#endif /* FWEAK_H */
+
+#endif

@@ -11,12 +11,12 @@ static BIGNUM *get_prime(void) {
     return p;
 }
 
-// Remplit un BIGNUM avec un nombre aléatoire dans [0, p-1]
+// bignum random [0,p]
 static void random_mod(BIGNUM *dest, BIGNUM *p) {
     BN_rand_range(dest, p);
 }
 
-// Alloue une matrice M x N de BIGNUM* 
+// matrice M x N de BIGNUM* 
 static BIGNUM ***alloc_matrix(int M, int N) {
     BIGNUM ***mat = malloc(M * sizeof(BIGNUM**));
     for (int i = 0; i < M; i++) {
@@ -26,20 +26,6 @@ static BIGNUM ***alloc_matrix(int M, int N) {
         }
     }
     return mat;
-}
-
-// Libère une matrice M x N
-static void free_matrix(BIGNUM ***mat, int M, int N) {
-    if (!mat) return;
-    for (int i = 0; i < M; i++) {
-        if (mat[i]) {
-            for (int j = 0; j < N; j++) {
-                BN_free(mat[i][j]);
-            }
-            free(mat[i]);
-        }
-    }
-    free(mat);
 }
 
 BIGNUM **fweak_random_vector(BIGNUM *p, int len) {
@@ -61,7 +47,7 @@ BIGNUM **fweak_copy_vector(BIGNUM **src, int len) {
 }
 
 
-// Multiplication matrice-vecteur : out = mat * x (mod p)
+// out = mat * x (mod p)
 static void matrix_vector_mult(BIGNUM **out, BIGNUM ***mat, int M, int N, BIGNUM **x, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
@@ -76,7 +62,7 @@ static void matrix_vector_mult(BIGNUM **out, BIGNUM ***mat, int M, int N, BIGNUM
     BN_CTX_free(ctx);
 }
 
-// Addition de deux matrices : dest = A + B (mod p)
+// dest = A + B (mod p)
 static void matrix_add(BIGNUM ***dest, BIGNUM ***A, BIGNUM ***B, int M, int N, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
@@ -87,7 +73,7 @@ static void matrix_add(BIGNUM ***dest, BIGNUM ***A, BIGNUM ***B, int M, int N, B
     BN_CTX_free(ctx);
 }
 
-// Produit externe : mat = d * y^T (mod p)
+// mat = d * y^T (mod p)
 static void outer_product(BIGNUM ***mat, BIGNUM **d, int M, BIGNUM **y, int N, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
@@ -107,7 +93,8 @@ fweak_master_key *fweak_master_keygen(int M, int N) {
     mk->M = M;
     mk->N = N;
     mk->S = alloc_matrix(M, N);
-    // Remplir S avec des éléments aléatoires
+
+    //S <- éléments randoms
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
             random_mod(mk->S[i][j], mk->p);
@@ -128,34 +115,33 @@ fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y
     ck->M = mk->M;
     ck->N = mk->N;
 
-    // Copier y
+    //copier y
     ck->y = malloc(mk->N * sizeof(BIGNUM*));
     for (int j = 0; j < mk->N; j++) {
         ck->y[j] = BN_dup(y[j]);
     }
 
-    // Générer d aléatoire (vecteur de taille M)
+    // d aléatoire (vecteur de taille M)
     BIGNUM **d = malloc(mk->M * sizeof(BIGNUM*));
     for (int i = 0; i < mk->M; i++) {
         d[i] = BN_new();
         random_mod(d[i], ck->p);
     }
 
-    // Construire la matrice d·y^T
+    //matrice d·y^T
     BIGNUM ***outer = alloc_matrix(mk->M, mk->N);
     outer_product(outer, d, mk->M, ck->y, mk->N, ck->p);
 
-    // Allouer S_y et copier S
+    // S_y et copier S
     ck->S_y = alloc_matrix(mk->M, mk->N);
     for (int i = 0; i < mk->M; i++) {
         for (int j = 0; j < mk->N; j++) {
             BN_copy(ck->S_y[i][j], mk->S[i][j]);
         }
     }
-    // Ajouter outer à S_y
+    //ajouter outer à S_y
     matrix_add(ck->S_y, ck->S_y, outer, mk->M, mk->N, ck->p);
 
-    // Libération des temporaires
     for (int i = 0; i < mk->M; i++) BN_free(d[i]);
     free(d);
     free_matrix(outer, mk->M, mk->N);
@@ -195,5 +181,17 @@ void fweak_free_vector(BIGNUM **vec, int len) {
     if (!vec) return;
     for (int i = 0; i < len; i++) BN_free(vec[i]);
     free(vec);
+}
+static void free_matrix(BIGNUM ***mat, int M, int N) {
+    if (!mat) return;
+    for (int i = 0; i < M; i++) {
+        if (mat[i]) {
+            for (int j = 0; j < N; j++) {
+                BN_free(mat[i][j]);
+            }
+            free(mat[i]);
+        }
+    }
+    free(mat);
 }
 
