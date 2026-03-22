@@ -368,7 +368,7 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \text{résultat 'brouillé'} & \text{sinon}
 \end{cases}
 \]
-Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$.
+Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il es impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
@@ -525,7 +525,7 @@ où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 
 On répète $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
 
-\paragraph{Problème:}
+\paragraph{Problème :}
 
 Le système linéaire admet une solution unique si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $\mathrm{rang}(X) = N$. 
 Afin de garantir cette inversibilité, il est nécessaire de choisir des vecteurs $\vec{x_j}$ tels que la famille $\{\vec{x_j}\}_{1 \leq j \leq N}$ soit libre, 
@@ -537,11 +537,15 @@ et engendrerait donc un espace de dimension $N+1$.
 
 Ceci est impossible, puisque ces vecteurs appartiennent tous à $(\mathbb{Z}/p\mathbb{Z})^N$, qui est de dimension $N$. Cette contradiction montre qu’il est impossible de construire une telle famille de vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ satisfaisant simultanément ces conditions.
 
-\paragraph{Alternative:}
+\paragraph{Alternative :}
 
 %TODO expliquer qu'on peut quand même avoir de l'information et distinguer une sortie aléatoire de la CPRF
 
-On remarque tout de même que $\vec{y}$ engendre un espace de dimension $1$, ce qui implique qu'il est possible de choisir $N-1$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ tel que chaque vecteur $\vec{x_j}$ soit orthogonal à $\vec{y}$.
+Dans le cas général, on remarque tout de même que $\vec{y}$ engendre un espace de dimension $1$, ce qui implique qu'il est possible de choisir $N-1$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ tel que chaque vecteur $\vec{x_j}$ soit orthogonal à $\vec{y}$.
+
+En effet, dans le système linéaire précédent, pour chaque ligne $j$ de $X$, on a :
+
+\[ x_{j,1}*S_{i,1} + \ldots + x_{j,N}*S_{i,N} = k_{i_j} \Leftrightarrow x_{j,1}*S_{i,1} + \ldots + x_{j,N-1}*S_{i,N-1} = k_{i_j} - x_{j,N}*S_{i,N} \]
 
 On peut donc reconstruire une autre matrice $X$ de taille $(N-1) \times (N-1)$ puis poser le système linéaire suivant :
 
@@ -608,15 +612,54 @@ Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famil
 
 En répétant ce procédé $M$ fois, on peut donc réécrire chaque ligne $S_i$ de $S$ en fonction d'un élément $S_{i,N}$.
 
+Cet alternative permet donc de reconstruire chaque élément $S_{i,j}$ ligne  de la matrice $S$ en fonction d'un seul élément $S_{i,N}$. Ceci permet à l'attaquant, à chaque requête envoyer à l'oracle, de retrouver une valeur de $S_{i,N}$, et de garder les valeurs de $S_{i,N}$ qui se répètent le plus comme la vraie valeur de $S_{i,N}$.
+
 \paragraph{Remarque :} Le choix d'utiliser un élément $S_{i,N}$ pour écrire chaque ligne $S_i$ de $S$ est arbitraire. On aurait pu réécrire chaque ligne $S_i$ de $S$ avec n'importe quel élément $S_{i,l}$.
 Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de $X$ sera $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, le vecteur $\vec{S_i}^T$ sera $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$ et chaque élément de $\vec{k_i}$ sera $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
 
 
-TODO : Trouver une attaque qui permet de distingue une fonction aléatoire de l'application de $S$ à un vecteur à partir de cette reconstruction de $S$.
+%TODO : Trouver une attaque qui permet de distingue une fonction aléatoire de l'application de $S$ à un vecteur à partir de cette reconstruction de $S$.
 
 
-\newpage
-\subsection{Jeu de sécurité pour l'attaque sur \(F^{WEAK}\)}
+\paragraph{Cas particulier :} On remarque que lorsque l'attaquant envoie un vecteur $\vec{y} = (0,\ldots,0,1)$ pour recevoir la clé maîtresse $S_{\vec{y}}$, il remarque que $\{(1,0,\ldots,0), (0,1,0,\ldots,0), \ldots, (0,\ldots,0,1,0)\}$ sont $N-1$ vecteurs de $(\mathbb{Z}/p\mathbb{Z})^N$ qui sont tous orthogonaux avec $\vec{y}$.
+
+Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, il peut alors choisir choisir un vecteur $\vec{x} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$, pour la ligne $j$, où on a un $1$ au $j^{\text{ième}}$ élément du vecteur.
+
+Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j, x_{j,N} = 0$. On se retrouve donc avec le système linéaire $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. Ceci permet de retrouver les $N-1$ premières colonnes de $S$ immédiatement. En effet, dans ce cas particulier, $S_{i,j} = k_{i_j}$.
+
+\subsection{Jeu de sécurité pour l'attaque sur $(F^{WEAK})$}
+
+Formellement, voici une attaque qu'un attaquant utilisera pour distinguer une CPRF $F^{WEAK}$ d'une CPRF :
+
+\begin{defbox}{Jeu de sécurité sur la CPRF $F^{WEAK}$}
+
+L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui répond soit avec une $CPRF$ soit avec une fonction aléatoire. 
+L’objectif de l'attaquant est de distinguer les deux cas.
+
+\begin{enumerate}
+\item $O$ construit une clé maîtresse $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$.
+\item $\mathcal{A}$ demande une clé contrainte en envoyant $\vec{y} = (0,\ldots,0,1)$ pour recevoir $S_{\vec{y}}$.
+\item $O$ renvoie $S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+%\item $\mathcal{A}$ construit la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$ où la $j^{\text{ième}}$ ligne est $\{(0,\ldots,0,1,0,\ldots,0)\}$, donc $X = Id_{N-1}$.
+\item $\mathcal{A}$ calcule $S_{\vec{y}} \cdot \vec{x}$ pour chacun des $\vec{x}$ de chaque ligne de $X$, pour retrouver $k_i$, ce qui lui permet de retrouver $S_{i,j}, \forall j \leq N-1$.
+\item $\mathcal{A}$ initialise un dictionnaire $D$ vide.
+\item $\mathcal{A}$ peut ensuite demander l'évaluation de plusieurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ non orthogonaux à $\vec{y}$ comme suit :
+  \begin{itemize}
+    \item Choisir $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
+    \item Demander à $O$ l'evaluation de $\vec{x}$ : $Eval(\vec{x})$.
+    \item Calculer $S_{i,N} \forall i$, $\mathcal{A}$ peut le calculer car il connait les valeurs de $S_{i,1},\ldots,S_{i,N-1}$.
+    \item Si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
+    \item Si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+  \end{itemize}
+\end{enumerate}
+
+Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redontantes, alors c'est très probablement le résultat d'une fonction aléatoire.
+
+Ceci permet à un attaquant $\mathcal{A}$ de distinguer une CPRF d'une fonction aléatoire, ce qui montre que $F^{WEAK}$ n'est pas sécurisé.
+
+
+\end{defbox}
+
 
 \begin{defbox}{Jeu de sécurité pour \(F^{WEAK}\)}
 L'attaquant \(\mathcal{A}\) interagit avec un oracle \(\mathcal{O}\) qui est soit la construction \(F^{WEAK}\)
@@ -667,6 +710,10 @@ Sinon, il décide que \(\mathcal{O}\) est une fonction aléatoire.
 
 \end{defbox}
 
+
+\subsection{Renforecement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
+
+TODO
 
 \subsection{Étude d'autres permutations alternatives}
 
