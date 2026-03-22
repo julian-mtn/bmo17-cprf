@@ -625,7 +625,7 @@ aléatoire \(\mathcal{R} : (\mathbb{Z}/p\mathbb{Z})^{N} \rightarrow (\mathbb{Z}/
 L’objectif de l'attaquant est de distinguer les deux cas.
 
 \begin{itemize}
-\item \textbf{Phase 1 – Demande de clé contrainte :}
+\item \textbf{1 - Demande de clé contrainte :}
 \(\mathcal{A}\) choisit un vecteur \(\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^{N}\) et interroge l’oracle
 avec la requête \(\textsf{Constrain}(\vec{y})\). L’oracle génère alors une clé contrainte
 \[
@@ -635,7 +635,7 @@ où \(\vec{d} \in (\mathbb{Z}/p\mathbb{Z})^{M}\) est choisi uniformément et ind
 à chaque requête. \(\mathcal{A}\) reçoit \(S_{\vec{y}}\) et peut désormais évaluer la fonction
 sur tout vecteur \(\vec{x}\) tel que \(\langle \vec{x}, \vec{y} \rangle = 0\).
 
-\item \textbf{Phase 2 – Requêtes d’évaluation :}
+\item \textbf{2 - Requêtes d’évaluation :}
 \(\mathcal{A}\) interroge l’oracle \(\mathcal{O}\)
 sur des vecteurs \(\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^{N}\) de son choix.
 \begin{itemize}
@@ -646,7 +646,7 @@ sur des vecteurs \(\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^{N}\) de son choix.
     \item Si \(\mathcal{O}\) est une fonction aléatoire \(\mathcal{R}\), l’oracle répond en tirant uniformément un vecteur aléatoire \(\vec{r} \in (\mathbb{Z}/p\mathbb{Z})^{M}\) et retourne \(\vec{r}\).
 \end{itemize}
 
-\item \textbf{Phase 3 – Exploitation :}
+\item \textbf{3 - Exploitation des informations :}
 \(\mathcal{A}\) utilise les informations collectées (clés contraintes et évaluations) pour
 tenter de reconstruire partiellement la matrice \(S\) afin de distinguer les deux mondes.
 
@@ -658,7 +658,7 @@ X \cdot \vec{S_i}'^{T} = \vec{k}_i,
 \]
 où \(X\) est la matrice des \(\vec{x}_j\), \(\vec{S_i}'\) est le vecteur \(S_i\) avec une valeur en moins, et \(\vec{k}_i\) est le vecteur des évaluations obtenues.
 
-\item \textbf{Décision :}
+\item \textbf{4 -Décision :}
 \(\mathcal{A}\) décide que \(\mathcal{O}\) est \(F^{WEAK}\) s’il arrive à reconstruire
 une matrice cohérente avec les observations et/ou s’il détecte une structure linéaire.
 Sinon, il décide que \(\mathcal{O}\) est une fonction aléatoire.
