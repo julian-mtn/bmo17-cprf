@@ -2,6 +2,7 @@
 #include "../include/fweak.h"
 
 
+//renvoie un nombre premier grand
 static BIGNUM *get_prime(void) {
     static BIGNUM *p = NULL;
     if (p == NULL) {
@@ -28,6 +29,7 @@ static BIGNUM ***alloc_matrix(int M, int N) {
     return mat;
 }
 
+//Génère un vecteur aléatoire de longueur len modulo p
 BIGNUM **fweak_random_vector(BIGNUM *p, int len) {
     BIGNUM **vec = malloc(len * sizeof(BIGNUM*));
     for (int i = 0; i < len; i++) {
@@ -37,7 +39,7 @@ BIGNUM **fweak_random_vector(BIGNUM *p, int len) {
     return vec;
 }
 
-
+//Copie un vecteur de BIGNUM
 BIGNUM **fweak_copy_vector(BIGNUM **src, int len) {
     BIGNUM **dst = malloc(len * sizeof(BIGNUM*));
     for (int i = 0; i < len; i++) {
@@ -86,6 +88,7 @@ static void outer_product(BIGNUM ***mat, BIGNUM **d, int M, BIGNUM **y, int N, B
 
 /*///////////////////// key generation ////////////////////////*/
 
+//Génère la clé maîtresse S de taille MxN
 fweak_master_key *fweak_master_keygen(int M, int N) {
     fweak_master_key *mk = malloc(sizeof(fweak_master_key));
     if (!mk) return NULL;
@@ -103,6 +106,7 @@ fweak_master_key *fweak_master_keygen(int M, int N) {
     return mk;
 }
 
+//Génère une clé contrainte S_y = S + d*y^T pour un vecteur y
 fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y, int y_len) {
     if (y_len != mk->N) {
         fprintf(stderr, "Erreur: y_len != N\n");
@@ -128,7 +132,7 @@ fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y
         random_mod(d[i], ck->p);
     }
 
-    //matrice d·y^T
+    //matrice d*y^T
     BIGNUM ***outer = alloc_matrix(mk->M, mk->N);
     outer_product(outer, d, mk->M, ck->y, mk->N, ck->p);
 
@@ -151,10 +155,13 @@ fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y
 
 /*///////////////////// evaluation ////////////////////////*/
 
+//Eval(FWEAK, x) = S * x
 void fweak_eval_master_key(BIGNUM **out, fweak_master_key *mk, BIGNUM **x) {
     matrix_vector_mult(out, mk->S, mk->M, mk->N, x, mk->p);
 }
 
+
+//CEval(S_y, x) = S · x + d·⟨x, y⟩ = S_y * x
 void fweak_eval_constrained_key(BIGNUM **out, fweak_constrained_key *ck, BIGNUM **x) {
     matrix_vector_mult(out, ck->S_y, ck->M, ck->N, x, ck->p);
 }
