@@ -374,7 +374,7 @@ Cette construction permet donc de restreindre l’évaluation de la fonction aux
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
 
-Pour un $\vec{x}$ orthogonal à $\vec{y}$, pour chaque $\vec{Si}$, notons $k_i = \vec{Si} \cdot \vec{x} = \vec{Si}_{\vec{y}} \cdot \vec{x}$.
+Pour un $\vec{x}$ orthogonal à $\vec{y}$, pour chaque $\vec{Si}$, notons $k_i = \vec{Si} \cdot \vec{x} = \vec{S}_{\vec{y}_i} \cdot \vec{x}$.
 
 
 
@@ -623,9 +623,9 @@ Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de
 
 \paragraph{Cas particulier :} On remarque que lorsque l'attaquant envoie un vecteur $\vec{y} = (0,\ldots,0,1)$ pour recevoir la clé maîtresse $S_{\vec{y}}$, il remarque que $\{(1,0,\ldots,0), (0,1,0,\ldots,0), \ldots, (0,\ldots,0,1,0)\}$ sont $N-1$ vecteurs de $(\mathbb{Z}/p\mathbb{Z})^N$ qui sont tous orthogonaux avec $\vec{y}$.
 
-Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, il peut alors choisir choisir un vecteur $\vec{x} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$, pour la ligne $j$, où on a un $1$ au $j^{\text{ième}}$ élément du vecteur.
+Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, il peut alors choisir choisir un vecteur $\vec{x_j} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$, pour la ligne $j$, où on a un $1$ au $j^{\text{ième}}$ élément du vecteur.
 
-Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j, x_{j,N} = 0$. On se retrouve donc avec le système linéaire $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. Ceci permet de retrouver les $N-1$ premières colonnes de $S$ immédiatement. En effet, dans ce cas particulier, $S_{i,j} = k_{i_j}$.
+Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j, x_{j,N} = 0$. On se retrouve donc avec le système linéaire $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. Ceci permet de retrouver les $N-1$ premières colonnes de $S$ immédiatement. En effet, dans ce cas particulier, $\forall j \leq N-1, S_{i,j} = k_{i_j} = \vec{S}_{\vec{y}_i} \cdot \vec{x_j} = S_{\vec{y}_{i,j}}$.
 
 \subsection{Jeu de sécurité pour l'attaque sur $(F^{WEAK})$}
 
