@@ -627,6 +627,8 @@ Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)
 
 Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j, x_{j,N} = 0$. On se retrouve donc avec le système linéaire $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. Ceci permet de retrouver les $N-1$ premières colonnes de $S$ immédiatement. En effet, dans ce cas particulier, $\forall j \leq N-1, S_{i,j} = k_{i_j} = \vec{S}_{\vec{y}_i} \cdot \vec{x_j} = S_{\vec{y}_{i,j}}$.
 
+Donc, après avoir demander l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$ à l'oracle, pour retrouver $S_{i,N}$, on a $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, donc on a $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
+
 \subsection{Jeu de sécurité pour l'attaque sur $(F^{WEAK})$}
 
 Formellement, voici une attaque qu'un attaquant utilisera pour distinguer une CPRF $F^{WEAK}$ d'une CPRF :

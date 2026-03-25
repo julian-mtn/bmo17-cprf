@@ -27,7 +27,7 @@
 \contentsline {subsubsection}{\numberline {2.6.1}Permutation à trappe de Rabin}{11}{subsubsection.2.6.1}%
 \contentsline {paragraph}{}{11}{subsubsection.2.6.1}%
 \contentsline {paragraph}{Problème:}{12}{subsubsection.2.6.1}%
-\contentsline {paragraph}{}{12}{subsubsection.2.6.1}%
+\contentsline {paragraph}{}{13}{subsubsection.2.6.1}%
 \contentsline {paragraph}{Conclusion :}{13}{figure.5}%
 \contentsline {subsubsection}{\numberline {2.6.2}Permutation à trappe AES}{13}{subsubsection.2.6.2}%
 \contentsline {paragraph}{}{13}{subsubsection.2.6.2}%
@@ -35,7 +35,7 @@
 \contentsline {section}{\numberline {3}L'attaque CJ25}{13}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Description générale et intuition de l’attaque}{13}{subsection.3.1}%
 \contentsline {paragraph}{}{13}{subsection.3.1}%
-\contentsline {paragraph}{}{13}{subsection.3.1}%
+\contentsline {paragraph}{}{14}{subsection.3.1}%
 \contentsline {paragraph}{}{14}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Modélisation du jeu de sécurité et avantage de l’attaquant}{14}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}Mise en œuvre expérimentale de l’attaque}{15}{subsection.3.3}%
