@@ -5,8 +5,14 @@
 #include <arpa/inet.h>
 #include <time.h> 
 #include <math.h>
+#include <stddef.h>
 
 #include "../include/fweak.h"
+
+
+#ifndef BIGNUM_DICT_H
+#define BIGNUM_DICT_H
+#endif /* BIGNUM_DICT_H */
 
 #define PORT 4242
 #define BUF_SIZE 4096
@@ -16,6 +22,249 @@
 // A revoir
 #define M_SIZE 10
 #define N_SIZE 100
+
+
+
+
+
+ 
+ 
+// Structure d'une entrée d'un dictionnaire
+typedef struct DictEntry {
+    BIGNUM **y;      
+    int N; // Taile de y  
+    int count;   
+    struct DictEntry *next; // Structure en liste chainé
+} DictEntry;
+ 
+//Structure principal d'un dictionnaire
+typedef struct {
+    DictEntry **buckets;   // tableau de listes chaînées
+    size_t      capacity;  // nombre de buckets
+    size_t      size;      // nombre d'éléments stockés
+} Dict;
+
+
+// Faire un code sur init_dict, is_max_dict, inserer_dict, vec_in_dict
+
+
+
+
+
+/* -----------------------------------------------------------------------
+ * hash_key
+ *
+ * y est un tableau de N BIGNUM*. On hache chaque BIGNUM octet par octet
+ * avec djb2-xor, puis on intègre N à la fin.
+ * ----------------------------------------------------------------------- */
+static size_t hash_key(BIGNUM **y, int N, size_t capacity)
+{
+    size_t h = (size_t)5381;
+    int i;
+ 
+    for (i = 0; i < N; i++) {
+        int bn_len = BN_num_bytes(y[i]);
+        if (bn_len > 0) {
+            unsigned char *buf = (unsigned char *)malloc((size_t)bn_len);
+            if (buf) {
+                int j;
+                BN_bn2bin(y[i], buf);
+                for (j = 0; j < bn_len; j++)
+                    h = ((h << 5) + h) ^ buf[j]; /* djb2 xor */
+                free(buf);
+            }
+        }
+    }
+ 
+    /* Intègre N pour distinguer des tableaux de tailles différentes */
+    h = ((h << 5) + h) ^ (size_t)(unsigned int)N;
+ 
+    return h % capacity;
+}
+ 
+/* -----------------------------------------------------------------------
+ * keys_equal
+ *
+ * Compare deux clés (y1, N1) et (y2, N2).
+ * Deux clés sont égales si N1 == N2 et BN_cmp(y1[i], y2[i]) == 0 pour tout i.
+ * ----------------------------------------------------------------------- */
+static int keys_equal(BIGNUM **y1, int N1, BIGNUM **y2, int N2)
+{
+    int i;
+    if (N1 != N2) return 0;
+    for (i = 0; i < N1; i++) {
+        if (BN_cmp(y1[i], y2[i]) != 0)
+            return 0;
+    }
+    return 1;
+}
+ 
+ 
+/* -----------------------------------------------------------------------
+ * Recherche dans un bucket (liste chaînée)
+ * ----------------------------------------------------------------------- */
+static DictEntry *find_entry(DictEntry *head, BIGNUM **y, int N)
+{
+    DictEntry *e = head;
+    while (e) {
+        if (keys_equal(e->y, e->N, y, N))
+            return e;
+        e = e->next;
+    }
+    return NULL;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_init
+ * ----------------------------------------------------------------------- */
+Dict *dict_init(size_t capacity)
+{
+    Dict *d;
+    if (capacity == 0) capacity = 64;
+ 
+    d = (Dict *)malloc(sizeof(Dict));
+    if (!d) return NULL;
+ 
+    d->buckets = (DictEntry **)calloc(capacity, sizeof(DictEntry *));
+    if (!d->buckets) { free(d); return NULL; }
+ 
+    d->capacity = capacity;
+    d->size     = 0;
+    return d;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_free
+ * ----------------------------------------------------------------------- */
+void dict_free(Dict *d)
+{
+    size_t i;
+    if (!d) return;
+ 
+    for (i = 0; i < d->capacity; i++) {
+        DictEntry *e = d->buckets[i];
+        while (e) {
+            DictEntry *next = e->next;
+            fweak_free_vector(e->y, e->N);
+            free(e);
+            e = next;
+        }
+    }
+    free(d->buckets);
+    free(d);
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_insert  (insert ou update)
+ * ----------------------------------------------------------------------- */
+int dict_insert(Dict *d, BIGNUM **y, int N, int count)
+{
+    size_t     idx;
+    DictEntry *e;
+ 
+    if (!d || !y || N <= 0) return -1;
+ 
+    idx = hash_key(y, N, d->capacity);
+    e   = find_entry(d->buckets[idx], y, N);
+ 
+    if (e) {
+        /* Clé déjà présente : mise à jour de la valeur uniquement */
+        e->count = count;
+        return 0;
+    }
+ 
+    /* Nouvelle entrée */
+    e = (DictEntry *)malloc(sizeof(DictEntry));
+    if (!e) return -1;
+ 
+    e->y = fweak_copy_vector(y, N);
+    if (!e->y) { free(e); return -1; }
+ 
+    e->N     = N;
+    e->count = count;
+    e->next  = d->buckets[idx];
+ 
+    d->buckets[idx] = e;
+    d->size++;
+    return 0;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_contains
+ * ----------------------------------------------------------------------- */
+int dict_contains(const Dict *d, BIGNUM **y, int N)
+{
+    size_t idx;
+    if (!d || !y || N <= 0) return 0;
+    idx = hash_key(y, N, d->capacity);
+    return find_entry(d->buckets[idx], y, N) != NULL;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_get
+ * ----------------------------------------------------------------------- */
+int dict_get(const Dict *d, BIGNUM **y, int N, int *out_count)
+{
+    size_t     idx;
+    DictEntry *e;
+ 
+    if (!d || !y || N <= 0) return 0;
+    idx = hash_key(y, N, d->capacity);
+    e   = find_entry(d->buckets[idx], y, N);
+    if (!e) return 0;
+ 
+    if (out_count) *out_count = e->count;
+    return 1;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_update  (update uniquement, pas d'insertion)
+ * ----------------------------------------------------------------------- */
+int dict_update(Dict *d, BIGNUM **y, int N, int new_count)
+{
+    size_t     idx;
+    DictEntry *e;
+ 
+    if (!d || !y || N <= 0) return 0;
+    idx = hash_key(y, N, d->capacity);
+    e   = find_entry(d->buckets[idx], y, N);
+    if (!e) return 0;
+ 
+    e->count = new_count;
+    return 1;
+}
+ 
+/* -----------------------------------------------------------------------
+ * dict_max
+ * ----------------------------------------------------------------------- */
+int dict_max(const Dict *d, BIGNUM ***out_y, int *out_N, int *out_count)
+{
+    size_t     i;
+    DictEntry *best = NULL;
+ 
+    if (!d || d->size == 0) return 0;
+ 
+    for (i = 0; i < d->capacity; i++) {
+        DictEntry *e = d->buckets[i];
+        while (e) {
+            if (!best || e->count > best->count)
+                best = e;
+            e = e->next;
+        }
+    }
+ 
+    if (!best) return 0;
+ 
+    if (out_y)     *out_y     = best->y;   /* pointeur interne, ne pas libérer */
+    if (out_N)     *out_N     = best->N;
+    if (out_count) *out_count = best->count;
+    return 1;
+}
+
+
+
+
+
 
 
 /*
@@ -33,17 +282,27 @@ void recv_line(int sock, char *buf, size_t size) {
 
 
 
-// Faire un code sur init_dict, is_max_dict, inserer_dict, vec_in_dict
+/*
+A modifier : envoie/reception oracle lignes : 360, 392, 394
+*/
 
 /*
  * effectuer une attaque sur la cprf (avec y=(0,0,...,0,1))
 */
 int attaque(fweak_constrained_key *ck) {
     FILE *log = fopen("attack_fweak_results.txt", "w"); // écriture dans un fichier if (!log) { perror("fopen"); exit(1); }
+
     int guess = 0;
     int next_progress = 10;
     int is_cprf;
     int valid;
+
+    int *out_count;
+    int *out_N;
+
+    BIGNUM ***out_y;
+    *out_y = malloc(ck->M * sizeof(BIGNUM*));
+
     BIGNUM ***S;
     
     BIGNUM **x = malloc(ck->N * sizeof(BIGNUM*));
@@ -78,8 +337,7 @@ int attaque(fweak_constrained_key *ck) {
     }
 
     // init dictionnaire D
-
-    // D = ...
+    Dict *d = dict_init(MAX_TRIES);
     
     // Faire des tests sur MAX_TRIES vecteurs
     for (int i = 0 ; i < MAX_TRIES; i++) {
@@ -114,46 +372,49 @@ int attaque(fweak_constrained_key *ck) {
             BN_mod_mul(Sn[j], Sn[j], x_1, ck->p, ctx);
         }
 
-
-        /*
-        if (!vec_in_dict(D, Sn)){
-            inserer_dict(D, Sn, 0);
+        if (!dict_contains(d, Sn, ck->M)){
+            dict_insert(d, Sn, ck->M, 0);
         } else {
-            inserer_dict(D, Sn, D(Sn) + 1); 
+            dict_get(d, Sn, ck->M, out_count);
+            dict_update(d, Sn, ck->M, (*out_count) + 1); 
         }
 
-        if(is_max_dict(D, Sn)){
+        // On prend dans *out_y l'element max du dictionnaire d
+        dict_max(d, out_y, out_N, out_count);
+
+        // Si Sn est le max du dictionnaire, alors Sn est probablement le vrai Sn, donc c'est probablement un cprf
+        if(keys_equal(Sn, ck->M, *out_y, *out_N)){
             is_cprf = 1;
         } else {
             is_cprf = 0; 
         }
 
-        send_oracle(is_cprf);
+        // send_oracle(is_cprf);
 
-        receive_oracle(valid) ??
+        // receive_oracle(valid);
 
         if(valid){
-            guess = guess + 1
+            guess = guess + 1;
         }
-        */
 
         fprintf(log, "%d %d %d\n", i, is_cprf, valid);  //écriture dans fichier
 
         int progress = (int) floor((double)(i-1) / MAX_TRIES * 100); // % accompli
         if(progress >= next_progress) {
-            printf("[*] Progression : %3d%%\n", next_progress);
-            fflush(stdout);
+            // printf("[*] Progression : %3d%%\n", next_progress);
+            // fflush(stdout);
             next_progress += 10;
         }
 
         
     }
     printf("[*] Attaque terminée\n");
+    /*
     if(guess)
         printf("[!!!] PRF détectée pour %d/%d tests\n", guess, MAX_TRIES);
     else
         printf("Aucune PRF détectée pour les %d testés\n", MAX_TRIES);
-
+    */
     fprintf(log, "# Total detected: %d/%d\n", guess, MAX_TRIES);
     fclose(log);
 
@@ -163,6 +424,8 @@ int attaque(fweak_constrained_key *ck) {
     fweak_free_vector(x, ck->N);
     fweak_free_vector(y, ck->M);
     fweak_free_vector(Sn, ck->M);
+    
+    fweak_free_vector(*out_y, ck->M);
 
     free_matrix(S ,ck->M ,ck->N);
 
@@ -181,7 +444,9 @@ int attaque(fweak_constrained_key *ck) {
 
 
 
-
+/*
+A modifier : envoie/reception oracle lignes : 453, 491, 517
+*/
 
 int main(int argc, char *argv[]) {
 
@@ -212,7 +477,7 @@ int main(int argc, char *argv[]) {
     }
     */
 
-    printf("[*] Connecté au serveur PORT %d\n", PORT);
+    // printf("[*] Connecté au serveur PORT %d\n", PORT);
     printf("[*] Attaque en cours ...\n");
     int found = 0;
     int next_progress = 10;
