@@ -370,16 +370,13 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \]
 Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il es impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
+\newpage
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
 
 Pour un $\vec{x}$ orthogonal à $\vec{y}$, pour chaque $\vec{Si}$, notons $k_i = \vec{Si} \cdot \vec{x} = \vec{S}_{\vec{y}_i} \cdot \vec{x}$.
 
-
-
-
-\newpage
 
 \begin{figure}[h]
 \centering
@@ -428,10 +425,6 @@ k_1 \\ k_2 \\ \vdots \\ k_M \\
 \end{tikzpicture}
 \caption{Représentation du système linéaire $S \cdot \vec{x} = \vec{k}$}
 \end{figure}
-
-
-
-
 
 
 En choisissant $N$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ tel que $<\vec{x_j},\vec{y}> = 0, \forall j$, on peut construire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ tel que la jème ligne de $X$ soit $\vec{x_j}^T$
@@ -525,6 +518,7 @@ où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 
 On répète $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
 
+\newpage
 \paragraph{Problème :}
 
 Le système linéaire admet une solution unique si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $\mathrm{rang}(X) = N$. 
@@ -538,8 +532,6 @@ et engendrerait donc un espace de dimension $N+1$.
 Ceci est impossible, puisque ces vecteurs appartiennent tous à $(\mathbb{Z}/p\mathbb{Z})^N$, qui est de dimension $N$. Cette contradiction montre qu’il est impossible de construire une telle famille de vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ satisfaisant simultanément ces conditions.
 
 \paragraph{Alternative :}
-
-%TODO expliquer qu'on peut quand même avoir de l'information et distinguer une sortie aléatoire de la CPRF
 
 Dans le cas général, on remarque tout de même que $\vec{y}$ engendre un espace de dimension $1$, ce qui implique qu'il est possible de choisir $N-1$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ tel que chaque vecteur $\vec{x_j}$ soit orthogonal à $\vec{y}$.
 
@@ -618,9 +610,6 @@ Cet alternative permet donc de reconstruire chaque élément $S_{i,j}$ ligne  de
 Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de $X$ sera $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, le vecteur $\vec{S_i}^T$ sera $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$ et chaque élément de $\vec{k_i}$ sera $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
 
 
-%TODO : Trouver une attaque qui permet de distingue une fonction aléatoire de l'application de $S$ à un vecteur à partir de cette reconstruction de $S$.
-
-
 \paragraph{Cas particulier :} On remarque que lorsque l'attaquant envoie un vecteur $\vec{y} = (0,\ldots,0,1)$ pour recevoir la clé maîtresse $S_{\vec{y}}$, il remarque que $\{(1,0,\ldots,0), (0,1,0,\ldots,0), \ldots, (0,\ldots,0,1,0)\}$ sont $N-1$ vecteurs de $(\mathbb{Z}/p\mathbb{Z})^N$ qui sont tous orthogonaux avec $\vec{y}$.
 
 Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, il peut alors choisir choisir un vecteur $\vec{x_j} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$, pour la ligne $j$, où on a un $1$ au $j^{\text{ième}}$ élément du vecteur.
@@ -629,91 +618,71 @@ Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j
 
 Donc, après avoir demander l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$ à l'oracle, pour retrouver $S_{i,N}$, on a $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, donc on a $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
 
-\subsection{Jeu de sécurité pour l'attaque sur $(F^{WEAK})$}
-
-Formellement, voici une attaque qu'un attaquant utilisera pour distinguer une CPRF $F^{WEAK}$ d'une CPRF :
+\subsection{Jeu de sécurité pour l'attaque sur $F^{WEAK}$}
 
 \begin{defbox}{Jeu de sécurité sur la CPRF $F^{WEAK}$}
 
-L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui répond soit avec une $CPRF$ soit avec une fonction aléatoire. 
-L’objectif de l'attaquant est de distinguer les deux cas.
+  L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui répond soit avec une $CPRF$ soit avec une fonction aléatoire. 
+  L’objectif de l'attaquant est de distinguer les deux cas.
 
-\begin{enumerate}
-\item $O$ construit une clé maîtresse $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$.
-\item $\mathcal{A}$ demande une clé contrainte en envoyant $\vec{y} = (0,\ldots,0,1)$ pour recevoir $S_{\vec{y}}$.
-\item $O$ renvoie $S_{\vec{y}} = S + d \cdot \vec{y}^T$.
-%\item $\mathcal{A}$ construit la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$ où la $j^{\text{ième}}$ ligne est $\{(0,\ldots,0,1,0,\ldots,0)\}$, donc $X = Id_{N-1}$.
-\item $\mathcal{A}$ calcule $S_{\vec{y}} \cdot \vec{x}$ pour chacun des $\vec{x}$ de chaque ligne de $X$, pour retrouver $k_i$, ce qui lui permet de retrouver $S_{i,j}, \forall j \leq N-1$.
-\item $\mathcal{A}$ initialise un dictionnaire $D$ vide.
-\item $\mathcal{A}$ peut ensuite demander l'évaluation de plusieurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ non orthogonaux à $\vec{y}$ comme suit :
+  \medskip
+
+  \textbf{Phase 1 - Initialisation :}
   \begin{itemize}
-    \item Choisir $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
-    \item Demander à $O$ l'evaluation de $\vec{x}$ : $Eval(\vec{x})$.
-    \item Calculer $S_{i,N} \forall i$, $\mathcal{A}$ peut le calculer car il connait les valeurs de $S_{i,1},\ldots,S_{i,N-1}$.
-    \item Si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
-    \item Si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+  \item $O$ construit une clé maîtresse $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$.
   \end{itemize}
-\end{enumerate}
 
-Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redontantes, alors c'est très probablement le résultat d'une fonction aléatoire.
+  \medskip
 
-Ceci permet à un attaquant $\mathcal{A}$ de distinguer une CPRF d'une fonction aléatoire, ce qui montre que $F^{WEAK}$ n'est pas sécurisé.
+  \textbf{Phase 2 - Demande de clé contrainte :}
+  \begin{itemize}
+  \item $\mathcal{A}$ demande une clé contrainte en envoyant $\vec{y} = (0,\ldots,0,1)$ pour recevoir $S_{\vec{y}}$.
+  \item $O$ renvoie $S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+  \end{itemize}
 
+  \medskip
 
-\end{defbox}
+  \textbf{Phase 3 - Reconstruction partielle :}
+  \begin{itemize}
+  \item $\mathcal{A}$ calcule $S_{\vec{y}} \cdot \vec{x}$ pour chacun des $\vec{x}$ de chaque ligne de $X$, pour retrouver $k_i$, ce qui lui permet de retrouver $S_{i,j}, \forall j \leq N-1$.
+  \end{itemize}
 
+  \medskip
 
-\begin{defbox}{Jeu de sécurité pour \(F^{WEAK}\)}
-L'attaquant \(\mathcal{A}\) interagit avec un oracle \(\mathcal{O}\) qui est soit la construction \(F^{WEAK}\)
-définie par une matrice secrète \(S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}\), soit une fonction
-aléatoire \(\mathcal{R} : (\mathbb{Z}/p\mathbb{Z})^{N} \rightarrow (\mathbb{Z}/p\mathbb{Z})^{M}\).
-L’objectif de l'attaquant est de distinguer les deux cas.
+  \textbf{Phase 4 - Initialisation du dictionnaire :}
+  \begin{itemize}
+  \item $\mathcal{A}$ initialise un dictionnaire $D$ vide.
+  \end{itemize}
 
-\begin{itemize}
-\item \textbf{1 - Demande de clé contrainte :}
-\(\mathcal{A}\) choisit un vecteur \(\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^{N}\) et interroge l’oracle
-avec la requête \(\textsf{Constrain}(\vec{y})\). L’oracle génère alors une clé contrainte
-\[
-S_{\vec{y}} = S + \vec{d} \cdot \vec{y}^{T},
-\]
-où \(\vec{d} \in (\mathbb{Z}/p\mathbb{Z})^{M}\) est choisi uniformément et indépendamment
-à chaque requête. \(\mathcal{A}\) reçoit \(S_{\vec{y}}\) et peut désormais évaluer la fonction
-sur tout vecteur \(\vec{x}\) tel que \(\langle \vec{x}, \vec{y} \rangle = 0\).
+  \medskip
 
-\item \textbf{2 - Requêtes d’évaluation :}
-\(\mathcal{A}\) interroge l’oracle \(\mathcal{O}\)
-sur des vecteurs \(\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^{N}\) de son choix.
-\begin{itemize}
-    \item Si \(\mathcal{O}\) est la construction \(F^{WEAK}\), l’oracle répond en utilisant la clé maîtresse \(S\) :
-    \[
-    \textsf{Eval}(S, \vec{x}) = S \cdot \vec{x}.
-    \]
-    \item Si \(\mathcal{O}\) est une fonction aléatoire \(\mathcal{R}\), l’oracle répond en tirant uniformément un vecteur aléatoire \(\vec{r} \in (\mathbb{Z}/p\mathbb{Z})^{M}\) et retourne \(\vec{r}\).
-\end{itemize}
+  \textbf{Phase 5 - Requêtes d’évaluation et attaque :}
+  \begin{itemize}
+  \item $\mathcal{A}$ peut ensuite demander l'évaluation de plusieurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ non orthogonaux à $\vec{y}$ comme suit :
+    \begin{itemize}
+      \item Choisir $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
+      \item Demander à $O$ l'evaluation de $\vec{x}$ : $Eval(\vec{x})$.
+      \item Calculer $S_{i,N} \forall i$, $\mathcal{A}$ peut le calculer car il connait les valeurs de $S_{i,1},\ldots,S_{i,N-1}$.
+      \item Si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
+      \item Si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+    \end{itemize}
+  \end{itemize}
 
-\item \textbf{3 - Exploitation des informations :}
-\(\mathcal{A}\) utilise les informations collectées (clés contraintes et évaluations) pour
-tenter de reconstruire partiellement la matrice \(S\) afin de distinguer les deux mondes.
+  \medskip
 
-Il sélectionne \(N-1\) vecteurs \(\{\vec{x}_j\}_{1 \leq j \leq N-1}\)
-orthogonaux à \(\vec{y}\) et formant une famille libre. Pour chaque ligne \(S_i\) de \(S\),
-il construit le système linéaire
-\[
-X \cdot \vec{S_i}'^{T} = \vec{k}_i,
-\]
-où \(X\) est la matrice des \(\vec{x}_j\), \(\vec{S_i}'\) est le vecteur \(S_i\) avec une valeur en moins, et \(\vec{k}_i\) est le vecteur des évaluations obtenues.
+  \textbf{Phase 6 - Interprétation :}
 
-\item \textbf{4 -Décision :}
-\(\mathcal{A}\) décide que \(\mathcal{O}\) est \(F^{WEAK}\) s’il arrive à reconstruire
-une matrice cohérente avec les observations et/ou s’il détecte une structure linéaire.
-Sinon, il décide que \(\mathcal{O}\) est une fonction aléatoire.
-\end{itemize}
+  Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redontantes, alors c'est très probablement le résultat d'une fonction aléatoire.
 
+  \medskip
+
+  Ceci permet à un attaquant $\mathcal{A}$ de distinguer une CPRF d'une fonction aléatoire, ce qui montre que $F^{WEAK}$ n'est pas sécurisé.
 
 \end{defbox}
 
 
-\subsection{Renforecement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
+
+\subsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
 
 TODO
 
