@@ -65,14 +65,6 @@ int main() {
 
     /* ====== SETUP FWEAK ======== */
 
-    int is_real_cprf = rand() % 2; //1 chance sur deux que l'oracle soit en mode aléatoire
-    if(is_real_cprf){
-        printf('[*] Mode : CPRF');
-    }
-    else{
-        printf('[*] Mode : RANDOM');
-    }
-
     //générer clé maitresse S
     fweak_master_key *mk = fweak_master_keygen(M_SIZE, N_SIZE);
 
@@ -113,6 +105,14 @@ int main() {
         BIGNUM **out = malloc(M_SIZE * sizeof(BIGNUM*));
         for(int i = 0; i < M_SIZE; i++){
             out[i] = BN_new();
+        }
+
+        int is_real_cprf = rand() % 2; //1 chance sur deux que l'oracle soit en mode aléatoire
+        if(is_real_cprf){
+            printf('[*] Mode : CPRF');
+        }
+        else{
+            printf('[*] Mode : RANDOM');
         }
 
         //si mode cprf, on renvoie S*x, sinon élément random

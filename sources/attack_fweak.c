@@ -270,6 +270,7 @@ int dict_max(const Dict *d, BIGNUM ***out_y, int *out_N, int *out_count)
 /*
  * lire ligne sur la connexion, reçevoir message du serveur
 */
+/*
 void recv_line(int sock, char *buf, size_t size) {
     memset(buf, 0, size);
     size_t i = 0;
@@ -279,17 +280,38 @@ void recv_line(int sock, char *buf, size_t size) {
         i++;
     }
 }
-
-
-
-/*
-A modifier : envoie/reception oracle lignes : 360, 392, 394
 */
+
+
+void send_bn(int sock, BIGNUM *bn){
+    int len = BN_num_bytes(bn);
+    write(sock, &len, sizeof(int));
+
+    unsigned char *buf = malloc(len);
+    BN_bn2bin(bn, buf);
+
+    write(sock, buf, len);
+    free(buf);
+}
+
+void recv_bn(int sock, BIGNUM *bn){
+    int len;
+    read(sock, &len, sizeof(int));
+
+    unsigned char *buf = malloc(len);
+    read(sock, buf, len);
+
+    BN_bin2bn(buf, len, bn);
+    free(buf);
+}
+
+
+
 
 /*
  * effectuer une attaque sur la cprf (avec y=(0,0,...,0,1))
 */
-int attaque(fweak_constrained_key *ck) {
+int attaque(fweak_constrained_key *ck, int server_fd) {
     FILE *log = fopen("attack_fweak_results.txt", "w"); // écriture dans un fichier if (!log) { perror("fopen"); exit(1); }
 
     int guess = 0;
@@ -358,6 +380,13 @@ int attaque(fweak_constrained_key *ck) {
         BN_mod_inverse(x_1, x[ck->N-1], ck->p, ctx);
 
         // y = oracle(x) // Eval(x)
+        for(int k = 0 ; k < N_SIZE ; k++){
+            send_bn(server_fd, x[k]);
+        }
+
+        for(int k = 0 ; k < M_SIZE ; k++){
+            recv_bn(server_fd, y[k]);
+        }
 
         // derniere colonne de S
         for (int j = 0; j < ck->M ; j++) {
@@ -390,8 +419,10 @@ int attaque(fweak_constrained_key *ck) {
         }
 
         // send_oracle(is_cprf);
+        write(server_fd, &is_cprf, sizeof(int));
 
         // receive_oracle(valid);
+        read(server_fd, &valid, sizeof(int));
 
         if(valid){
             guess = guess + 1;
@@ -401,21 +432,21 @@ int attaque(fweak_constrained_key *ck) {
 
         int progress = (int) floor((double)(i-1) / MAX_TRIES * 100); // % accompli
         if(progress >= next_progress) {
-            // printf("[*] Progression : %3d%%\n", next_progress);
-            // fflush(stdout);
+            printf("[*] Progression : %3d%%\n", next_progress);
+            fflush(stdout);
             next_progress += 10;
         }
 
         
     }
     printf("[*] Attaque terminée\n");
-    /*
+    
     if(guess)
-        printf("[!!!] PRF détectée pour %d/%d tests\n", guess, MAX_TRIES);
+        printf("[!!!] Attaque réussi pour %d/%d tests\n", guess, MAX_TRIES);
     else
-        printf("Aucune PRF détectée pour les %d testés\n", MAX_TRIES);
-    */
-    fprintf(log, "# Total detected: %d/%d\n", guess, MAX_TRIES);
+        printf("Aucune attaque réussi pour les %d testés\n", MAX_TRIES);
+    
+    fprintf(log, "# Total attaque réussi : %d/%d\n", guess, MAX_TRIES);
     fclose(log);
 
     BN_free(tmp);
@@ -444,60 +475,37 @@ int attaque(fweak_constrained_key *ck) {
 
 
 
-/*
-A modifier : envoie/reception oracle lignes : 453, 491, 517
-*/
 
 int main(int argc, char *argv[]) {
 
-    /*
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s -n|-h|-l <taille>\n", argv[0]);
-        exit(1);
-    }
     
 
-    oracle_mode mode;
-    int MAX_N = atoi(argv[2]);
-
-    if (MAX_N <= 0) {
-        fprintf(stderr, "Erreur: taille invalide\n");
-        exit(1);
-    }
-
-    if (strcmp(argv[1], "-n") == 0) {
-        mode = MODE_NORMAL;
-    } else if (strcmp(argv[1], "-h") == 0) {
-        mode = MODE_HASHED;
-    } else if (strcmp(argv[1], "-l") == 0) {
-        mode = MODE_LAZY;
-    } else {
-        fprintf(stderr, "Mode invalide: %s\n", argv[1]);
-        exit(1);
-    }
-    */
-
-    // printf("[*] Connecté au serveur PORT %d\n", PORT);
+    printf("[*] Connecté au serveur PORT %d\n", PORT);
     printf("[*] Attaque en cours ...\n");
-    int found = 0;
-    int next_progress = 10;
-    
 
-    int sock;
-    int guess;
+    int server_fd, client_fd;
     struct sockaddr_in addr;
     char buffer[BUF_SIZE];
 
     /* --- connexion --- */
-    sock = socket(AF_INET, SOCK_STREAM, 0);
+    client_fd = socket(AF_INET, SOCK_STREAM, 0);
     addr.sin_family = AF_INET;
     addr.sin_port = htons(PORT);
     inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
 
-    if (connect(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+    if (connect(client_fd, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
         perror("connect");
         exit(1);
     }
+
+
+    
+
+
+
+    int found = 0;
+    int next_progress = 10;
+    int guess;
 
     BIGNUM **y = malloc(M_SIZE * sizeof(BIGNUM*));
     BIGNUM ***Sy;
@@ -516,6 +524,18 @@ int main(int argc, char *argv[]) {
     /*
     Envoyer y puis recevoir Sy et p
     */
+    for(int i = 0; i < N_SIZE; i++){
+        send_bn(server_fd, y[i]);
+    }
+
+    recv_bn(server_fd, p);
+
+    for(int i = 0 ; i < M_SIZE ; i++){
+        for(int j = 0 ; j < N_SIZE ; j++){
+            recv_bn(server_fd, Sy[i][j]);
+        }
+    }
+
 
     fweak_constrained_key *ck;
 
@@ -527,7 +547,7 @@ int main(int argc, char *argv[]) {
 
     /* ---- attaque ---- */
     clock_t start = clock(); 
-    guess = attaque(ck);
+    guess = attaque(ck, server_fd);
     clock_t end = clock();
 
     double elapsed_ms = (double)(end - start) / CLOCKS_PER_SEC * 1000.0;
