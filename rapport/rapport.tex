@@ -684,7 +684,16 @@ Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$
 
 \subsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
 
-TODO
+Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cet implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
+
+\paragraph{\'{E}valuation sur les entrées non contraintes : }Lorsqu'un attaquant demande l'évaluation d'un vecteur $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, alors l'oracle lui enverrait $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ au lieu de $Eval(\vec{x}) = S \cdot \vec{x}$, où $H$ est une fonction de hachage.
+
+\paragraph{Demande d'une clé contrainte : }La demande de la clé contrainte par un attaquant reste inchangée. L'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, puis l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+
+\paragraph{\'{E}valuation sur les entrées contraintes : }Après avoir reçue une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
+
+Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourras pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précedente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
+
 
 \subsection{Étude d'autres permutations alternatives}
 
