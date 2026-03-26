@@ -2,8 +2,9 @@
 #include "../include/fweak.h"
 
 
+
 //renvoie un nombre premier grand
-static BIGNUM *get_prime(void) {
+BIGNUM *get_prime(void) {
     static BIGNUM *p = NULL;
     if (p == NULL) {
         p = BN_new();
@@ -13,12 +14,12 @@ static BIGNUM *get_prime(void) {
 }
 
 // bignum random [0,p]
-static void random_mod(BIGNUM *dest, BIGNUM *p) {
+void random_mod(BIGNUM *dest, BIGNUM *p) {
     BN_rand_range(dest, p);
 }
 
 // matrice M x N de BIGNUM* 
-static BIGNUM ***alloc_matrix(int M, int N) {
+BIGNUM ***alloc_matrix(int M, int N) {
     BIGNUM ***mat = malloc(M * sizeof(BIGNUM**));
     for (int i = 0; i < M; i++) {
         mat[i] = malloc(N * sizeof(BIGNUM*));
@@ -50,7 +51,7 @@ BIGNUM **fweak_copy_vector(BIGNUM **src, int len) {
 
 
 // out = mat * x (mod p)
-static void matrix_vector_mult(BIGNUM **out, BIGNUM ***mat, int M, int N, BIGNUM **x, BIGNUM *p) {
+void matrix_vector_mult(BIGNUM **out, BIGNUM ***mat, int M, int N, BIGNUM **x, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
         BN_zero(out[i]);
@@ -65,7 +66,7 @@ static void matrix_vector_mult(BIGNUM **out, BIGNUM ***mat, int M, int N, BIGNUM
 }
 
 // dest = A + B (mod p)
-static void matrix_add(BIGNUM ***dest, BIGNUM ***A, BIGNUM ***B, int M, int N, BIGNUM *p) {
+void matrix_add(BIGNUM ***dest, BIGNUM ***A, BIGNUM ***B, int M, int N, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
@@ -76,7 +77,7 @@ static void matrix_add(BIGNUM ***dest, BIGNUM ***A, BIGNUM ***B, int M, int N, B
 }
 
 // mat = d * y^T (mod p)
-static void outer_product(BIGNUM ***mat, BIGNUM **d, int M, BIGNUM **y, int N, BIGNUM *p) {
+void outer_product(BIGNUM ***mat, BIGNUM **d, int M, BIGNUM **y, int N, BIGNUM *p) {
     BN_CTX *ctx = BN_CTX_new();
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
@@ -189,7 +190,7 @@ void fweak_free_vector(BIGNUM **vec, int len) {
     for (int i = 0; i < len; i++) BN_free(vec[i]);
     free(vec);
 }
-static void free_matrix(BIGNUM ***mat, int M, int N) {
+void free_matrix(BIGNUM ***mat, int M, int N) {
     if (!mat) return;
     for (int i = 0; i < M; i++) {
         if (mat[i]) {

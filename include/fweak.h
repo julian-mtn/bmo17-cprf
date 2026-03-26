@@ -1,4 +1,3 @@
-// fweak.h
 #ifndef FWEAK_H
 #define FWEAK_H
 
@@ -29,24 +28,35 @@ typedef struct {
     int N;
 } fweak_constrained_key;
 
-//Génère un vecteur aléatoire de longueur len modulo p
+/*///////////////////// random / alloc ////////////////////////*/
+
+// Génère un vecteur aléatoire de longueur len modulo p
 BIGNUM **fweak_random_vector(BIGNUM *p, int len);
-//Copie un vecteur de BIGNUM
+// Copie un vecteur de BIGNUM
 BIGNUM **fweak_copy_vector(BIGNUM **src, int len);
+
+// Renvoie un nombre premier fixe
+BIGNUM *get_prime(void);
+// Bignum random [0, p]
+void random_mod(BIGNUM *dest, BIGNUM *p);
+// Alloue une matrice M x N
+BIGNUM ***alloc_matrix(int M, int N);
+// Libère une matrice M x N
+void free_matrix(BIGNUM ***mat, int M, int N);
 
 /*///////////////////// key generation ////////////////////////*/
 
-//Génère la clé maîtresse S de taille MxN
+// Génère la clé maîtresse S de taille MxN
 fweak_master_key *fweak_master_keygen(int M, int N);
-//Génère une clé contrainte S_y = S + d*y^T pour un vecteur y
+// Génère une clé contrainte S_y = S + d*y^T pour un vecteur y
 fweak_constrained_key *fweak_constrained_keygen(fweak_master_key *mk, BIGNUM **y, int y_len);
 
 /*///////////////////// CPRF evaluation ////////////////////////*/
 
-//Eval(FWEAK, x) = S * x
+// Eval(FWEAK, x) = S * x
 void fweak_eval_master_key(BIGNUM **out, fweak_master_key *mk, BIGNUM **x);
 
-//CEval(S_y, x) = S · x + d·⟨x, y⟩ = S_y * x
+// CEval(S_y, x) = S · x + d·⟨x, y⟩ = S_y * x
 void fweak_eval_constrained_key(BIGNUM **out, fweak_constrained_key *ck, BIGNUM **x);
 
 /*///////////////////// memory ////////////////////////*/
@@ -54,6 +64,5 @@ void fweak_eval_constrained_key(BIGNUM **out, fweak_constrained_key *ck, BIGNUM 
 void fweak_master_key_free(fweak_master_key *mk);
 void fweak_constrained_key_free(fweak_constrained_key *ck);
 void fweak_free_vector(BIGNUM **vec, int len);
-
 
 #endif

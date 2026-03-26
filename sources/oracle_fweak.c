@@ -109,10 +109,10 @@ int main() {
 
         int is_real_cprf = rand() % 2; //1 chance sur deux que l'oracle soit en mode aléatoire
         if(is_real_cprf){
-            printf('[*] Mode : CPRF');
+            printf("[*] Mode : CPRF\n");
         }
         else{
-            printf('[*] Mode : RANDOM');
+            printf("[*] Mode : RANDOM\n");
         }
 
         //si mode cprf, on renvoie S*x, sinon élément random
@@ -141,7 +141,7 @@ int main() {
 
     fweak_master_key_free(mk);
     fweak_constrained_key_free(ck);
-    fweak_free_vector(y, N_SIZE);
+    //fweak_free_vector(y, N_SIZE);
 
     close(client_fd);
     close(server_fd);
