@@ -168,7 +168,7 @@ void recv_bn(int sock, BIGNUM *bn){
 /* --- ATTAQUE --- */
 
 int attaque(fweak_constrained_key *ck, int client_fd,int MAX_TRIES) {
-    FILE *log = fopen("attack_fweak_results.txt", "w");
+    FILE *log = fopen("attack_results.txt", "w");
     if (!log) { perror("fopen"); exit(1); }
 
     int guess = 0;
@@ -192,7 +192,10 @@ int attaque(fweak_constrained_key *ck, int client_fd,int MAX_TRIES) {
 
     Dict *d = dict_init(MAX_TRIES);
 
+    clock_t start;
+    clock_t end;
     for(int i = 0; i < MAX_TRIES; i++){
+        start = clock();
         for(int j = 0; j < ck->N-1; j++) random_mod(x[j], ck->p);
         do { random_mod(x[ck->N-1], ck->p); } while(BN_is_zero(x[ck->N-1]));
         BN_mod_inverse(x_1, x[ck->N-1], ck->p, ctx);
@@ -211,6 +214,7 @@ int attaque(fweak_constrained_key *ck, int client_fd,int MAX_TRIES) {
             BN_mod_add(Sn[j],Sn[j],y[j],ck->p,ctx);
             BN_mod_mul(Sn[j], Sn[j], x_1, ck->p, ctx);
         }
+        end = clock();
 
         int count;
         if (!dict_contains(d, Sn, ck->M)) dict_insert(d, Sn, ck->M, 1);
@@ -224,8 +228,8 @@ int attaque(fweak_constrained_key *ck, int client_fd,int MAX_TRIES) {
         read(client_fd, &valid, sizeof(int));
 
         if(valid) guess++;
-        fprintf(log, "%d %d %d\n", i, is_cprf, valid);
 
+        fprintf(log, "%d %d %d %.2f\n", i, is_cprf, valid,(double)(end-start)/CLOCKS_PER_SEC*1000.0 );
         int progress = (int)floor((double)(i+1)/MAX_TRIES*100);
         if(progress >= next_progress){ printf("[*] Progression : %3d%%\n", next_progress); next_progress += 10; }
     }
@@ -300,7 +304,9 @@ int main(int argc, char * argv[]) {
     clock_t start = clock();
     attaque(ck, client_fd,MAX_TRIES);
     clock_t end = clock();
+
     printf("[*] Temps total : %.2f ms\n", (double)(end-start)/CLOCKS_PER_SEC*1000.0);
+    
 
     BN_free(p);
     fweak_free_vector(y, N_SIZE);
