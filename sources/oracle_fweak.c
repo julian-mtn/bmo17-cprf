@@ -94,6 +94,7 @@ int main() {
 
     /*  ORACLE LOOP  */
 
+    
     while(1){
 
         BIGNUM **x = malloc(N_SIZE * sizeof(BIGNUM*));
@@ -106,8 +107,8 @@ int main() {
         for(int i = 0; i < M_SIZE; i++){
             out[i] = BN_new();
         }
-
-        int is_real_cprf = rand() % 2; //1 chance sur deux que l'oracle soit en mode aléatoire
+        int is_real_cprf = rand() %2; //1 chance sur deux que l'oracle soit en mode aléatoire
+        
         if(is_real_cprf){
             printf("[*] Mode : CPRF\n");
         }

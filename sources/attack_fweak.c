@@ -10,7 +10,7 @@
 
 #define PORT 4242
 #define BUF_SIZE 4096
-#define MAX_TRIES 10
+#define MAX_TRIES 50
 #define M_SIZE 10
 #define N_SIZE 100
 
@@ -207,9 +207,11 @@ int attaque(fweak_constrained_key *ck, int client_fd) {
         for(int j = 0; j < ck->M; j++){
             BN_zero(Sn[j]);
             for(int k = 0; k < ck->N-1; k++){
+
                 BN_mod_mul(tmp, ck->S_y[j][k], x[k], ck->p, ctx);
-                BN_mod_sub(Sn[j], y[j], tmp, ck->p, ctx);
+                BN_mod_sub(Sn[j], Sn[j], tmp, ck->p, ctx);
             }
+            BN_mod_add(Sn[j],Sn[j],y[j],ck->p,ctx);
             BN_mod_mul(Sn[j], Sn[j], x_1, ck->p, ctx);
         }
 
