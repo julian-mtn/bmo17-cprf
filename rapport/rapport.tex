@@ -326,7 +326,8 @@ jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluati
 sont possibles.
 
 
-\subsection{CPRF avec une permutation linéaire $F^{WEAK}$}
+\section{Étude d'autres permutations alternatives}
+\subsection{Permutation linéaire $F^{WEAK}$}
 
 Dans cette section, nous allons voir une implémentation d'une CPRF dont l'entrée et la sortie seront des vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N $ et $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^M$ où $p$ est un nombre premier et $N$ et $M$ les dimensions des vecteurs.
 
@@ -618,7 +619,7 @@ Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j
 
 Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$ à l'oracle, pour retrouver $S_{i,N}$, on a $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, donc on a $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
 
-\subsection{Jeu de sécurité pour l'attaque sur $F^{WEAK}$}
+\subsubsection{Jeu de sécurité pour l'attaque sur $F^{WEAK}$}
 
 \begin{defbox}{Jeu de sécurité sur la CPRF $F^{WEAK}$}
 
@@ -682,7 +683,7 @@ Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$
 
 
 
-\subsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
+\subsubsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
 
 Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cet implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
 
@@ -695,9 +696,8 @@ Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire 
 Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourras pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précedente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
 
 
-\subsection{Étude d'autres permutations alternatives}
 
-\subsubsection{Permutation à trappe de Rabin}
+\subsection{Permutation à trappe de Rabin}
 
 \paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
 
@@ -828,7 +828,7 @@ Même avec la clé privée, il est impossible de savoir laquelle correspond à l
 l'application répétée de l'inverse $(n-c)$ fois pour retrouver correctement le résultat de la CPRF.
 
 
-\subsubsection{Permutation à trappe AES}
+\subsection{Permutation à trappe AES}
 \paragraph{}
 Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
 Contrairement à \(x \mapsto x^2 \bmod n\), chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
