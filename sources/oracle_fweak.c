@@ -10,8 +10,6 @@
 #include "../include/fweak.h"
 
 #define PORT 4242 //TODO à modifier
-#define M_SIZE 10 //TODO à modifier
-#define N_SIZE 100 //TODO à modifier
 
 /* //////////////socket////////////// */
 
@@ -41,7 +39,19 @@ void recv_bn(int sock, BIGNUM *bn){
 /* ////////////// ORACLE ////////////// */
 
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <taille_N> <taille_M>\n", argv[0]);
+    }
+
+    int N_SIZE = atoi(argv[1]);
+    int M_SIZE = atoi(argv[2]);
+    
+    if (N_SIZE <= 0 || M_SIZE <=0) {
+        fprintf(stderr, "Erreur: taille invalide\n");
+        exit(1);
+    }
 
     srand(time(NULL));
 

@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[9pt]{article}
 
 % Encodage et langues
 \usepackage[T1]{fontenc}
@@ -371,7 +371,6 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \]
 Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il es impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
-\newpage
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
@@ -519,7 +518,6 @@ où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 
 On répète $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
 
-\newpage
 \paragraph{Problème :}
 
 Le système linéaire admet une solution unique si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $\mathrm{rang}(X) = N$. 

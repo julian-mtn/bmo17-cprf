@@ -10,9 +10,7 @@
 
 #define PORT 4242
 #define BUF_SIZE 4096
-#define MAX_TRIES 50
-#define M_SIZE 10
-#define N_SIZE 100
+
 
 /* --- DICTIONNAIRE --- */
 
@@ -169,7 +167,7 @@ void recv_bn(int sock, BIGNUM *bn){
 
 /* --- ATTAQUE --- */
 
-int attaque(fweak_constrained_key *ck, int client_fd) {
+int attaque(fweak_constrained_key *ck, int client_fd,int MAX_TRIES) {
     FILE *log = fopen("attack_fweak_results.txt", "w");
     if (!log) { perror("fopen"); exit(1); }
 
@@ -248,7 +246,21 @@ int attaque(fweak_constrained_key *ck, int client_fd) {
 
 /* --- MAIN --- */
 
-int main() {
+int main(int argc, char * argv[]) {
+
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <max_tries> <taille_N> <taille_M>\n", argv[0]);
+    }
+
+    int MAX_TRIES = atoi(argv[1]);
+    int N_SIZE = atoi(argv[2]);
+    int M_SIZE = atoi(argv[3]);
+    
+    if (N_SIZE <= 0 || M_SIZE <=0 || MAX_TRIES <=0 ) {
+        fprintf(stderr, "Erreur: taille invalide\n");
+        exit(1);
+    }
+
     printf("[*] Connecté au serveur PORT %d\n", PORT);
     printf("[*] Attaque en cours ...\n");
 
@@ -286,7 +298,7 @@ int main() {
     ck->M = M_SIZE; ck->N = N_SIZE; ck->p = p; ck->S_y = Sy; ck->y = y;
 
     clock_t start = clock();
-    attaque(ck, client_fd);
+    attaque(ck, client_fd,MAX_TRIES);
     clock_t end = clock();
     printf("[*] Temps total : %.2f ms\n", (double)(end-start)/CLOCKS_PER_SEC*1000.0);
 
