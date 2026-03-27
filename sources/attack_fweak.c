@@ -183,9 +183,8 @@ int attaque(fweak_constrained_key *ck, int client_fd) {
     BIGNUM *x_1 = BN_new();
     BIGNUM *tmp = BN_new();
     BN_CTX *ctx = BN_CTX_new();
-
-    BIGNUM **S = malloc(ck->M * sizeof(BIGNUM*));
-    for(int i = 0; i < ck->M; i++) S[i] = BN_new();
+    
+    BIGNUM **out_y;
 
     for(int j = 0; j < ck->N; j++) x[j] = BN_new();
     for(int j = 0; j < ck->M; j++){
@@ -219,7 +218,6 @@ int attaque(fweak_constrained_key *ck, int client_fd) {
         if (!dict_contains(d, Sn, ck->M)) dict_insert(d, Sn, ck->M, 1);
         else { dict_get(d, Sn, ck->M, &count); dict_update(d, Sn, ck->M, count + 1); }
 
-        BIGNUM **out_y;
         int out_N, out_count;
         dict_max(d, &out_y, &out_N, &out_count);
         is_cprf = keys_equal(Sn, ck->M, out_y, out_N);
@@ -242,8 +240,6 @@ int attaque(fweak_constrained_key *ck, int client_fd) {
     fweak_free_vector(x, ck->N);
     fweak_free_vector(y, ck->M);
     fweak_free_vector(Sn, ck->M);
-    for(int i = 0; i < ck->M; i++) BN_free(S[i]);
-    free(S);
     dict_free(d);
     BN_CTX_free(ctx);
 
