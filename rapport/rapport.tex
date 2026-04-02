@@ -1122,25 +1122,38 @@ Ces deux figures montrent aussi que le choix du hachage n'a pas d'impact signifi
 
 \subsection{Guide d'utilisation}
 
+\subsubsection*{Compiler}
+
+\begin{verbatim}
+make
+\end{verbatim}
+
+\subsubsection*{Exécuter}
+
+\begin{verbatim}
+./start.sh <mode> [parameters]
+\end{verbatim}
 
 \begin{center}
-\begin{tabular}{|l|l|}
+\begin{tabular}{|l|l|l|}
 \hline
-\textbf{Commande} & \textbf{Description} \\
+\textbf{Mode} & \textbf{Paramètres} & \textbf{Description} \\
 \hline
-\texttt{make} & Compilation \\
+\texttt{-n} & \texttt{<size>} & CPRF normale, nombre de tests \\
 \hline
-\texttt{./start.sh -n <size>} & CPRF normale \\
+\texttt{-h} & \texttt{<size>} & CPRF hachée (SHA-256), nombre de tests \\
 \hline
-\texttt{./start.sh -h <size>} & CPRF hachée (SHA-256) \\
+\texttt{-l} & \texttt{<size>} & Lazy sampling, nombre de tests \\
 \hline
-\texttt{./start.sh -l <size>} & Lazy sampling \\
-\hline
-\texttt{./start.sh -f <tries> <N> <M>} & Mode fweak \\
-\hline
-\texttt{python3 display.py} & Affichage des courbes \\
+\texttt{-f} & \texttt{<tries> <N> <M>} & Mode FWEAK : nombre de tentatives, taille N et M \\
 \hline
 \end{tabular}
 \end{center}
+
+\subsubsection*{Afficher les courbes}
+
+\begin{verbatim}
+python3 display.py
+\end{verbatim}
 
 \end{document}
