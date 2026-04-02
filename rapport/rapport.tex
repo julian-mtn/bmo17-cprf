@@ -163,7 +163,7 @@ qui autorisent toutes les entrées strictement inférieures à un seuil $n \in \
 
 \addcontentsline{toc}{subsection}{Fonction pseudo-aléatoire contrainte}
 \begin{defbox}{Fonction pseudo-aléatoire contrainte (CPRF)}
-Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes efficaces:
+Une fonction pseudo-aléatoire contrainte (CPRF) est donnée par quatre algorithmes:
 \begin{itemize}
 \item $\textsf{Setup}(1^\lambda) \to K$ (clé maître): génère la clé secrète principale $K$.
 \item $\textsf{Constrain}(K,C) \to K_C$ (clé contrainte): produit une clé spéciale $K_C$ permettant
@@ -540,7 +540,7 @@ En effet, dans le système linéaire précédent, pour chaque ligne $j$ de $X$, 
 
 On peut donc reconstruire une autre matrice $X$ de taille $(N-1) \times (N-1)$ puis poser le système linéaire suivant :
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 
@@ -697,7 +697,7 @@ Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un atta
 
 \subsection{Permutation à trappe de Rabin}
 
-\paragraph{}La permutation de Rabin est une fonction cryptographique à trappe fondée sur la difficulté de la factorisation des entiers. Elle est conceptuellement plus simple que RSA et repose sur l'opération de mise au carré modulo un entier composé.
+\paragraph{}La permutation de Rabin est une fonction à trappe fondée sur la difficulté de la factorisation des entiers. Elle repose sur l'opération de mise au carré modulo un entier composé.
 
 \begin{itemize}
 \item\textbf{Génération de la clé :}
@@ -1085,9 +1085,11 @@ L'évaluation est définie par :
 
 
 
+\appendix
 
+\section{Annexe : Graphiques et guide d'utilisation}
 
-\subsection{Évaluation expérimentale et comparaison des attaques}
+\subsection{Résultats expérimentaux}
 
 \paragraph{}Après avoir implémenté les différentes versions de la CPRF (normale, hachée avec SHA-256 et hachée avec lazy sampling), nous avons mené des expériences pour évaluer l’efficacité de l’attaque CJ25 contre chacune d’elles.
 Les tests ont été réalisés en exécutant 100 requêtes d’évaluation pour chaque version, et en enregistrant le taux de succès de l’attaque à chaque étape.
@@ -1099,48 +1101,46 @@ Le taux d'attaque réussie à 100\% s'explique par le fait que l'attaquant doit 
 On observe que l'attaque est complètement inefficace, avec un taux de succès proche de 0.5, ce qui correspond à une attaque aléatoire car l'attaquant ne détecte jamais de CPRF et se trompe dans la moitié des cas.
 Ces deux figures montrent aussi que le choix du hachage n'a pas d'impact significatif sur l'efficacité de l'attaque, ce qui confirme que l'introduction du hachage rend la structure de la CPRF indiscernable pour l'attaquant.
 
+
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{./images/stat1.png}
-  \caption{Attaque version non hachée}
-  \label{fig:stat1}
+\centering
+\includegraphics[width=0.95\textwidth]{./images/stat1.png}
+\caption{Attaque version non hachée}
 \end{figure}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{./images/stat2.png}
-  \caption{Attaque version hachée avec SHA-256}
-  \label{fig:stat2}
+\centering
+\includegraphics[width=0.95\textwidth]{./images/stat2.png}
+\caption{Attaque version hachée avec SHA-256}
 \end{figure}
 
 \begin{figure}[H]
-  \centering
-  \includegraphics[width=0.95\textwidth]{./images/stat3.png}
-  \caption{Attaque version hachée avec lazy sampling}
-  \label{fig:stat3}
+\centering
+\includegraphics[width=0.95\textwidth]{./images/stat3.png}
+\caption{Attaque version hachée avec lazy sampling}
 \end{figure}
 
-\section{Comment lancer le programme}
+\subsection{Guide d'utilisation}
+
 
 \begin{center}
-\begin{tabular}{|l|p{10cm}|}
+\begin{tabular}{|l|l|}
 \hline
 \textbf{Commande} & \textbf{Description} \\
 \hline
-\texttt{make} & Compile le projet. \\
+\texttt{make} & Compilation \\
 \hline
-\texttt{./start.sh -n <size>} & Lance les tests avec la CPRF normale. \\
+\texttt{./start.sh -n <size>} & CPRF normale \\
 \hline
-\texttt{./start.sh -h <size>} & Lance les tests avec la CPRF hachée. \\
+\texttt{./start.sh -h <size>} & CPRF hachée (SHA-256) \\
 \hline
-\texttt{./start.sh -l <size>} & Lance les tests avec le lazy sampling. \\
+\texttt{./start.sh -l <size>} & Lazy sampling \\
 \hline
-\texttt{<size>} & Nombre de tests à exécuter. \\
+\texttt{./start.sh -f <tries> <N> <M>} & Mode fweak \\
 \hline
-\texttt{python3 display.py} & Trace les courbes à partir des résultats enregistrés dans \texttt{attack\_results.txt}. \\
+\texttt{python3 display.py} & Affichage des courbes \\
 \hline
 \end{tabular}
 \end{center}
-
 
 \end{document}
