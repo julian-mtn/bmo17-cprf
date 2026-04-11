@@ -26,6 +26,7 @@
 \usetikzlibrary{decorations.pathreplacing,trees,calc}
 \usetikzlibrary{arrows.meta, positioning}
 \usetikzlibrary{matrix, positioning, arrows.meta}
+\usepackage[numbers]{natbib}
 
 % Couleurs et boîtes
 \usepackage[many]{tcolorbox}
@@ -84,7 +85,7 @@
 \author{
 \textbf{Julian Mouthon, Mario Razafinony}\\
 \small Master 1 Cryptologie, Calcul haute-performance et Algorithmique\\
-\small Sorbonne Université
+\small Sorbonne Université\\
 }
 \date{\today}
 
@@ -106,23 +107,26 @@ pseudo-aléatoires classiques permettant de restreindre les évaluations à un s
 d’entrées défini par une contrainte.
 
 Dans un premier temps, nous présentons les notions fondamentales liées aux fonctions
-pseudo-aléatoires et aux CPRFs, ainsi que la construction proposée par Bost, Minaud et
-Ohrimenko en 2017 (BMO17).
+pseudo-aléatoires et aux CPRFs, ainsi que la construction proposée par Bost, Minaud et Ohrimenko en 2017~\cite{BMO17}.
 
-Dans un second temps, nous nous intéressons aux travaux récents de Cheng et Jaeger
-en 2025 (CJ25), qui mettent en évidence une attaque contre cette CPRF et proposent une variante
-hachée assurant la sécurité face à un tel attaquant.\\\\
+Dans un second temps, nous étudions plusieurs variantes de cette construction reposant sur RSA, Rabin, AES,
+ainsi qu’une alternative basée sur des transformations linéaires, 
+$F^{\text{WEAK}}$, dont nous proposons une version hachée et pour 
+laquelle nous établissons une preuve de sécurité.
 
+Enfin, nous revenons sur les travaux récents de Cheng et Jaeger~\cite{CJ25}, 
+qui mettent en évidence une attaque contre cette CPRF et proposent une variante hachée 
+assurant sa sécurité face à un tel attaquant.
 
+L’ensemble du projet est accompagné d’une implémentation complète et de simulations
+permettant d’évaluer les attaques.
 
-\small \textit{Le code source est disponible sur GitHub : 
+\small \textit{Le code source associé au projet est disponible sur GitHub : 
 \href{https://github.com/julian-mtn/bmo17-cprf.git}{https://github.com/julian-mtn/bmo17-cprf.git}}
 
 
 \newpage
-
 \tableofcontents
-\newpage
 
 \section{Définitions}
 
@@ -307,7 +311,7 @@ d’exécution indépendant des données.
 
 La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
 privée RSA. L’état initial est généré comme un entier aléatoire de 256 bits à partir de
-\texttt{/dev/urandom}..
+\texttt{/dev/urandom}.
 
 L’évaluation avec la clé maîtresse consiste à appliquer $c$ fois l’inverse de la permutation
 RSA à partir de $ST_0$.
@@ -369,7 +373,7 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \text{résultat 'brouillé'} & \text{sinon}
 \end{cases}
 \]
-Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il es impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
+Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il est impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
@@ -603,7 +607,7 @@ Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famil
 
 En répétant ce procédé $M$ fois, on peut donc réécrire chaque ligne $S_i$ de $S$ en fonction d'un élément $S_{i,N}$.
 
-Cet alternative permet donc de reconstruire chaque élément $S_{i,j}$ ligne  de la matrice $S$ en fonction d'un seul élément $S_{i,N}$. Ceci permet à l'attaquant, à chaque requête envoyer à l'oracle, de retrouver une valeur de $S_{i,N}$, et de garder les valeurs de $S_{i,N}$ qui se répètent le plus comme la vraie valeur de $S_{i,N}$.
+Cette alternative permet donc de reconstruire chaque élément $S_{i,j}$ ligne  de la matrice $S$ en fonction d'un seul élément $S_{i,N}$. Ceci permet à l'attaquant, à chaque requête envoyer à l'oracle, de retrouver une valeur de $S_{i,N}$, et de garder les valeurs de $S_{i,N}$ qui se répètent le plus comme la vraie valeur de $S_{i,N}$.
 
 \paragraph{Remarque :} Le choix d'utiliser un élément $S_{i,N}$ pour écrire chaque ligne $S_i$ de $S$ est arbitraire. On aurait pu réécrire chaque ligne $S_i$ de $S$ avec n'importe quel élément $S_{i,l}$.
 Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de $X$ sera $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, le vecteur $\vec{S_i}^T$ sera $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$ et chaque élément de $\vec{k_i}$ sera $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
@@ -671,7 +675,7 @@ Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$
 
   \textbf{Phase 6 - Interprétation :}
 
-  Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redontantes, alors c'est très probablement le résultat d'une fonction aléatoire.
+  Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redondantes, alors c'est très probablement le résultat d'une fonction aléatoire.
 
   \medskip
 
@@ -683,17 +687,18 @@ Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$
 
 \subsubsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
 
-Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cet implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
+Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cette implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
 
 \paragraph{\'{E}valuation sur les entrées non contraintes : }Lorsqu'un attaquant demande l'évaluation d'un vecteur $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, alors l'oracle lui enverrait $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ au lieu de $Eval(\vec{x}) = S \cdot \vec{x}$, où $H$ est une fonction de hachage.
 
 \paragraph{Demande d'une clé contrainte : }La demande de la clé contrainte par un attaquant reste inchangée. L'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, puis l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
 
-\paragraph{\'{E}valuation sur les entrées contraintes : }Après avoir reçue une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
+\paragraph{\'{E}valuation sur les entrées contraintes : }Après avoir reçu une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
 
-Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourras pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précedente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
+Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourra pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précédente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
 
 
+\subsubsection{Preuve de sécurité de $F^{WEAK}$ hachée}
 
 \subsection{Permutation à trappe de Rabin}
 
@@ -852,10 +857,10 @@ tout en conservant l’accès à un oracle d’évaluation global.
 \paragraph{}
 Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
 clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
-entrée $x$ telle que $x > n$ à l’aide des permutations publiques associées.
+entrée $x$ telle que $x < n$ à l’aide des permutations publiques associées.
 
 Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
-$x > n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
+$x < n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
 provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
 
 À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
@@ -1085,33 +1090,9 @@ L'évaluation est définie par :
 
 
 
-\section{Preuves de la sécurité des CPRFs hachées}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %///////////////////////////////ANNEXE%///////////////////////////////
 
 
-\newpage
 \appendix
 
 \section{Annexe : Graphiques et guide d'utilisation}
@@ -1182,5 +1163,24 @@ make
 \begin{verbatim}
 python3 display.py
 \end{verbatim}
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{BMO17}
+E. Bost, B. Minaud, and O. Ohrimenko,
+\textit{Forward and Backward Private Searchable Encryption from
+Constrained Cryptographic Primitives},
+ACM CCS 2017.
+
+\bibitem{CJ25}
+K. Cheng and J. Jaeger,
+\textit{Adaptive Security for Constrained PRFs},
+2025.
+
+\end{thebibliography}
+
+
 
 \end{document}
