@@ -700,6 +700,27 @@ Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un atta
 
 \subsubsection{Preuve de sécurité de $F^{WEAK}$ hachée}
 
+
+\begin{defbox}{\text{Théorème 2 (CJ25~\cite{CJ25})}}
+Soit $CF$ une CPRF. Si les conditions suivantes sont satisfaites :
+\begin{itemize}
+    \item $\min_x |\textsf{CF.Out}(\lambda, x)|$ est super-polynomial en $\lambda$,
+    \item $CF$ est IND$^*$-NC-CPRF sécurisée,
+    \item L'oracle aléatoire utilisé est non-programmable,
+\end{itemize}
+alors la construction $\textsf{Hashed}[CF]$ est \textbf{SIM$^*$-AC-CPRF sécurisée},
+c’est-à-dire qu’aucun adversaire efficace (à nombre polynomial de requêtes)
+ne peut distinguer cette construction d’un idéal, même en présence d’un oracle de hachage aléatoire.
+\end{defbox}
+
+\begin{defbox}{Fonction super-polynomiale}
+Une fonction $f : \mathbb{N} \rightarrow \mathbb{N}$ est dite \emph{super-polynomiale} si, pour tout polynôme $p(\lambda)$, il existe $N$ tel que pour tout $\lambda \geq N$,
+\[
+f(\lambda) > p(\lambda).
+\]
+Autrement dit, $f(\lambda)$ croît plus vite que toute fonction polynomiale.
+\end{defbox}
+
 \subsection{Permutation à trappe de Rabin}
 
 \paragraph{}La permutation de Rabin est une fonction à trappe fondée sur la difficulté de la factorisation des entiers. Elle repose sur l'opération de mise au carré modulo un entier composé.
