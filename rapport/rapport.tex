@@ -218,7 +218,7 @@ L’évaluation consiste à appliquer $c$ fois l’inverse de la permutation à 
   \node[state] (s0) {$ST_0$};
   \node[state, right of=s0] (s1) {$ST_1$};
   \node[right of=s1] (dots) {$\cdots$};
-  \node[state, right of=dots] (sn) {$ST_n$};
+  \node[state, right of=dots] (sn) {$ST_c$};
 
   \draw[arrow] (s0) -- node[above] {$\pi^{-1}$} (s1);
   \draw[arrow] (s1) -- node[above] {$\pi^{-1}$} (dots);
@@ -720,6 +720,72 @@ f(\lambda) > p(\lambda).
 \]
 Autrement dit, $f(\lambda)$ croît plus vite que toute fonction polynomiale.
 \end{defbox}
+
+\begin{itemize}
+\item \textbf{$\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ est super-polynomial en $\lambda$ :}
+
+Dans l'implémentation de la CPRF $F^{\text{WEAK}}$, nous travaillons avec des coefficients de $\mathbb{Z}/p\mathbb{Z}$ où $p$ est de taille $\lambda$. On a donc $|\mathbb{Z}/p\mathbb{Z}| \approx 2^{\lambda}$.
+
+L'evaluation d'une entrée $x \in (\mathbb{Z}/p\mathbb{Z})^N$ par $F^{\text{WEAK}}$ se fait par $Eval(F^{WEAK},\vec{x}) = S \cdot \vec{x}$, ce qui est une application linéaire, qui est donc une bijection. Ceci implique que $\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)$d a la même taille pour tout $x \in (\mathbb{Z}/p\mathbb{Z})^N$.
+
+Fixons $x \in (\mathbb{Z}/p\mathbb{Z})^N$. Pour tout $S,S' \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$, $S \neq S' \Rightarrow S \cdot x \neq S' \cdot x$. Comme $S$ est de taille $M \times N$, et que les coefficients sont dans $\mathbb{Z}/p\mathbb{Z}$, on en déduit qu'il existe  $(2^{\lambda})^{M \times N} = 2^{\lambda \times M \times N}$ clé maîtresse différentes.
+
+On conclue que $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)| \approx 2^{\lambda \times M \times N}$ qui est super-polynomial en $\lambda$.
+
+\item \textbf{L'oracle aléatoire utilisé est non-programmable :}
+
+On rappel que la fonction lazy sampling $P.Ls$ et la fonction de programmation $P.Prog$ sont implémentées comme suit :
+
+
+
+\begin{center}
+  \begin{tabular}{l|l}
+    \textbf{\underline{$P.Ls(1^{\lambda}, x, \sigma_P)$}} & \textbf{\underline{$P.Prog(1^{\lambda}, x, y, \sigma_P)$}} \\
+    SI $\sigma_P[x] = \perp$ alors $\sigma_P[x] \leftarrow Random(1^{\lambda})$ & Si $\sigma_P[x] = \perp$ alors $\sigma_P[x] \leftarrow y$ \\
+    Renvoyer $\sigma_P[x]$ & Renvoyer $\perp$
+  \end{tabular}
+\end{center}
+
+On dit que $P$ est non programmable si $P.Prog$ ne met pas à jour $\sigma_P$ et l'exécution de $P.Ls$ sur différentes entrées ne change pas la distribution de sa sortie.
+
+Dans notre implémentation de $F^{\text{WEAK}}$, nous utilisons le lazy sampling pour implémenter la fonction de hachage $H$. Ceci implique que $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ est fixé uniquement lorsque l'évaluation de $\vec{x}$ est demandée, mais pas plus tôt.
+
+On peut donc conclure que $P$ est non-programmable.
+
+\item \textbf{$F^{\text{WEAK}}$ est IND$^*$-NC-CPRF sécurisée :}
+
+Pour cette condition, on peut prouver que $CF$ est IND$^*$-NC-CPRF sécurisée si il n'existe pas un attaquant qui :
+
+\begin{itemize}
+  \item Demande toutes les évaluations
+  \item Effectue ses calculs
+  \item Renvoie ses réponses à l'oracle tout en ayant un avantage significatif
+\end{itemize}
+
+Dans notre jeu de sécurité, dans la phase 5, l'attaquant procède comme suit : 
+
+\begin{itemize}
+  \item Demande \textbf{une} évaluation
+  \item Effectue ses calculs
+  \item Renvoie sa réponse à l'oracle tout en ayant un avantage significatif
+  \item Recommence
+\end{itemize}
+
+Cependant, il est possible de modifier la phase 5 de notre jeu de sécurité pour que l'attaquant procède comme suit : 
+
+\begin{itemize}
+  \item Choisir $n$ vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour chacun des vecteurs $\vec{x}$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
+  \item Demander à $O$ l'evaluation des $n$ vecteurs $\vec{x}$ : $Eval(\vec{x})$.
+  \item Pour chaque évaluation des $n$ vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, calculer $S_{i,N} \forall i$..
+  \item Pour chaque $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
+  \item Pour chaque $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+\end{itemize}
+
+Un attaquant aura les même avantages en utilisant cet attaque, sans effectuer des évaluations adaptatives, ce qui montre que $F^{\text{WEAK}}$ n'est pas IND$^*$-NC-CPRF sécurisée.
+
+\end{itemize}
+
+Toutefois, le fait que $F^{\text{WEAK}}$ n'est pas IND$^*$-NC-CPRF sécurisée n'implique pas que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}. Ceci n'est donc pas une preuve que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}.
 
 \subsection{Permutation à trappe de Rabin}
 
