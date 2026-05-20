@@ -1180,11 +1180,7 @@ L'évaluation est définie par :
 %///////////////////////////////ANNEXE%///////////////////////////////
 
 
-\appendix
-
-\section{Annexe : Graphiques et guide d'utilisation}
-
-\subsection{Résultats expérimentaux}
+\section{Résultats expérimentaux}
 
 \paragraph{}Après avoir implémenté les différentes versions de la CPRF (normale, hachée avec SHA-256 et hachée avec lazy sampling), nous avons mené des expériences pour évaluer l’efficacité de l’attaque CJ25 contre chacune d’elles.
 Les tests ont été réalisés en exécutant 100 requêtes d’évaluation pour chaque version, et en enregistrant le taux de succès de l’attaque à chaque étape.
@@ -1215,7 +1211,7 @@ Ces deux figures montrent aussi que le choix du hachage n'a pas d'impact signifi
 \caption{Attaque version hachée avec lazy sampling}
 \end{figure}
 
-\subsection{Guide d'utilisation}
+\section{Guide d'utilisation}
 
 \subsubsection*{Compiler}
 
@@ -1251,7 +1247,8 @@ make
 python3 display.py
 \end{verbatim}
 
-
+\newpage
+\appendix
 
 \begin{thebibliography}{9}
 
