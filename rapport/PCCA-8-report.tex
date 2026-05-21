@@ -100,26 +100,32 @@
 \maketitle
 
 \section*{Introduction}
+Les fonctions pseudo-aléatoires (\emph{Pseudorandom Functions}, PRF) sont des primitives
+fondamentales en cryptographie moderne. Elles interviennent dans de nombreux protocoles,
+notamment pour le chiffrement symétrique, l’authentification ou la dérivation de clés.
+Dans certains contextes, il est nécessaire de déléguer uniquement une partie des capacités
+d’évaluation d’une PRF sans révéler la clé secrète complète. Ce besoin apparaît notamment dans le contexte de la recherche sur données chiffrées
+(\emph{Searchable Symmetric Encryption}) et du stockage externalisé sur des serveurs non fiables,
+où il est nécessaire de contrôler précisément les capacités d’évaluation d’un adversaire~\cite{BMO17}.
+Les fonctions pseudo-aléatoires contraintes (\emph{Constrained Pseudorandom Functions}, CPRF)
+répondent à ce problème en permettant de restreindre l’évaluation de la fonction à un sous-ensemble
+d’entrées défini par une contrainte~\cite{BMO17}.
 
-Ce projet s’intéresse aux fonctions pseudo-aléatoires contraintes
-(\emph{Constrained Pseudorandom Functions}, CPRF), une extension des fonctions
-pseudo-aléatoires classiques permettant de restreindre les évaluations à un sous-ensemble
-d’entrées défini par une contrainte.
-
+Ce projet s’intéresse à la construction de CPRF proposée par
+Bost, Minaud et Ohrimenko en 2017~\cite{BMO17}, basée sur l’itération
+d’une permutation à trappe.
 Dans un premier temps, nous présentons les notions fondamentales liées aux fonctions
-pseudo-aléatoires et aux CPRFs, ainsi que la construction proposée par Bost, Minaud et Ohrimenko en 2017~\cite{BMO17}.
-
+pseudo-aléatoires et aux CPRF, ainsi que la construction proposée dans~\cite{BMO17}.
 Dans un second temps, nous étudions plusieurs variantes de cette construction reposant sur RSA, Rabin, AES,
-ainsi qu’une alternative basée sur des transformations linéaires, 
-$F^{\text{WEAK}}$, dont nous proposons une version hachée et pour 
-laquelle nous établissons une preuve de sécurité.
-
-Enfin, nous revenons sur les travaux récents de Cheng et Jaeger~\cite{CJ25}, 
-qui mettent en évidence une attaque contre cette CPRF et proposent une variante hachée 
-assurant sa sécurité face à un tel attaquant.
+ainsi qu’une alternative basée sur des transformations linéaires,
+$F^{\text{WEAK}}$, dont nous proposons une version hachée et pour laquelle
+nous discutons la sécurité.
+Enfin, nous revenons sur les travaux récents de Cheng et Jaeger~\cite{CJ25},
+qui mettent en évidence une attaque contre cette CPRF et proposent une variante hachée
+permettant de renforcer sa sécurité.
 
 L’ensemble du projet est accompagné d’une implémentation complète et de simulations
-permettant d’évaluer les attaques.
+permettant d’évaluer expérimentalement les attaques étudiées.
 
 \small \textit{Le code source associé au projet est disponible sur GitHub : 
 \href{https://github.com/julian-mtn/bmo17-cprf.git}{https://github.com/julian-mtn/bmo17-cprf.git}}
@@ -301,10 +307,6 @@ avec
 \[
 x^{e \cdot d} = x \bmod N , \forall x \in \mathbb{Z}_N.
 \] 
-
-Afin de limiter les fuites par canaux auxiliaires, l’évaluation privée est réalisée à l’aide
-de la fonction \texttt{BN\_mod\_exp\_mont\_consttime} d’OpenSSL, qui garantit un temps
-d’exécution indépendant des données.
 
 
 \subsubsection{Implémentation de la clé maîtresse et génération de l’état initial}
@@ -1179,36 +1181,40 @@ L'évaluation est définie par :
 
 %///////////////////////////////ANNEXE%///////////////////////////////
 
-
 \section{Résultats expérimentaux}
 
-\paragraph{}Après avoir implémenté les différentes versions de la CPRF (normale, hachée avec SHA-256 et hachée avec lazy sampling), nous avons mené des expériences pour évaluer l’efficacité de l’attaque CJ25 contre chacune d’elles.
-Les tests ont été réalisés en exécutant 100 requêtes d’évaluation pour chaque version, et en enregistrant le taux de succès de l’attaque à chaque étape.
+\paragraph{}Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
+nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
+Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
 
-\paragraph{}Dans la figure \ref{fig:stat1}, on constate les résultats sur les attaques sur la version non hachée de la CPRF. On observe que l'attaque CJ25 est très efficace contre la CPRF non hachée, avec une probabilité de succès proche de 1 dès les premières requêtes d'évaluation. Avec $N$ de l'ordre de $2^{4096}$, la probabilité de se tromper est de $1/N$, ce qui est pratiquement nul.
-Le taux d'attaque réussie à 100\% s'explique par le fait que l'attaquant doit faire en espérance $N = 2^{4096}$ requêtes pour se tromper une fois.
+\paragraph{}La figure \ref{fig:stat1} présente les résultats obtenus sur la version non hachée de la CPRF. 
+On observe que l’attaque CJ25 est très efficace dans ce cas, avec une probabilité de succès proche de 1 dès les premières requêtes. 
+Cela s’explique par le fait que la structure de la CPRF reste entièrement exploitable dans ce modèle, ce qui permet à l’attaquant de distinguer les comportements de la fonction.
 
-\paragraph{}Sur les figures \ref{fig:stat2} et \ref{fig:stat3}, on a utilisé le même modèle d'attaque contre les versions hachées avec SHA-256 et avec le lazy sampling.
-On observe que l'attaque est complètement inefficace, avec un taux de succès proche de 0.5, ce qui correspond à une attaque aléatoire car l'attaquant ne détecte jamais de CPRF et se trompe dans la moitié des cas.
-Ces deux figures montrent aussi que le choix du hachage n'a pas d'impact significatif sur l'efficacité de l'attaque, ce qui confirme que l'introduction du hachage rend la structure de la CPRF indiscernable pour l'attaquant.
+\paragraph{}Dans les figures \ref{fig:stat2} et \ref{fig:stat3}, la même attaque est appliquée aux versions hachées (SHA-256 et lazy sampling). On observe alors un échec systématique de l’attaque, avec un taux de succès proche de 0.5, correspondant à un comportement équivalent à une décision aléatoire. Dans ces cas, l’attaquant ne parvient plus à exploiter la structure de la CPRF.
+
+\paragraph{}Enfin, les résultats suggèrent que le choix du schéma de hachage (SHA-256 ou lazy sampling) n’a pas d’impact significatif sur la robustesse observée dans nos expérimentations, les deux variantes présentant des comportements similaires face à l’attaque CJ25.
 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{./images/stat1.png}
+\includegraphics[width=0.7\textwidth]{./images/stat1.png}
 \caption{Attaque version non hachée}
+\label{fig:stat1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{./images/stat2.png}
+\includegraphics[width=0.7\textwidth]{./images/stat2.png}
 \caption{Attaque version hachée avec SHA-256}
+\label{fig:stat2}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{./images/stat3.png}
+\includegraphics[width=0.7\textwidth]{./images/stat3.png}
 \caption{Attaque version hachée avec lazy sampling}
+\label{fig:stat3}
 \end{figure}
 
 \section{Guide d'utilisation}
@@ -1247,7 +1253,6 @@ make
 python3 display.py
 \end{verbatim}
 
-\newpage
 \appendix
 
 \begin{thebibliography}{9}
@@ -1264,7 +1269,5 @@ K. Cheng and J. Jaeger,
 2025.
 
 \end{thebibliography}
-
-
 
 \end{document}
