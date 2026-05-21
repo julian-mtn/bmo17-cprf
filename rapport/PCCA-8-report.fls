@@ -389,6 +389,11 @@ INPUT ./images/stat3.png
 INPUT ./images/stat3.png
 INPUT ./images/stat3.png
 INPUT ./images/stat3.png
+INPUT ./images/stat4.png
+INPUT ./images/stat4.png
+INPUT ./images/stat4.png
+INPUT ./images/stat4.png
+INPUT ./images/stat4.png
 INPUT PCCA-8-report.aux
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.pfb
 INPUT /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb

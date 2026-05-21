@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1779354361.76467 "/home/julian/Bureau/PCCA/bmo17-cprf/rapport/PCCA-8-report.tex" "PCCA-8-report.pdf" "PCCA-8-report" 1779354363.17281 0
+["pdflatex"] 1779358775.18672 "/home/julian/Bureau/PCCA/bmo17-cprf/rapport/PCCA-8-report.tex" "PCCA-8-report.pdf" "PCCA-8-report" 1779358779.6138 0
   "/etc/texmf/web2c/texmf.cnf" 1761145480.36181 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/julian/Bureau/PCCA/bmo17-cprf/rapport/PCCA-8-report.tex" 1779354359.93902 53355 2a79197d6fa92289c83df7ba4cb90659 ""
+  "/home/julian/Bureau/PCCA/bmo17-cprf/rapport/PCCA-8-report.tex" 1779358769.50641 53498 643dd945f41650105eb3633e1cb8631f ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0500.tfm" 1136768653 3584 0913860e6fa2bdf78ecaf460b391112b ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0600.tfm" 1136768653 3584 ad9fcbc26a2a7bccd6d08b0a5792fbe0 ""
@@ -241,13 +241,14 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770116836.56821 5349306 5bebe4c4513170eb7b91d5de73269dde ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770116845 6837886 995b4c421a219235e7928a91b461690a ""
-  "PCCA-8-report.aux" 1779354363.04701 27001 c07a39e10f7cc935524618f05ffcca1f "pdflatex"
-  "PCCA-8-report.tex" 1779354359.93902 53355 2a79197d6fa92289c83df7ba4cb90659 ""
-  "PCCA-8-report.toc" 1779354363.05101 4854 10c9c77b6595042a5f137510e72b2708 "pdflatex"
+  "PCCA-8-report.aux" 1779358779.25151 27187 d0477ac80eb873069865dfb3ee82cc9b "pdflatex"
+  "PCCA-8-report.tex" 1779358769.50641 53498 643dd945f41650105eb3633e1cb8631f ""
+  "PCCA-8-report.toc" 1779358779.26551 4854 5c34832fde312453e6bd3fd056d4c83d "pdflatex"
   "images/sorbonne.png" 1776354407.12832 7860 7634c442bbbc26e80b522a21fb5dd53f ""
   "images/stat1.png" 1771680282.48971 42967 40c0dcb8fa301c90bede3ddec928ffab ""
   "images/stat2.png" 1771583281.37909 79714 626461b2aaa42aa11e2f2428ebc08ab5 ""
   "images/stat3.png" 1771844476.72097 78799 5cabcaa9ed23b6effdc17d5c9076772b ""
+  "images/stat4.png" 1779358669.69139 45729 8e87c0738aa3e268c1620ecda8277e6a ""
   (generated)
   "PCCA-8-report.aux"
   "PCCA-8-report.log"
