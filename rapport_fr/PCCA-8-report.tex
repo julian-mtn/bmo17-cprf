@@ -308,7 +308,7 @@ avec
 x^{e \cdot d} = x \bmod N , \forall x \in \mathbb{Z}_N.
 \] 
 
-
+\newpage
 \subsubsection{Implémentation de la clé maîtresse et génération de l’état initial}
 
 La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
@@ -377,6 +377,7 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \]
 Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il est impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
+\newpage
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
@@ -691,11 +692,11 @@ Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$
 
 Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cette implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
 
-\paragraph{\'{E}valuation sur les entrées non contraintes : }Lorsqu'un attaquant demande l'évaluation d'un vecteur $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, alors l'oracle lui enverrait $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ au lieu de $Eval(\vec{x}) = S \cdot \vec{x}$, où $H$ est une fonction de hachage.
+\textbf{\'{E}valuation sur les entrées non contraintes : }Lorsqu'un attaquant demande l'évaluation d'un vecteur $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, alors l'oracle lui enverrait $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ au lieu de $Eval(\vec{x}) = S \cdot \vec{x}$, où $H$ est une fonction de hachage.
 
-\paragraph{Demande d'une clé contrainte : }La demande de la clé contrainte par un attaquant reste inchangée. L'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, puis l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+\textbf{Demande d'une clé contrainte : }La demande de la clé contrainte par un attaquant reste inchangée. L'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, puis l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
 
-\paragraph{\'{E}valuation sur les entrées contraintes : }Après avoir reçu une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
+\textbf{\'{E}valuation sur les entrées contraintes : }Après avoir reçu une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
 
 Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourra pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précédente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
 
@@ -1198,67 +1199,31 @@ Enfin, les résultats suggèrent que le choix du schéma de hachage (SHA-256 ou 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat1.png}
+\includegraphics[width=0.9\textwidth]{./images/stat1.png}
 \caption{Attaque version non hachée}
 \label{fig:stat1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat2.png}
+\includegraphics[width=0.9\textwidth]{./images/stat2.png}
 \caption{Attaque version hachée avec SHA-256}
 \label{fig:stat2}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat3.png}
+\includegraphics[width=0.9\textwidth]{./images/stat3.png}
 \caption{Attaque version hachée avec lazy sampling}
 \label{fig:stat3}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat4.png}
+\includegraphics[width=0.9\textwidth]{./images/stat4.png}
 \caption{Attaque Fweak}
 \label{fig:stat4}
 \end{figure}
-
-\section{Guide d'utilisation}
-
-\subsubsection*{Compiler}
-
-\begin{verbatim}
-make
-\end{verbatim}
-
-\subsubsection*{Exécuter}
-
-\begin{verbatim}
-./start.sh <mode> [parameters]
-\end{verbatim}
-
-\begin{center}
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Mode} & \textbf{Paramètres} & \textbf{Description} \\
-\hline
-\texttt{-n} & \texttt{<size>} & CPRF normale, nombre de tests \\
-\hline
-\texttt{-h} & \texttt{<size>} & CPRF hachée (SHA-256), nombre de tests \\
-\hline
-\texttt{-l} & \texttt{<size>} & Lazy sampling, nombre de tests \\
-\hline
-\texttt{-f} & \texttt{<tries> <N> <M>} & Mode FWEAK : nombre de tentatives, taille N et M \\
-\hline
-\end{tabular}
-\end{center}
-
-\subsubsection*{Afficher les courbes}
-
-\begin{verbatim}
-python3 display.py
-\end{verbatim}
 
 \appendix
 
