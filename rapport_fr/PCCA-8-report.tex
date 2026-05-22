@@ -1183,17 +1183,17 @@ L'évaluation est définie par :
 
 \section{Résultats expérimentaux}
 
-\paragraph{}Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
+Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
 nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
 Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
 
-\paragraph{}La figure \ref{fig:stat1} présente les résultats obtenus sur la version non hachée de la CPRF. 
+La figure \ref{fig:stat1} présente les résultats obtenus sur la version non hachée de la CPRF. 
 On observe que l’attaque CJ25 est très efficace dans ce cas, avec une probabilité de succès proche de 1 dès les premières requêtes. 
 Cela s’explique par le fait que la structure de la CPRF reste entièrement exploitable dans ce modèle, ce qui permet à l’attaquant de distinguer les comportements de la fonction.
 
-\paragraph{}Dans les figures \ref{fig:stat2} et \ref{fig:stat3}, la même attaque est appliquée aux versions hachées (SHA-256 et lazy sampling). On observe alors un échec systématique de l’attaque, avec un taux de succès proche de 0.5, correspondant à un comportement équivalent à une décision aléatoire. Dans ces cas, l’attaquant ne parvient plus à exploiter la structure de la CPRF.
+Dans les figures \ref{fig:stat2} et \ref{fig:stat3}, la même attaque est appliquée aux versions hachées (SHA-256 et lazy sampling). On observe alors un échec systématique de l’attaque, avec un taux de succès proche de 0.5, correspondant à un comportement équivalent à une décision aléatoire. Dans ces cas, l’attaquant ne parvient plus à exploiter la structure de la CPRF.
 
-\paragraph{}Enfin, les résultats suggèrent que le choix du schéma de hachage (SHA-256 ou lazy sampling) n’a pas d’impact significatif sur la robustesse observée dans nos expérimentations, les deux variantes présentant des comportements similaires face à l’attaque CJ25.
+Enfin, les résultats suggèrent que le choix du schéma de hachage (SHA-256 ou lazy sampling) n’a pas d’impact significatif sur la robustesse observée dans nos expérimentations, les deux variantes présentant des comportements similaires face à l’attaque CJ25.
 
 
 \begin{figure}[H]

@@ -101,18 +101,14 @@
 \section*{Introduction}
 Pseudorandom functions (PRFs) are fundamental primitives in modern cryptography.
 They are used in many protocols, notably for symmetric encryption, authentication, and key derivation.
-
 In some contexts, it is necessary to delegate only part of the evaluation capabilities of a PRF without revealing the full secret key. This need arises in particular in the context of Searchable Symmetric Encryption and outsourced storage on untrusted servers, where it is necessary to precisely control an adversary’s evaluation capabilities~\cite{BMO17}.
-
 Constrained pseudorandom functions (CPRFs) address this problem by allowing the restriction of the function’s evaluation to a subset of inputs defined by a constraint~\cite{BMO17}.
 
 This project focuses on the CPRF construction proposed by
 Bost, Minaud, and Ohrimenko in 2017~\cite{BMO17}, based on iteration of a trapdoor permutation.
-
 First, we present the fundamental notions related to pseudorandom functions and CPRFs, as well as the construction introduced in~\cite{BMO17}.
 Second, we study several variants of this construction based on RSA, Rabin, and AES, as well as an alternative based on linear transformations,
 $F^{\text{WEAK}}$, for which we propose a hashed version and analyze its security.
-
 Finally, we revisit recent work by Cheng and Jaeger~\cite{CJ25}, which presents an attack on this CPRF and proposes a hashed variant that improves its security.
 
 The project is accompanied by a complete implementation and simulations
@@ -373,7 +369,7 @@ Let $\vec{S_i} \in (\mathbb{Z}/p\mathbb{Z})^N$ denote the $i$-th row of $S$.
 For a vector $\vec{x}$ orthogonal to $\vec{y}$, for each $\vec{S_i}$ we define
 $k_i = \vec{S_i} \cdot \vec{x} = \vec{S_{\vec{y},i}} \cdot \vec{x}$.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 
@@ -426,7 +422,7 @@ By choosing $N$ vectors $\{\vec{x_j}\}_{1 \leq j \leq N}$ such that
 $\langle \vec{x_j},\vec{y} \rangle = 0$ for all $j$, we can construct a matrix
 $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ such that the $j$-th row of $X$ is $\vec{x_j}^T$.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[>=Latex]
 
@@ -443,14 +439,13 @@ $X \in (\mathbb{Z}/p\mathbb{Z})^{N \times N}$ such that the $j$-th row of $X$ is
 \caption{Matrix $X$ for the attack built from $\{\vec{x_j}\}$ orthogonal to $\vec{y}$}
 \end{figure}
 
+%Since $\{\vec{x_j}\}_{1 \leq j \leq N}$ is a linearly independent family, we have $rank(X) = N$, therefore $X$ is invertible. 
 
-%Comme $\{\vec{x_j}\}_{1 \leq j \leq N}$ est une famille libre, on a $rang(X) = N$ donc $X$ est inversible. 
-
-Pour retrouver la matrice $S$, il suffit donc de résoudre le système linéaire $X \cdot \vec{Si}^T = \vec{k_i}$ où le jème élément de $\vec{k_i}$ est $k_{i_j} = \vec{Si} \cdot \vec{x_j}$, pour chaque ligne $S_i$ de $S$.
-
+To recover the matrix $S$, it is therefore sufficient to solve the linear system $X \cdot \vec{Si}^T = \vec{k_i}$ where the j-th element of $\vec{k_i}$ is $k_{i_j} = \vec{Si} \cdot \vec{x_j}$, for each row $S_i$ of $S$.
 
 
-\begin{figure}[h]
+
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}
 
@@ -505,34 +500,34 @@ k_{i_1} \\ k_{i_2} \\ \vdots \\ k_{i_N} \\
     node[midway, below=8pt] {};
 
 \end{tikzpicture}
-\caption{Représentation du système linéaire $X \cdot \vec{S_i}^T = \vec{k_i}$,
-où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
+\caption{Representation of the linear system $X \cdot \vec{S_i}^T = \vec{k_i}$,
+where $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 \end{figure}
 
 
-On répète $M$ fois ce procédé pour retrouver chacun des $\vec{Si}$.
+This procedure is repeated $M$ times in order to recover each $\vec{Si}$.
 
-\paragraph{Problème :}
+\paragraph{Problem:}
 
-Le système linéaire admet une solution unique si et seulement si la matrice $X$ est inversible, ce qui est équivalent à $\mathrm{rang}(X) = N$. 
-Afin de garantir cette inversibilité, il est nécessaire de choisir des vecteurs $\vec{x_j}$ tels que la famille $\{\vec{x_j}\}_{1 \leq j \leq N}$ soit libre, 
-c’est-à-dire qu’elle engendre un espace vectoriel de dimension $N$.
+The linear system admits a unique solution if and only if the matrix $X$ is invertible, which is equivalent to $\mathrm{rang}(X) = N$. 
+In order to guarantee this invertibility, it is necessary to choose vectors $\vec{x_j}$ such that the family $\{\vec{x_j}\}_{1 \leq j \leq N}$ is linearly independent, 
+that is, it spans a vector space of dimension $N$.
 
-Par ailleurs, chaque vecteur $\vec{x_j}$ doit être orthogonal à $\vec{y}$. 
-On a alors que l’ensemble $\{\vec{y}\} \cup \{\vec{x_j}\}_{1 \leq j \leq N}$ est constitué de $N+1$ vecteurs deux à deux linéairement indépendants, 
-et engendrerait donc un espace de dimension $N+1$.
+Furthermore, each vector $\vec{x_j}$ must be orthogonal to $\vec{y}$. 
+We then have that the set $\{\vec{y}\} \cup \{\vec{x_j}\}_{1 \leq j \leq N}$ consists of $N+1$ pairwise linearly independent vectors, 
+and would therefore span a vector space of dimension $N+1$.
 
-Ceci est impossible, puisque ces vecteurs appartiennent tous à $(\mathbb{Z}/p\mathbb{Z})^N$, qui est de dimension $N$. Cette contradiction montre qu’il est impossible de construire une telle famille de vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N}$ satisfaisant simultanément ces conditions.
+This is impossible, since all these vectors belong to $(\mathbb{Z}/p\mathbb{Z})^N$, which has dimension $N$. This contradiction shows that it is impossible to construct such a family of vectors $\{\vec{x_j}\}_{1 \leq j \leq N}$ simultaneously satisfying these conditions.
 
-\paragraph{Alternative :}
+\paragraph{Alternative:}
 
-Dans le cas général, on remarque tout de même que $\vec{y}$ engendre un espace de dimension $1$, ce qui implique qu'il est possible de choisir $N-1$ vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ tel que chaque vecteur $\vec{x_j}$ soit orthogonal à $\vec{y}$.
+In the general case, we still observe that $\vec{y}$ spans a vector space of dimension $1$, which implies that it is possible to choose $N-1$ vectors $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ such that each vector $\vec{x_j}$ is orthogonal to $\vec{y}$.
 
-En effet, dans le système linéaire précédent, pour chaque ligne $j$ de $X$, on a :
+Indeed, in the previous linear system, for each row $j$ of $X$, we have:
 
 \[ x_{j,1}*S_{i,1} + \ldots + x_{j,N}*S_{i,N} = k_{i_j} \Leftrightarrow x_{j,1}*S_{i,1} + \ldots + x_{j,N-1}*S_{i,N-1} = k_{i_j} - x_{j,N}*S_{i,N} \]
 
-On peut donc reconstruire une autre matrice $X$ de taille $(N-1) \times (N-1)$ puis poser le système linéaire suivant :
+We can therefore reconstruct another matrix $X$ of size $(N-1) \times (N-1)$ and then define the following linear system:
 
 \begin{figure}[H]
 \centering
@@ -546,11 +541,10 @@ On peut donc reconstruire une autre matrice $X$ de taille $(N-1) \times (N-1)$ p
 {
 x_{1,1} & \ldots & x_{1,N-1}  \\ x_{2,1} & \ldots & x_{2,N-1} \\ \vdots & \vdots & \vdots \\ x_{N-1,1} & \ldots & x_{N-1,N-1} \\
 };
-
-% --- Signe multiplié ---
+% --- Multiplication sign ---
 \node[right=0.3cm of X] (times) {$\cdot$};
 
-% --- Vecteur Si^T (N x 1) ---
+% --- Vector Si^T (N x 1) ---
 \matrix[matrix of math nodes,
         left delimiter={[},
         right delimiter={]},
@@ -560,10 +554,10 @@ x_{1,1} & \ldots & x_{1,N-1}  \\ x_{2,1} & \ldots & x_{2,N-1} \\ \vdots & \vdots
 S_{i,1} \\ S_{i,2} \\ \vdots \\ S_{i,N-1} \\
 };
 
-% --- Signe égal ---
+% --- Equal sign ---
 \node[right=0.3cm of Si] (eq) {$=$};
 
-% --- Vecteur k_i (N x 1) ---
+% --- Vector k_i (N x 1) ---
 \matrix[matrix of math nodes,
         left delimiter={[},
         right delimiter={]},
@@ -573,256 +567,253 @@ S_{i,1} \\ S_{i,2} \\ \vdots \\ S_{i,N-1} \\
 k_{i_1} - x_{1,N} \cdot S_{i,N} \\ k_{i_2} - x_{2,N} \cdot S_{i,N} \\ \vdots \\ k_{i_N-1} - x_{N-1,N} \cdot S_{i,N} \\
 };
 
-% --- Labels au-dessus ---
+% --- Labels above ---
 \node[above=0.3cm of X]  {$X$};
 \node[above=0.3cm of Si] {$\vec{S_i}^T$};
 \node[above=0.3cm of Ki] {$\vec{k_i}$};
 
-% --- Labels dimensions en dessous ---
+% --- Dimension labels below ---
 \node[below=0.3cm of X]  {\small ($N-1)\times (N-1)$};
 \node[below=0.3cm of Si] {\small ($N-1) \times 1$};
 \node[below=0.3cm of Ki] {\small ($N-1) \times 1$};
 
-% --- Accolade pour montrer le produit scalaire ligne i ---
+% --- Brace to illustrate the scalar product on row i ---
 \draw[decorate, decoration={brace, amplitude=5pt, mirror}, thick]
     (X.south west) -- (X.south east)
     node[midway, below=8pt] {};
 
 \end{tikzpicture}
-\caption{Représentation du nouveau système linéaire $X \cdot \vec{S_i}^T = \vec{k_i}$,
-où $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
+\caption{Representation of the new linear system $X \cdot \vec{S_i}^T = \vec{k_i}$,
+where $k_{i_j} = \vec{S_i} \cdot \vec{x_j}$}
 \end{figure}
 
-Ici, l'ensemble des vecteurs $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forme une famille libre, donc $rang(X) = N-1$, donc $X$ est inversible, donc ce système linéaire possède une unique solution. Cependant, cette unique solution est calculée en fonction de $S_{i,N}$.
+Here, the set of vectors $\{\vec{x_j}\}_{1 \leq j \leq N-1}$ forms a linearly independent family, therefore $rang(X) = N-1$, hence $X$ is invertible, and thus this linear system has a unique solution. However, this unique solution is computed as a function of $S_{i,N}$.
 
-En répétant ce procédé $M$ fois, on peut donc réécrire chaque ligne $S_i$ de $S$ en fonction d'un élément $S_{i,N}$.
+By repeating this process $M$ times, it is therefore possible to rewrite each row $S_i$ of $S$ as a function of a single element $S_{i,N}$.
 
-Cette alternative permet donc de reconstruire chaque élément $S_{i,j}$ ligne  de la matrice $S$ en fonction d'un seul élément $S_{i,N}$. Ceci permet à l'attaquant, à chaque requête envoyer à l'oracle, de retrouver une valeur de $S_{i,N}$, et de garder les valeurs de $S_{i,N}$ qui se répètent le plus comme la vraie valeur de $S_{i,N}$.
+This alternative therefore makes it possible to reconstruct each element $S_{i,j}$ of the matrix $S$ as a function of a single element $S_{i,N}$. This allows the attacker, for each query sent to the oracle, to recover one value of $S_{i,N}$, and to keep the values of $S_{i,N}$ that appear most frequently as the true value of $S_{i,N}$.
 
-\paragraph{Remarque :} Le choix d'utiliser un élément $S_{i,N}$ pour écrire chaque ligne $S_i$ de $S$ est arbitraire. On aurait pu réécrire chaque ligne $S_i$ de $S$ avec n'importe quel élément $S_{i,l}$.
-Dans ce cas, dans le système linéaire précédent, chaque ligne $\vec{x_i}$ de $X$ sera $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, le vecteur $\vec{S_i}^T$ sera $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$ et chaque élément de $\vec{k_i}$ sera $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
+\paragraph{Remark:} The choice of using an element $S_{i,N}$ to express each row $S_i$ of $S$ is arbitrary. Each row $S_i$ of $S$ could have been rewritten using any element $S_{i,l}$.
+In this case, in the previous linear system, each row $\vec{x_i}$ of $X$ becomes $(x_{i,1},\ldots,x_{i,l-1},x_{i,l+1},\ldots,x_{i,N}), \forall i \neq l$, the vector $\vec{S_i}^T$ becomes $(S_{i,1},\ldots,S_{i,l-1},S_{i,l+1},\ldots,S_{i,N})$, and each element of $\vec{k_i}$ becomes $k_{i_j} - x_{j,l} \cdot S_{i,l}, \forall i \neq l$
 
 
-\paragraph{Cas particulier :} On remarque que lorsque l'attaquant envoie un vecteur $\vec{y} = (0,\ldots,0,1)$ pour recevoir la clé maîtresse $S_{\vec{y}}$, il remarque que $\{(1,0,\ldots,0), (0,1,0,\ldots,0), \ldots, (0,\ldots,0,1,0)\}$ sont $N-1$ vecteurs de $(\mathbb{Z}/p\mathbb{Z})^N$ qui sont tous orthogonaux avec $\vec{y}$.
+\paragraph{Special case:} We observe that when the attacker sends a vector $\vec{y} = (0,\ldots,0,1)$ in order to receive the master key $S_{\vec{y}}$, they notice that $\{(1,0,\ldots,0), (0,1,0,\ldots,0), \ldots, (0,\ldots,0,1,0)\}$ are $N-1$ vectors of $(\mathbb{Z}/p\mathbb{Z})^N$ that are all orthogonal to $\vec{y}$.
 
-Pour reconstruire la matrice $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, il peut alors choisir choisir un vecteur $\vec{x_j} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$, pour la ligne $j$, où on a un $1$ au $j^{\text{ième}}$ élément du vecteur.
+To reconstruct the matrix $X \in (\mathbb{Z}/p\mathbb{Z})^{(N-1) \times (N-1)}$, they can then choose a vector $\vec{x_j} = (0,\ldots,0,1,0,\ldots,0) \in (\mathbb{Z}/p\mathbb{Z})^{N-1}$ for row $j$, where the vector contains a $1$ at its $j^{\text{th}}$ coordinate.
 
-Ainsi, dans le système linéaire précédent, on a $X = Id_{N-1}$ et $\forall j, x_{j,N} = 0$. On se retrouve donc avec le système linéaire $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. Ceci permet de retrouver les $N-1$ premières colonnes de $S$ immédiatement. En effet, dans ce cas particulier, $\forall j \leq N-1, S_{i,j} = k_{i_j} = \vec{S}_{\vec{y}_i} \cdot \vec{x_j} = S_{\vec{y}_{i,j}}$.
+Thus, in the previous linear system, we have $X = Id_{N-1}$ and $\forall j, x_{j,N} = 0$. We therefore obtain the linear system $X \cdot \vec{S_i}^T = \vec{k_i} \Leftrightarrow Id_{N-1} \cdot \vec{S_i}^T = \vec{k_i}$. This makes it possible to immediately recover the first $N-1$ columns of $S$. Indeed, in this special case, $\forall j \leq N-1, S_{i,j} = k_{i_j} = \vec{S}_{\vec{y}_i} \cdot \vec{x_j} = S_{\vec{y}_{i,j}}$.
 
-Donc, après avoir demandé l'évaluation d'un vecteur $EVAL(\vec{x}) = \vec{y}$ à l'oracle, pour retrouver $S_{i,N}$, on a $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, donc on a $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
+Therefore, after requesting the evaluation of a vector $EVAL(\vec{x}) = \vec{y}$ from the oracle, in order to recover $S_{i,N}$, we have $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, hence
+$S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
 
-\subsubsection{Jeu de sécurité pour l'attaque sur $F^{WEAK}$}
+\subsubsection{Security game for the attack on $F^{WEAK}$}
 
-\begin{defbox}{Jeu de sécurité sur la CPRF $F^{WEAK}$}
+\begin{defbox}{Security game on the CPRF $F^{WEAK}$}
 
-  L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui répond soit avec une $CPRF$ soit avec une fonction aléatoire. 
-  L’objectif de l'attaquant est de distinguer les deux cas.
+  The attacker $\mathcal{A}$ interacts with an oracle $O$ which responds either with a $CPRF$ or with a random function. 
+  The goal of the attacker is to distinguish between the two cases.
 
   \medskip
 
-  \textbf{Phase 1 - Initialisation :}
+  \textbf{Phase 1 - Initialization:}
   \begin{itemize}
-  \item $O$ construit une clé maîtresse $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$.
+  \item $O$ generates a master key $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$.
   \end{itemize}
 
   \medskip
 
-  \textbf{Phase 2 - Demande de clé contrainte :}
+  \textbf{Phase 2 - Constrained key request:}
   \begin{itemize}
-  \item $\mathcal{A}$ demande une clé contrainte en envoyant $\vec{y} = (0,\ldots,0,1)$ pour recevoir $S_{\vec{y}}$.
-  \item $O$ renvoie $S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+  \item $\mathcal{A}$ requests a constrained key by sending $\vec{y} = (0,\ldots,0,1)$ in order to receive $S_{\vec{y}}$.
+  \item $O$ returns $S_{\vec{y}} = S + d \cdot \vec{y}^T$.
   \end{itemize}
 
   \medskip
 
-  \textbf{Phase 3 - Reconstruction partielle :}
+  \textbf{Phase 3 - Partial reconstruction:}
   \begin{itemize}
-  \item $\mathcal{A}$ calcule $S_{\vec{y}} \cdot \vec{x}$ pour chacun des $\vec{x}$ de chaque ligne de $X$, pour retrouver $k_i$, ce qui lui permet de retrouver $S_{i,j}, \forall j \leq N-1$.
+  \item $\mathcal{A}$ computes $S_{\vec{y}} \cdot \vec{x}$ for each $\vec{x}$ corresponding to each row of $X$, in order to recover $k_i$, which allows them to recover $S_{i,j}, \forall j \leq N-1$.
   \end{itemize}
 
   \medskip
 
-  \textbf{Phase 4 - Initialisation du dictionnaire :}
+  \textbf{Phase 4 - Dictionary initialization:}
   \begin{itemize}
-  \item $\mathcal{A}$ initialise un dictionnaire $D$ vide.
+  \item $\mathcal{A}$ initializes an empty dictionary $D$.
   \end{itemize}
 
   \medskip
-
-  \textbf{Phase 5 - Requêtes d’évaluation et attaque :}
+  \textbf{Phase 5 - Evaluation queries and attack:}
   \begin{itemize}
-  \item $\mathcal{A}$ peut ensuite demander l'évaluation de plusieurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ non orthogonaux à $\vec{y}$ comme suit :
+  \item $\mathcal{A}$ can then request the evaluation of several $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ that are not orthogonal to $\vec{y}$ as follows:
     \begin{itemize}
-      \item Choisir $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
-      \item Demander à $O$ l'evaluation de $\vec{x}$ : $Eval(\vec{x})$.
-      \item Calculer $S_{i,N} \forall i$, $\mathcal{A}$ peut le calculer car il connait les valeurs de $S_{i,1},\ldots,S_{i,N-1}$.
-      \item Si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
-      \item Si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+      \item Choose a random $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ while ensuring that $x_N \neq 0$ in order to guarantee that $\vec{x}$ is not orthogonal to $\vec{y}$.
+      \item Request from $O$ the evaluation of $\vec{x}$: $Eval(\vec{x})$.
+      \item Compute $S_{i,N} \forall i$; $\mathcal{A}$ can compute it because they know the values of $S_{i,1},\ldots,S_{i,N-1}$.
+      \item If $(S_{1,N},\ldots,S_{N,N})$ is not in $D$, then insert into $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, otherwise increment $D(S_{1,N},\ldots,S_{N,N})$
+      \item If $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, then output CPRF oracle, otherwise output random function.
     \end{itemize}
   \end{itemize}
 
   \medskip
 
-  \textbf{Phase 6 - Interprétation :}
+  \textbf{Phase 6 - Interpretation:}
 
-  Dans ce jeu de sécurité, à chaque demande d'évaluation d'un vecteur $\vec{x}$, l'attaquant recalcule les valeurs de $S_{1,N},\ldots,S_{N,N}$. Les valeurs redondantes ont une haute probabilité que ce sont les vraies valeurs de $S_{1,N},\ldots,S_{N,N}$, ce qui permet d'en déduire que le résultat de l'évaluation vient d'une CPRF. Si après une évaluation, on retrouve des valeurs de $S_{1,N},\ldots,S_{N,N}$ qui ne sont pas redondantes, alors c'est très probablement le résultat d'une fonction aléatoire.
+  In this security game, for each request evaluating a vector $\vec{x}$, the attacker recomputes the values of $S_{1,N},\ldots,S_{N,N}$. Repeated values have a high probability of being the true values of $S_{1,N},\ldots,S_{N,N}$, which makes it possible to deduce that the evaluation result comes from a CPRF. If, after an evaluation, the recovered values of $S_{1,N},\ldots,S_{N,N}$ are not repeated, then the result most likely comes from a random function.
 
   \medskip
 
-  Ceci permet à un attaquant $\mathcal{A}$ de distinguer une CPRF d'une fonction aléatoire, ce qui montre que $F^{WEAK}$ n'est pas sécurisé.
+  This allows an attacker $\mathcal{A}$ to distinguish a CPRF from a random function, which shows that $F^{WEAK}$ is not secure.
 
 \end{defbox}
 
 
 
-\subsubsection{Renforcement de \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} par hachage}
+\subsubsection{Strengthening \texorpdfstring{$F^{\text{WEAK}}$}{F WEAK} using hashing}
 
-Afin d'améliorer la sécurité de la CPRF $F^{WEAK}$, il est possible de faire une implémentation en utilisant une fonction de hachage $H$. Cette implémentation apporte une modification sur l'évaluation d'une entrée contrainte ou non, sans empêcher un attaquant de demander une clé contrainte.
+In order to improve the security of the CPRF $F^{WEAK}$, it is possible to implement it using a hash function $H$. This implementation modifies the evaluation of constrained and unconstrained inputs, without preventing an attacker from requesting a constrained key.
 
-\paragraph{\'{E}valuation sur les entrées non contraintes : }Lorsqu'un attaquant demande l'évaluation d'un vecteur $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, alors l'oracle lui enverrait $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ au lieu de $Eval(\vec{x}) = S \cdot \vec{x}$, où $H$ est une fonction de hachage.
+\paragraph{Evaluation on unconstrained inputs: }When an attacker requests the evaluation of a vector $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, the oracle returns $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ instead of $Eval(\vec{x}) = S \cdot \vec{x}$, where $H$ is a hash function.
 
-\paragraph{Demande d'une clé contrainte : }La demande de la clé contrainte par un attaquant reste inchangée. L'attaquant envoie un vecteur $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, puis l'oracle renvoie $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
+\paragraph{Constrained key request: }The constrained key request made by an attacker remains unchanged. The attacker sends a vector $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^N$, then the oracle returns $Constrain(S, \vec{y}) = S_{\vec{y}} = S + d \cdot \vec{y}^T$.
 
-\paragraph{\'{E}valuation sur les entrées contraintes : }Après avoir reçu une clé contrainte $S_y$, pour évaluer un vecteur $\vec{x}$ orthogonal à $\vec{y}$, l'attaquant calculera $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ au lieu de $EvalC(\vec{x}) = S_y \cdot \vec{x}$, où $H$ est une fonction de hachage.
+\paragraph{Evaluation on constrained inputs: }After receiving a constrained key $S_y$, in order to evaluate a vector $\vec{x}$ orthogonal to $\vec{y}$, the attacker computes $EvalC_H(\vec{x}) = H(S_y \cdot \vec{x})$ instead of $EvalC(\vec{x}) = S_y \cdot \vec{x}$, where $H$ is a hash function.
 
-Cette implémentation qui utilise une fonction de hachage $H$, assure qu'un attaquant puisse toujours faire des évaluations sur les entrées contraintes, mais il ne pourra pas reconstituer la matrice $S$ en résolvant des systèmes linéaires. En effet, en utilisant l'attaque décrite dans la section précédente, retrouver $S$ revient à chercher une pré-image $H(S \cdot \vec{x})$. Ceci confirme que l'application d'une fonction de hachage assure la sécurité de la CPRF $F^{WEAK}$
-
-
-\subsubsection{Preuve de sécurité de $F^{WEAK}$ hachée}
+This implementation using a hash function $H$ ensures that an attacker can still perform evaluations on constrained inputs, but they will no longer be able to reconstruct the matrix $S$ by solving linear systems. Indeed, using the attack described in the previous section, recovering $S$ amounts to finding a preimage of $H(S \cdot \vec{x})$. This confirms that applying a hash function ensures the security of the CPRF $F^{WEAK}$.
 
 
-\begin{defbox}{\text{Théorème 2 (CJ25~\cite{CJ25})}}
-Soit $CF$ une CPRF. Si les conditions suivantes sont satisfaites :
+\subsubsection{Security proof of hashed $F^{WEAK}$}
+
+
+\begin{defbox}{\text{Theorem 2 (CJ25~\cite{CJ25})}}
+Let $CF$ be a CPRF. If the following conditions are satisfied:
 \begin{itemize}
-    \item $\min_x |\textsf{CF.Out}(\lambda, x)|$ est super-polynomial en $\lambda$,
-    \item $CF$ est IND$^*$-NC-CPRF sécurisée,
-    \item L'oracle aléatoire utilisé est non-programmable,
+    \item $\min_x |\textsf{CF.Out}(\lambda, x)|$ is super-polynomial in $\lambda$,
+    \item $CF$ is IND$^*$-NC-CPRF secure,
+    \item The random oracle used is non-programmable,
 \end{itemize}
-alors la construction $\textsf{Hashed}[CF]$ est \textbf{SIM$^*$-AC-CPRF sécurisée},
-c’est-à-dire qu’aucun adversaire efficace (à nombre polynomial de requêtes)
-ne peut distinguer cette construction d’un idéal, même en présence d’un oracle de hachage aléatoire.
+then the construction $\textsf{Hashed}[CF]$ is \textbf{SIM$^*$-AC-CPRF secure},
+meaning that no efficient adversary (with a polynomial number of queries)
+can distinguish this construction from an ideal one, even in the presence of a random hash oracle.
 \end{defbox}
 
-\begin{defbox}{Fonction super-polynomiale}
-Une fonction $f : \mathbb{N} \rightarrow \mathbb{N}$ est dite \emph{super-polynomiale} si, pour tout polynôme $p(\lambda)$, il existe $N$ tel que pour tout $\lambda \geq N$,
+\begin{defbox}{Super-polynomial function}
+A function $f : \mathbb{N} \rightarrow \mathbb{N}$ is said to be \emph{super-polynomial} if, for every polynomial $p(\lambda)$, there exists $N$ such that for all $\lambda \geq N$,
 \[
 f(\lambda) > p(\lambda).
 \]
-Autrement dit, $f(\lambda)$ croît plus vite que toute fonction polynomiale.
+In other words, $f(\lambda)$ grows faster than any polynomial function.
 \end{defbox}
 
 \begin{itemize}
-\item \textbf{$\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ est super-polynomial en $\lambda$ :}
+\item \textbf{$\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ is super-polynomial in $\lambda$:}
 
-Dans l'implémentation de la CPRF $F^{\text{WEAK}}$, nous travaillons avec des coefficients de $\mathbb{Z}/p\mathbb{Z}$ où $p$ est de taille $\lambda$. On a donc $|\mathbb{Z}/p\mathbb{Z}| \approx 2^{\lambda}$.
+In the implementation of the CPRF $F^{\text{WEAK}}$, we work with coefficients in $\mathbb{Z}/p\mathbb{Z}$ where $p$ has size $\lambda$. Therefore, $|\mathbb{Z}/p\mathbb{Z}| \approx 2^{\lambda}$.
 
-L'evaluation d'une entrée $x \in (\mathbb{Z}/p\mathbb{Z})^N$ par $F^{\text{WEAK}}$ se fait par $Eval(F^{WEAK},\vec{x}) = S \cdot \vec{x}$, ce qui est une application linéaire, qui est donc une bijection. Ceci implique que $\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)$d a la même taille pour tout $x \in (\mathbb{Z}/p\mathbb{Z})^N$.
+The evaluation of an input $x \in (\mathbb{Z}/p\mathbb{Z})^N$ by $F^{\text{WEAK}}$ is performed as $Eval(F^{WEAK},\vec{x}) = S \cdot \vec{x}$, which is a linear map and therefore a bijection. This implies that $\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)$ has the same size for all $x \in (\mathbb{Z}/p\mathbb{Z})^N$.
 
-Fixons $x \in (\mathbb{Z}/p\mathbb{Z})^N$. Pour tout $S,S' \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$, $S \neq S' \Rightarrow S \cdot x \neq S' \cdot x$. Comme $S$ est de taille $M \times N$, et que les coefficients sont dans $\mathbb{Z}/p\mathbb{Z}$, on en déduit qu'il existe  $(2^{\lambda})^{M \times N} = 2^{\lambda \times M \times N}$ clé maîtresse différentes.
+Fix $x \in (\mathbb{Z}/p\mathbb{Z})^N$. For all $S,S' \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$, $S \neq S' \Rightarrow S \cdot x \neq S' \cdot x$. Since $S$ has size $M \times N$, and the coefficients belong to $\mathbb{Z}/p\mathbb{Z}$, we deduce that there exist $(2^{\lambda})^{M \times N} = 2^{\lambda \times M \times N}$ distinct master keys.
 
-On conclue que $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)| \approx 2^{\lambda \times M \times N}$ qui est super-polynomial en $\lambda$.
+We conclude that $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)| \approx 2^{\lambda \times M \times N}$, which is super-polynomial in $\lambda$.
 
-\item \textbf{L'oracle aléatoire utilisé est non-programmable :}
+\item \textbf{The random oracle used is non-programmable:}
 
-On rappel que la fonction lazy sampling $P.Ls$ et la fonction de programmation $P.Prog$ sont implémentées comme suit :
-
-
+Recall that the lazy sampling function $P.Ls$ and the programming function $P.Prog$ are implemented as follows:
 
 \begin{center}
   \begin{tabular}{l|l}
     \textbf{\underline{$P.Ls(1^{\lambda}, x, \sigma_P)$}} & \textbf{\underline{$P.Prog(1^{\lambda}, x, y, \sigma_P)$}} \\
-    SI $\sigma_P[x] = \perp$ alors $\sigma_P[x] \leftarrow Random(1^{\lambda})$ & Si $\sigma_P[x] = \perp$ alors $\sigma_P[x] \leftarrow y$ \\
-    Renvoyer $\sigma_P[x]$ & Renvoyer $\perp$
+    IF $\sigma_P[x] = \perp$ then $\sigma_P[x] \leftarrow Random(1^{\lambda})$ & If $\sigma_P[x] = \perp$ then $\sigma_P[x] \leftarrow y$ \\
+    Return $\sigma_P[x]$ & Return $\perp$
   \end{tabular}
 \end{center}
 
-On dit que $P$ est non programmable si $P.Prog$ ne met pas à jour $\sigma_P$ et l'exécution de $P.Ls$ sur différentes entrées ne change pas la distribution de sa sortie.
+We say that $P$ is non-programmable if $P.Prog$ does not update $\sigma_P$ and the execution of $P.Ls$ on different inputs does not change the distribution of its output.
 
-Dans notre implémentation de $F^{\text{WEAK}}$, nous utilisons le lazy sampling pour implémenter la fonction de hachage $H$. Ceci implique que $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ est fixé uniquement lorsque l'évaluation de $\vec{x}$ est demandée, mais pas plus tôt.
+In our implementation of $F^{\text{WEAK}}$, we use lazy sampling to implement the hash function $H$. This implies that $Eval_H(\vec{x}) = H(S \cdot \vec{x})$ is fixed only when the evaluation of $\vec{x}$ is requested, but not earlier.
 
-On peut donc conclure que $P$ est non-programmable.
+We can therefore conclude that $P$ is non-programmable.
 
-\item \textbf{$F^{\text{WEAK}}$ est IND$^*$-NC-CPRF sécurisée :}
+\item \textbf{$F^{\text{WEAK}}$ is IND$^*$-NC-CPRF secure:}
 
-Pour cette condition, on peut prouver que $CF$ est IND$^*$-NC-CPRF sécurisée si il n'existe pas un attaquant qui :
-
-\begin{itemize}
-  \item Demande toutes les évaluations
-  \item Effectue ses calculs
-  \item Renvoie ses réponses à l'oracle tout en ayant un avantage significatif
-\end{itemize}
-
-Dans notre jeu de sécurité, dans la phase 5, l'attaquant procède comme suit : 
+For this condition, we can prove that $CF$ is IND$^*$-NC-CPRF secure if there does not exist an attacker who:
 
 \begin{itemize}
-  \item Demande \textbf{une} évaluation
-  \item Effectue ses calculs
-  \item Renvoie sa réponse à l'oracle tout en ayant un avantage significatif
-  \item Recommence
+  \item Requests all evaluations
+  \item Performs their computations
+  \item Returns their answers to the oracle while having a significant advantage
 \end{itemize}
 
-Cependant, il est possible de modifier la phase 5 de notre jeu de sécurité pour que l'attaquant procède comme suit : 
+In our security game, during phase 5, the attacker proceeds as follows: 
 
 \begin{itemize}
-  \item Choisir $n$ vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ aléatoire en assurant que $x_N \neq 0$ pour chacun des vecteurs $\vec{x}$ pour assurer que $\vec{x}$ n'est pas orthogonal à $\vec{y}$.
-  \item Demander à $O$ l'evaluation des $n$ vecteurs $\vec{x}$ : $Eval(\vec{x})$.
-  \item Pour chaque évaluation des $n$ vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, calculer $S_{i,N} \forall i$..
-  \item Pour chaque $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, si $(S_{1,N},\ldots,S_{N,N})$ n'est pas dans $D$, alors insérer dans $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, sinon, incrémenter $D(S_{1,N},\ldots,S_{N,N})$
-  \item Pour chaque $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, si $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, alors renvoyer à l'oracle CPRF, sinon, renvoyer fonction aléatoire.
+  \item Requests \textbf{one} evaluation
+  \item Performs their computations
+  \item Returns their answer to the oracle while having a significant advantage
+  \item Repeats
 \end{itemize}
 
-Un attaquant aura les même avantages en utilisant cet attaque, sans effectuer des évaluations adaptatives, ce qui montre que $F^{\text{WEAK}}$ n'est pas IND$^*$-NC-CPRF sécurisée.
-
-\end{itemize}
-
-Toutefois, le fait que $F^{\text{WEAK}}$ n'est pas IND$^*$-NC-CPRF sécurisée n'implique pas que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}. Ceci n'est donc pas une preuve que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}.
-
-\subsection{Permutation à trappe de Rabin}
-
-\paragraph{}La permutation de Rabin est une fonction à trappe fondée sur la difficulté de la factorisation des entiers. Elle repose sur l'opération de mise au carré modulo un entier composé.
+However, it is possible to modify phase 5 of our security game so that the attacker proceeds as follows: 
 
 \begin{itemize}
-\item\textbf{Génération de la clé :}
+  \item Choose $n$ random vectors $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$ while ensuring that $x_N \neq 0$ for each vector $\vec{x}$ in order to guarantee that $\vec{x}$ is not orthogonal to $\vec{y}$.
+  \item Request from $O$ the evaluation of the $n$ vectors $\vec{x}$: $Eval(\vec{x})$.
+  \item For each evaluation of the $n$ vectors $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, compute $S_{i,N} \forall i$.
+  \item For each $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, if $(S_{1,N},\ldots,S_{N,N})$ is not in $D$, then insert into $D$ : $( (S_{1,N},\ldots,S_{N,N}), 0)$, otherwise increment $D(S_{1,N},\ldots,S_{N,N})$
+  \item For each $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N$, if $D(S_{1,N},\ldots,S_{N,N}) = \max\{D(\cdot)\}$, then output CPRF oracle, otherwise output random function.
+\end{itemize}
 
-On choisit deux nombres premiers distincts $p$ et $q$ tels que :
+An attacker will have the same advantage using this attack without performing adaptive evaluations, which shows that $F^{\text{WEAK}}$ is not IND$^*$-NC-CPRF secure.
+
+\end{itemize}
+
+However, the fact that $F^{\text{WEAK}}$ is not IND$^*$-NC-CPRF secure does not imply that $\textsf{Hashed}[F^{\text{WEAK}}]$ is not \textbf{SIM$^*$-AC-CPRF secure}. Therefore, this is not a proof that $\textsf{Hashed}[F^{\text{WEAK}}]$ is not \textbf{SIM$^*$-AC-CPRF secure}.
+
+\subsection{Rabin trapdoor permutation}
+
+\paragraph{}The Rabin permutation is a trapdoor function based on the hardness of integer factorization. It relies on the squaring operation modulo a composite integer.
+
+\begin{itemize}
+\item\textbf{Key generation:}
+
+We choose two distinct prime numbers $p$ and $q$ such that:
 \[
 p \equiv q \equiv 3 \pmod{4}
 \]
 
-La clé publique est définie par :
+The public key is defined as:
 \[
 n = p \cdot q
 \]
 
-La clé privée est le couple $(p, q)$.
+The private key is the pair $(p, q)$.
 
-Cette condition sur $p$ et $q$ permet un calcul efficace des racines carrées modulo ces nombres premiers.\\
+This condition on $p$ and $q$ allows efficient computation of square roots modulo these prime numbers.\\
 
-\item\textbf{Permutation de Rabin :}
+\item\textbf{Rabin permutation:}
 
-La permutation de Rabin est la fonction :
+The Rabin permutation is the function:
 \[
 f : \mathbb{Z}_n \rightarrow \mathbb{Z}_n
 \]
-définie par :
+defined by:
 \[
 f(x) = x^2 \bmod n
 \]
+This function is easy to compute, but difficult to invert without knowing the factorization of $n$.\\
 
-Cette fonction est facile à calculer, mais difficile à inverser sans connaître la factorisation de $n$.\\
+\item\textbf{Inverting the Rabin permutation:}
 
-\item\textbf{Inverser la permutation de Rabin :}
-
-Inverser la permutation de Rabin revient à résoudre l'équation :
+Inverting the Rabin permutation amounts to solving the equation:
 \[
 x^2 \equiv y \pmod{n}
 \]
 
-Lorsque $n = p \cdot q$, cette équation admet exactement \textbf{quatre solutions distinctes} modulo $n$.
+When $n = p \cdot q$, this equation admits exactly \textbf{four distinct solutions} modulo $n$.
 
-%\subsection{Résolution modulo p et q}
+%\subsection{Resolution modulo p and q}
 
-On commence par réduire le problème modulo $p$ et $q$ :
+We begin by reducing the problem modulo $p$ and $q$:
 \[
 \begin{cases}
 x^2 \equiv y \pmod{p} \\
@@ -830,18 +821,18 @@ x^2 \equiv y \pmod{q}
 \end{cases}
 \]
 
-Comme $p \equiv 3 \pmod{4}$, une racine carrée modulo $p$ est donnée par :
+Since $p \equiv 3 \pmod{4}$, a square root modulo $p$ is given by:
 \[
 r_p = y^{\frac{p+1}{4}} \bmod p
 \]
 
-De même, modulo $q$ :
+Similarly, modulo $q$:
 
 \[
 r_q = y^{\frac{q+1}{4}} \bmod q
 \]
 
-Les solutions sont donc: 
+The solutions are therefore: 
 
 \begin{itemize}
   \item $X_0 = (r_p * q * q^{-1}_{\bmod p} + r_q * p * p^{-1}_{\bmod q}) \bmod n $
@@ -856,11 +847,11 @@ Les solutions sont donc:
 
 \end{itemize}
 
-\paragraph{Problème:}Laquelle de ces racines correspond au message original ?
+\paragraph{Problem:} Which of these roots corresponds to the original message?
 \paragraph{}
-La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 4 pré-images.
-Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
-Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
+The function \(f(x) = x^2 \bmod n\) is not injective: each ciphertext \(c\) has 4 preimages.
+Even with the secret key (\(p,q\)), it is possible to compute all the roots but \textbf{not directly determine which one corresponds to the original message}.
+Applying the inverse \(n-c\) times does not guarantee recovering the original message.
 
 
 
@@ -899,58 +890,56 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
   child {node {$X_2$}}
   child {node {$X_3$}};
 \end{tikzpicture}
-\caption{Arbre des pré-images dans la permutation de Rabin.}\label{fig:rabin-tree}
+\caption{Tree of preimages in the Rabin permutation.}\label{fig:rabin-tree}
 \end{figure}
 
-\paragraph{Conclusion :}
-La permutation de Rabin n'est pas adaptée pour notre CPRF car chaque valeur a quatre pré-images possibles. 
-Même avec la clé privée, il est impossible de savoir laquelle correspond à l'entrée originale, ce qui empêche 
-l'application répétée de l'inverse $(n-c)$ fois pour retrouver correctement le résultat de la CPRF.
+\paragraph{Conclusion:}
+The Rabin permutation is not suitable for our CPRF because each value has four possible preimages. 
+Even with the private key, it is impossible to know which one corresponds to the original input, which prevents 
+the repeated application of the inverse $(n-c)$ times from correctly recovering the CPRF output.
 
 
-\subsection{Permutation à trappe AES}
+\subsection{AES trapdoor permutation}
 \paragraph{}
-Le chiffrement AES applique une fonction bijective \(E_k(x)\) qui dépend de la clé \(k\).
-Contrairement à \(x \mapsto x^2 \bmod n\), chaque bloc chiffré a une \textbf{unique pré-image} pour une clé donnée.
-Cependant, pour déchiffrer, \textbf{il faut absolument connaître la clé k} :
+AES encryption applies a bijective function \(E_k(x)\) that depends on the key \(k\).
+Unlike \(x \mapsto x^2 \bmod n\), each encrypted block has a \textbf{unique preimage} for a given key.
+However, in order to decrypt, \textbf{the key \(k\) must absolutely be known}:
 \begin{itemize}
-    \item Sans la clé, l'attaquant ne peut pas inverser la permutation.
-    \item AES reste sécurisé grâce à la clé secrète.
+    \item Without the key, the attacker cannot invert the permutation.
+    \item AES remains secure thanks to the secret key.
 \end{itemize}
 
 \paragraph{}
-Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour notre CPRF.
+Therefore, the use of AES as a trapdoor permutation is not suitable for our CPRF.
 
 
-\section{L'attaque CJ25}
+\section{The CJ25 attack}
 
-\subsection{Description générale et intuition de l’attaque}
-
-\paragraph{}
-L’attaque CJ25 exploite le fait qu’un attaquant peut obtenir une clé contrainte
-permettant d’évaluer la fonction pseudo‑aléatoire sur un sous‑ensemble d’entrées,
-tout en conservant l’accès à un oracle d’évaluation global.
+\subsection{General description and intuition behind the attack}
 
 \paragraph{}
-Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
-clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
-entrée $x$ telle que $x < n$ à l’aide des permutations publiques associées.
+The CJ25 attack exploits the fact that an attacker can obtain a constrained key
+allowing them to evaluate the pseudo-random function on a subset of inputs,
+while still retaining access to a global evaluation oracle.
 
-Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
-$x < n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
-provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
+\paragraph{}
+First, the adversary chooses an index $n$ and requests from the oracle a
+constrained key $(PK, ST_n, n)$. This key allows them to evaluate the function on any
+input $x$ such that $x < n$ using the associated public permutations.
 
-À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
-publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
-Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
+In a second step, the adversary queries the evaluation oracle on an input
+$x < n$ and obtains a value $ST_x$. At this stage, the attacker does not know whether $ST_x$
+comes from a constrained pseudo-random function or from a random function.
 
-\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.\\
+Using the constrained key, the attacker successively applies the public permutations
+in order to compute the value $\pi_{PK}^{x-n}(ST_x)$.
+If the attacker recovers $ST_a = ST_x$, they can then conclude that the value $ST_x$ is the result of a constrained pseudo-random function.
 
-
+\paragraph{}It is therefore possible for an attacker to obtain information about the structure of the CPRF from the constrained key and the obtained evaluations, which allows them to distinguish a CPRF from a random function with non-negligible probability.\\
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[node distance=2.5cm]
-  % Etats
+  % States
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
   \node[right of=st0] (dots1) {$\dots$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
@@ -958,21 +947,21 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
   \node[right of=stn1] (dots) {$\dots$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
 
-  % Flèches directes avec π
+  % Direct arrows with π
   \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
   \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
   \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
   \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
   \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
 
-  % Flèches de l'attaquant (en rouge, dashed)
+  % Attacker arrows (red, dashed)
 \draw[
   decorate,
   decoration={brace, mirror, amplitude=6pt, raise=8pt},
   red
 ]
   (st0.south west) -- (stn.south east)
-  node[midway, below=14pt, red] {zone contrainte};
+  node[midway, below=14pt, red] {constrained zone};
 
 \draw[
   decorate,
@@ -980,44 +969,44 @@ Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_
   blue
 ]
   (stn1.south west) -- (stx.south east)
-  node[midway, below=14pt, blue] {zone d'évaluation hors contrainte};
+  node[midway, below=14pt, blue] {evaluation zone outside the constraint};
 \end{tikzpicture}
-\caption{Schéma général de l’attaque CJ25}
+\caption{General diagram of the CJ25 attack}
 \end{figure}
 
 
-\subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
-\begin{defbox}{Jeu de sécurité pour les CPRF}
-L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire. 
-L’objectif de l'attaquant est de distinguer les deux cas.
+\subsection{Security game model and attacker advantage}
+\begin{defbox}{Security game for CPRFs}
+The attacker $\mathcal{A}$ interacts with an oracle $O$ which is either a $CPRF$ or a random function. 
+The goal of the attacker is to distinguish between the two cases.
 \begin{itemize}
-\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C = (PK, ST_n, n)$ pour une contrainte $n$ de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
-\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées $x > n$ pour obtenir des valeurs $ST_x$ non contraintes.
-\item \textbf{Phase 3 :} $\mathcal{A}$ utilise les valeurs obtenues pour évaluer $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ et compare avec $ST_n$.
-\item \textbf{Décision :} $\mathcal{A}$ décide que $O$ est la $CPRF$ si $ST_a = ST_n$, sinon il décide que $O$ est une fonction aléatoire.
+\item \textbf{Phase 1:} $\mathcal{A}$ requests a constrained key $K_C = (PK, ST_n, n)$ for a constraint $n$ of their choice, allowing them to evaluate the function on a subset of inputs.
+\item \textbf{Phase 2:} $\mathcal{A}$ makes several evaluation queries to the oracle $O$ on inputs $x > n$ in order to obtain unconstrained values $ST_x$.
+\item \textbf{Phase 3:} $\mathcal{A}$ uses the obtained values to evaluate $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ and compares it with $ST_n$.
+\item \textbf{Decision:} $\mathcal{A}$ decides that $O$ is the $CPRF$ if $ST_a = ST_n$, otherwise they decide that $O$ is a random function.
 \end{itemize}
-Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
-L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.\\
+In the case where $O$ is a $CPRF$, the attacker $\mathcal{A}$ always recovers $ST_a = ST_n$, and never makes a mistake. On the other hand, if $O$ is a random function, the probability that $ST_a = ST_n$ is $1/N$, where $N$ is the size of the output space of the function. In this case, the attacker makes a mistake with probability $1/N$.
+The attacker $\mathcal{A}$ therefore succeeds with probability $1 - 1/N$ in correctly distinguishing the two cases, which is non-negligible for reasonable values of $N$.\\
 
 \begin{figure}[H]
   \centering
 \begin{tikzpicture}[node distance=3cm]
-  % Etats
+  % States
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
   \node[right of=stnp2] (dots) {$\dots$};
   \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
 
-  % Flèches directes CPRF avec pi écrit au-dessus
+  % Direct CPRF arrows with pi written above
   \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
   \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
   \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
   \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
 
-  % Flèches de l'attaquant (en rouge, dashed) sous les cases
+  % Attacker arrows (red, dashed) below the boxes
   \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
-    node[below, red, align=center] {Attaquant applique la permutation \\ pour vérifier $ST_a = ST_n$} (stn.south);
+    node[below, red, align=center] {Attacker applies the permutation \\ to verify $ST_a = ST_n$} (stn.south);
 
   \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
     node[below, red, align=center] {} (stnp1.south);
@@ -1026,7 +1015,7 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
     node[below, red, align=center] {} (stnp2.south);
 
 \end{tikzpicture}
-\caption{Schéma des permutation de l'attaque dans la zone hors contrainte}
+\caption{Diagram of the permutations used in the attack within the unconstrained zone}
 \end{figure}
 
 
@@ -1034,59 +1023,57 @@ L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de disti
 
 \end{defbox}
 
-\subsection{Mise en œuvre expérimentale de l’attaque}
+\subsection{Experimental implementation of the attack}
 
-Pour simuler le jeu de sécurité, nous avons mis en place une architecture client–serveur locale 
-reposant sur TCP. Le serveur implémente l’oracle du jeu 
-(évaluation et génération de clés contraintes), 
-le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
-
-
-\subsubsection{Implémentation de l’oracle de sécurité}
+To simulate the security game, we implemented a local client–server architecture 
+based on TCP. The server implements the game oracle 
+(evaluation and constrained key generation), 
+while the client plays the role of the attacker (evaluation and constraint requests, tests, ...).
 
 
-L’oracle met à disposition deux interfaces accessibles à l’attaquant :
+\subsubsection{Implementation of the security oracle}
+
+
+The oracle provides two interfaces accessible to the attacker:
 \begin{itemize}
-    \item \texttt{EVAL(x)} : retourne une valeur associée à l’entrée $x$.\\
-    En monde PRF, l’oracle retourne l’évaluation de la CPRF à l’aide de la clé maîtresse.\\
-    En monde aléatoire, il retourne une valeur uniforme de même taille.
+    \item \texttt{EVAL(x)} : returns a value associated with the input $x$.\\
+    In the PRF world, the oracle returns the evaluation of the CPRF using the master key.\\
+    In the random world, it returns a uniformly random value of the same size.
 
-    \item \texttt{CONSTRAIN(n)} : retourne une clé contrainte associée à l’indice $n$,
-    permettant l’évaluation de la fonction sur un sous‑ensemble d’entrées.
+    \item \texttt{CONSTRAIN(n)} : returns a constrained key associated with index $n$,
+    allowing the evaluation of the function on a subset of inputs.
 \end{itemize}
+\subsubsection{Implementation of the attacker and strategy}
 
+The attacker chooses an index $n$ and requests from the oracle the corresponding constrained
+key. This key allows them to evaluate the function on inputs
+strictly greater than $n$.
 
-\subsubsection{Implémentation de l’attaquant et stratégie}
+They then perform \texttt{EVAL} queries on inputs
+$x > n$. Using the values returned by the oracle and the constrained key, they
+apply the public permutations in order to test the consistency of the CPRF structure.
 
-L’attaquant choisit un indice $n$ et demande à l’oracle la clé
-contrainte correspondante. Cette clé lui permet d’évaluer la fonction sur des entrées
-strictement supérieures à $n$.
+If the attacker finds a match, they can conclude that the oracle implements a CPRF rather than a random function.
 
-Ensuite il effectue des requêtes \texttt{EVAL} sur des entrées
-$x > n$. À partir des valeurs retournées par l’oracle et de la clé contrainte, il
-applique les permutations publiques afin de tester la cohérence de la structure de la CPRF.
+\section{Strengthening the CPRF using hashing}
 
-Si l’attaquant trouve une correspondance, il peut conclure que l’oracle implémente une CPRF plutôt qu’une fonction aléatoire.
+In order to improve the security of the BMO17 construction against the CJ25 attack,
+it is possible to implement a hashed version of the CPRF.
 
-\section{Renforcement de la CPRF par hachage}
+\subsection{General principle of the hashed CPRF}
 
-Afin d'améliorer la sécurité de la construction de BMO17 face à l'attaque CJ25,
-il est possible d'implémenter une version hachée de la CPRF.
+The idea is to introduce a cryptographic hash function into the evaluation process. 
+The attacker will still be able to evaluate the CPRF on unconstrained inputs, 
+but they will no longer be able to exploit the results to distinguish the CPRF from a random function
+because these results will be irreversibly hashed.\\
 
-\subsection{Principe général de la CPRF hachée}
-
-L’idée est d’introduire une fonction de hachage cryptographique dans l'évaluation. 
-L'attaquant pourra toujours évaluer la CPRF sur les entrées non contraintes, 
-mais il ne pourra pas exploiter les résultats pour distinguer la CPRF d’une fonction aléatoire
-car ceux-ci seront hachés de manière irréversible.\\
-
-$\rightarrow$ \textbf{Le rôle de la fonction de hachage est de rendre impossible toute utilisation ou comparaison
-via les permutations publiques.}
+$\rightarrow$ \textbf{The role of the hash function is to make any use or comparison
+through the public permutations impossible.}
 
 \begin{center}
 \begin{tikzpicture}[node distance=4cm]
 
-% CPRF normale
+% Standard CPRF
 \node[state] (a0) {$ST_x$};
 \node[state, right of=a0] (a1) {$ST_n$};
 \draw[arrow] (a0) -- node[above] {$\pi^{x-n}$} (a1);
@@ -1101,40 +1088,40 @@ via les permutations publiques.}
 \end{tikzpicture}
 \end{center}
 
-\subsubsection{Implémentation}
+\textbf{Implementation:}
 
-Nous avons implémenté deux versions de la CPRF hachée :
+We implemented two versions of the hashed CPRF:
 
 \begin{itemize}
-  \item \textbf{CPRF hachée simple} : l’évaluation est effectuée normalement,
-  puis le résultat est haché à l’aide de \texttt{SHA-256} avant d’être retourné.
+  \item \textbf{Simple hashed CPRF}: the evaluation is performed normally,
+  then the result is hashed using \texttt{SHA-256} before being returned.
     \begin{itemize}
-      \item \texttt{$Eval_H(x)$}: retourne le hachage de l’évaluation sur l’entrée $x$ avec la clé maîtresse, c’est-à-dire $H(Eval((SK, ST_0), x))$.
-      \item \texttt{$EvalC_H(n)$}: retourne le hachage de l’évaluation sur l’entrée $n$ avec la clé contrainte, c’est-à-dire $H(EvalC((PK, ST_n, n), c))$.
+      \item \texttt{$Eval_H(x)$}: returns the hash of the evaluation on input $x$ using the master key, that is $H(Eval((SK, ST_0), x))$.
+      \item \texttt{$EvalC_H(n)$}: returns the hash of the evaluation on input $n$ using the constrained key, that is $H(EvalC((PK, ST_n, n), c))$.
     \end{itemize}
 
-  \item \textbf{CPRF hachée avec lazy sampling} : afin de se rapprocher du modèle
-  théorique d’un oracle de hachage idéal utilisé dans l'article CJ25, nous avons également implémenté
-  une version reposant sur le lazy sampling décrite dans la section suivante.
+  \item \textbf{Hashed CPRF with lazy sampling}: in order to get closer to the
+  theoretical model of an ideal hash oracle used in the CJ25 paper, we also implemented
+  a version based on the lazy sampling technique described in the following section.
 \end{itemize}
 
 
-\subsection{Construction explicite de la CPRF hachée de Cheng et Jaeger}
+\subsection{Explicit construction of the Cheng and Jaeger hashed CPRF}
 
-Nous présentons ici la version hachée proposée dans l'article CJ25.\\
+We present here the hashed version proposed in the CJ25 paper.\\
 
-Notations utilisées :
+Notation used:
 \begin{itemize}
-  \item $P$ : fonction de hachage idéale modélisée comme un oracle de hachage aléatoire.
-  \item $\sigma_P$ : état interne de $P$ (initialement vide) qui mémorise les paires $(x,y)$.
-  \item $\lambda$ : paramètre de sécurité (taille de la sortie de $P$).
-  \item $k$ : clé secrète de la \textsf{CPRF}.
-  \item $k_R$ : clé contrainte associée à un ensemble de restrictions $R$.
-  \item $x$ : entrée de la fonction.
-  \item $y \in \{0,1\}^{\lambda}$ : valeur de hachage associée à une entrée.
+  \item $P$ : ideal hash function modeled as a random hash oracle.
+  \item $\sigma_P$ : internal state of $P$ (initially empty) storing the pairs $(x,y)$.
+  \item $\lambda$ : security parameter (output size of $P$).
+  \item $k$ : secret key of the \textsf{CPRF}.
+  \item $k_R$ : constrained key associated with a set of restrictions $R$.
+  \item $x$ : function input.
+  \item $y \in \{0,1\}^{\lambda}$ : hash value associated with an input.
 \end{itemize}
 
-L'évaluation est définie par :
+The evaluation is defined by:
 
 \[
 \textsf{Hashed[CPRF].Eval}(1^\lambda, k, x)
@@ -1152,75 +1139,73 @@ L'évaluation est définie par :
   \begin{tabular}{l}
     \textbf{Lazy Sampling} \\
     \hline \\
-    Chercher $x$ dans $\sigma_P$ \\
-    Si $x \notin \sigma_P$ : \\
-    \quad Choisir $y \leftarrow \{0,1\}^\lambda$ au hasard \\
-    \quad Mémoriser $(x,y)$ \\
-    Sinon : \\
-    \quad Récupérer $y$ associé à $x$ \\
-    Retourner $y$
+    Search for $x$ in $\sigma_P$ \\
+    If $x \notin \sigma_P$ : \\
+    \quad Choose $y \leftarrow \{0,1\}^\lambda$ uniformly at random \\
+    \quad Store $(x,y)$ \\
+    Otherwise : \\
+    \quad Retrieve the value $y$ associated with $x$ \\
+    Return $y$
   \end{tabular}
   
   \vspace{1ex}
-  \textit{Algorithme de lazy sampling d'une primitive idéale.}
+  \textit{Lazy sampling algorithm for an ideal primitive.}
 \end{center}
 
 
+%///////////////////////////////APPENDIX%///////////////////////////////
 
-%///////////////////////////////ANNEXE%///////////////////////////////
+\section{Experimental Results}
 
-\section{Résultats expérimentaux}
+\paragraph{}After implementing different variants of the CPRF (original version, hashed version with SHA-256, and hashed version with lazy sampling), 
+we conducted experiments in order to evaluate the effectiveness of the CJ25 attack on each of them. 
+The tests consist of executing 100 evaluation queries for each version and observing the evolution of the attack success rate throughout the queries.
 
-\paragraph{}Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
-nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
-Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
+Figure \ref{fig:stat1} presents the results obtained on the non-hashed version of the CPRF. 
+We observe that the CJ25 attack is highly effective in this case, with a success probability close to 1 from the very first queries. 
+This is explained by the fact that the structure of the CPRF remains fully exploitable in this model, allowing the attacker to distinguish the function's behavior.
 
-\paragraph{}La figure \ref{fig:stat1} présente les résultats obtenus sur la version non hachée de la CPRF. 
-On observe que l’attaque CJ25 est très efficace dans ce cas, avec une probabilité de succès proche de 1 dès les premières requêtes. 
-Cela s’explique par le fait que la structure de la CPRF reste entièrement exploitable dans ce modèle, ce qui permet à l’attaquant de distinguer les comportements de la fonction.
+In Figures \ref{fig:stat2} and \ref{fig:stat3}, the same attack is applied to the hashed versions (SHA-256 and lazy sampling). We then observe a systematic failure of the attack, with a success rate close to 0.5, corresponding to behavior equivalent to random guessing. In these cases, the attacker is no longer able to exploit the structure of the CPRF.
 
-\paragraph{}Dans les figures \ref{fig:stat2} et \ref{fig:stat3}, la même attaque est appliquée aux versions hachées (SHA-256 et lazy sampling). On observe alors un échec systématique de l’attaque, avec un taux de succès proche de 0.5, correspondant à un comportement équivalent à une décision aléatoire. Dans ces cas, l’attaquant ne parvient plus à exploiter la structure de la CPRF.
-
-\paragraph{}Enfin, les résultats suggèrent que le choix du schéma de hachage (SHA-256 ou lazy sampling) n’a pas d’impact significatif sur la robustesse observée dans nos expérimentations, les deux variantes présentant des comportements similaires face à l’attaque CJ25.
-
+Finally, the results suggest that the choice of hashing scheme (SHA-256 or lazy sampling) has no significant impact on the robustness observed in our experiments, as both variants exhibit similar behavior against the CJ25 attack.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{./images/stat1.png}
-\caption{Attaque version non hachée}
+\caption{Attack on the non-hashed version}
 \label{fig:stat1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{./images/stat2.png}
-\caption{Attaque version hachée avec SHA-256}
+\caption{Attack on the hashed version with SHA-256}
 \label{fig:stat2}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{./images/stat3.png}
-\caption{Attaque version hachée avec lazy sampling}
+\caption{Attack on the hashed version with lazy sampling}
 \label{fig:stat3}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.7\textwidth]{./images/stat4.png}
-\caption{Attaque Fweak}
+\caption{Attack on FWEAK}
 \label{fig:stat4}
 \end{figure}
 
-\section{Guide d'utilisation}
+\section{User Guide}
 
-\subsubsection*{Compiler}
+\subsubsection*{Compile}
 
 \begin{verbatim}
 make
 \end{verbatim}
 
-\subsubsection*{Exécuter}
+\subsubsection*{Run}
 
 \begin{verbatim}
 ./start.sh <mode> [parameters]
@@ -1229,20 +1214,20 @@ make
 \begin{center}
 \begin{tabular}{|l|l|l|}
 \hline
-\textbf{Mode} & \textbf{Paramètres} & \textbf{Description} \\
+\textbf{Mode} & \textbf{Parameters} & \textbf{Description} \\
 \hline
-\texttt{-n} & \texttt{<size>} & CPRF normale, nombre de tests \\
+\texttt{-n} & \texttt{<size>} & Standard CPRF, number of tests \\
 \hline
-\texttt{-h} & \texttt{<size>} & CPRF hachée (SHA-256), nombre de tests \\
+\texttt{-h} & \texttt{<size>} & Hashed CPRF (SHA-256), number of tests \\
 \hline
-\texttt{-l} & \texttt{<size>} & Lazy sampling, nombre de tests \\
+\texttt{-l} & \texttt{<size>} & Lazy sampling, number of tests \\
 \hline
-\texttt{-f} & \texttt{<tries> <N> <M>} & Mode FWEAK : nombre de tentatives, taille N et M \\
+\texttt{-f} & \texttt{<tries> <N> <M>} & FWEAK mode: number of attempts, dimensions N and M \\
 \hline
 \end{tabular}
 \end{center}
 
-\subsubsection*{Afficher les courbes}
+\subsubsection*{Display the plots}
 
 \begin{verbatim}
 python3 display.py
