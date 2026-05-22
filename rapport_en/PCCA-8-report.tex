@@ -606,6 +606,7 @@ Thus, in the previous linear system, we have $X = Id_{N-1}$ and $\forall j, x_{j
 Therefore, after requesting the evaluation of a vector $EVAL(\vec{x}) = \vec{y}$ from the oracle, in order to recover $S_{i,N}$, we have $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, hence
 $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
 
+\newpage
 \subsubsection{Security game for the attack on $F^{WEAK}$}
 
 \begin{defbox}{Security game on the CPRF $F^{WEAK}$}
@@ -832,6 +833,7 @@ Similarly, modulo $q$:
 r_q = y^{\frac{q+1}{4}} \bmod q
 \]
 
+\newpage
 The solutions are therefore: 
 
 \begin{itemize}
@@ -1097,7 +1099,7 @@ We implemented two versions of the hashed CPRF:
   then the result is hashed using \texttt{SHA-256} before being returned.
     \begin{itemize}
       \item \texttt{$Eval_H(x)$}: returns the hash of the evaluation on input $x$ using the master key, that is $H(Eval((SK, ST_0), x))$.
-      \item \texttt{$EvalC_H(n)$}: returns the hash of the evaluation on input $n$ using the constrained key, that is $H(EvalC((PK, ST_n, n), c))$.
+      \item \texttt{$EvalC_H(n)$}: returns the hash of the evaluation on input $n$ using the constrained key, that is $H(EvalC((PK, ST_n, n), c))$.\\
     \end{itemize}
 
   \item \textbf{Hashed CPRF with lazy sampling}: in order to get closer to the
@@ -1105,7 +1107,7 @@ We implemented two versions of the hashed CPRF:
   a version based on the lazy sampling technique described in the following section.
 \end{itemize}
 
-
+\newpage
 \subsection{Explicit construction of the Cheng and Jaeger hashed CPRF}
 
 We present here the hashed version proposed in the CJ25 paper.\\
@@ -1171,67 +1173,31 @@ Finally, the results suggest that the choice of hashing scheme (SHA-256 or lazy 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat1.png}
+\includegraphics[width=0.9\textwidth]{./images/stat1.png}
 \caption{Attack on the non-hashed version}
 \label{fig:stat1}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat2.png}
+\includegraphics[width=0.9\textwidth]{./images/stat2.png}
 \caption{Attack on the hashed version with SHA-256}
 \label{fig:stat2}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat3.png}
+\includegraphics[width=0.9\textwidth]{./images/stat3.png}
 \caption{Attack on the hashed version with lazy sampling}
 \label{fig:stat3}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.7\textwidth]{./images/stat4.png}
+\includegraphics[width=0.9\textwidth]{./images/stat4.png}
 \caption{Attack on FWEAK}
 \label{fig:stat4}
 \end{figure}
-
-\section{User Guide}
-
-\subsubsection*{Compile}
-
-\begin{verbatim}
-make
-\end{verbatim}
-
-\subsubsection*{Run}
-
-\begin{verbatim}
-./start.sh <mode> [parameters]
-\end{verbatim}
-
-\begin{center}
-\begin{tabular}{|l|l|l|}
-\hline
-\textbf{Mode} & \textbf{Parameters} & \textbf{Description} \\
-\hline
-\texttt{-n} & \texttt{<size>} & Standard CPRF, number of tests \\
-\hline
-\texttt{-h} & \texttt{<size>} & Hashed CPRF (SHA-256), number of tests \\
-\hline
-\texttt{-l} & \texttt{<size>} & Lazy sampling, number of tests \\
-\hline
-\texttt{-f} & \texttt{<tries> <N> <M>} & FWEAK mode: number of attempts, dimensions N and M \\
-\hline
-\end{tabular}
-\end{center}
-
-\subsubsection*{Display the plots}
-
-\begin{verbatim}
-python3 display.py
-\end{verbatim}
 
 \appendix
 
