@@ -1169,6 +1169,8 @@ This is explained by the fact that the structure of the CPRF remains fully explo
 
 In Figures \ref{fig:stat2} and \ref{fig:stat3}, the same attack is applied to the hashed versions (SHA-256 and lazy sampling). We then observe a systematic failure of the attack, with a success rate close to 0.5, corresponding to behavior equivalent to random guessing. In these cases, the attacker is no longer able to exploit the structure of the CPRF.
 
+In Figure \ref{fig:stat4}, we observe the results of the attack we implemented on the CPRF F^{WEAK}, where we can clearly see that this attack allows gaining a significant advantage over the CPRF F^{WEAK} when it is not hashed.
+
 Finally, the results suggest that the choice of hashing scheme (SHA-256 or lazy sampling) has no significant impact on the robustness observed in our experiments, as both variants exhibit similar behavior against the CJ25 attack.
 
 \begin{figure}[H]
