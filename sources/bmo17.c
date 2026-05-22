@@ -1,3 +1,29 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier implémente la construction cryptographique BMO17,
+ * basée sur des permutations de type RSA et Rabin dans un corps
+ * fini, ainsi que leurs variantes avec hachage.
+ *
+ * Il fournit la génération de clés maîtresses, la dérivation de
+ * clés contraintes, ainsi que l’évaluation directe ou contrainte
+ * des fonctions de type CPRF (Constrained Pseudo-Random Function).
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Générer des clés maîtresses BMO17 (RSA et Rabin)
+ * - Générer des clés contraintes à partir d’une clé maître
+ * - Évaluer la fonction CPRF depuis la clé maître
+ * - Évaluer la fonction CPRF depuis une clé contrainte
+ * - Fournir des variantes avec hachage SHA-256
+ * - Libérer proprement les structures associées
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
 
 #include "../include/bmo17.h"
 #include <openssl/sha.h>

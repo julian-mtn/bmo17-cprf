@@ -1,3 +1,28 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier implémente la permutation de Rabin basé sur la
+ * difficulté de factorisation et le calcul de racines carrées
+ * modulo un entier composé n = p * q.
+ *
+ * Il fournit la génération de clés, l’évaluation directe de la
+ * fonction (carré modulaire) ainsi qu’une tentative de résolution
+ * du problème inverse (racines carrées modulo n).
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Générer une clé Rabin (p, q, n avec p = q = 3 mod 4)
+ * - Évaluer la fonction Rabin : y = x^2 mod n
+ * - Calculer les racines carrées modulo n 
+ * - Libérer la mémoire associée à la clé
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include "../include/rabin.h"
 
 /*

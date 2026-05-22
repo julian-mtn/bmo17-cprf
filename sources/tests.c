@@ -1,3 +1,16 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier contient une suite de tests unitaires simples pour
+ * valider les implémentations des modules RSA et BMO17.
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/rsa.h"

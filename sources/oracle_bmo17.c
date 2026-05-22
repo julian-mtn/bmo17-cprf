@@ -1,3 +1,31 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce programme implémente un serveur TCP simulant un oracle
+ * cryptographique basé sur la construction BMO17.
+ *
+ * Le serveur génère une clé maîtresse et répond à des requêtes
+ * clients permettant d’évaluer une fonction CPRF contrainte
+ * ou de renvoyer des valeurs aléatoires selon un mode secret.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Initialiser un serveur TCP sur le port 4242
+ * - Générer une clé maîtresse BMO17
+ * - Accepter des connexions clients en boucle
+ * - Gérer deux types de requêtes :
+ *   - CONSTRAIN : génération d’une clé contrainte (e, N, STn)
+ *   - EVAL : évaluation de la fonction ou génération aléatoire
+ * - Simuler un oracle PRF ou aléatoire (challenge_bit)
+ * - Répondre aux tentatives d’attaque 
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

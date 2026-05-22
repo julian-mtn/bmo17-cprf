@@ -1,3 +1,33 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce programme implémente un serveur oracle basé sur la
+ * construction cryptographique fweak.
+ *
+ * Le serveur génère une clé maîtresse, construit une clé
+ * contrainte à partir d’un vecteur client, puis répond à des
+ * requêtes en mode soit déterministe (PRF), soit aléatoire,
+ * afin de simuler un oracle de détection.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Initialiser un serveur TCP sur le port 4242
+ * - Générer une clé maîtresse fweak (matrice S)
+ * - Recevoir un vecteur client y
+ * - Construire une clé contrainte S_y
+ * - Envoyer p et S_y au client
+ * - Répondre à des requêtes x via un oracle :
+ *   - mode PRF : renvoie S * x
+ *   - mode aléatoire : renvoie des valeurs aléatoires
+ * - Vérifier la réponse du client 
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,7 +39,7 @@
 
 #include "../include/fweak.h"
 
-#define PORT 4242 //TODO à modifier
+#define PORT 4242 
 
 /* //////////////socket////////////// */
 

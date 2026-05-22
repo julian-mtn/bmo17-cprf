@@ -1,3 +1,22 @@
+'''
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce script Python analyse et visualise les résultats d’une
+ * attaque stockés dans un fichier de logs (attack_results.txt).
+ *
+ * Il permet de transformer les données expérimentales en
+ * graphiques afin d’évaluer la performance de l’attaque et la
+ * détection de la PRF.
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+'''
+
 import matplotlib.pyplot as plt
 
 # Lire le fichier

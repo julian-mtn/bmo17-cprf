@@ -1,3 +1,26 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier implémente la permutation RSA basé sur OpenSSL,
+ * fournissant la génération de clés, l’évaluation de la
+ * permutation RSA (publique et privée), ainsi qu’une fonction
+ * de hachage vers BIGNUM pour usage cryptographique.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Générer une clé RSA (n, e, d) avec p et q premiers
+ * - Évaluer la permutation RSA publique : c = m^e mod n
+ * - Évaluer la permutation RSA privée : m = c^d mod n
+ * - Hacher un message SHA-256 et le convertir en BIGNUM mod n
+ * - Fournir des primitives sécurisées pour constructions PRF
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include "../include/rsa.h"
 
 

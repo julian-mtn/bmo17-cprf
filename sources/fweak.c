@@ -1,4 +1,30 @@
-// fweak.c
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier implémente la construction cryptographique fweak,
+ * basée sur des opérations matricielles dans un corps fini.
+ *
+ * Le système définit une fonction de type PRF construite à partir
+ * d’une matrice secrète S et d’un vecteur y, ainsi qu’une version
+ * contrainte de cette fonction permettant de dériver une clé
+ * S_y adaptée à un vecteur donné.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Générer une clé maîtresse fweak (matrice S mod p)
+ * - Générer une clé contrainte S_y à partir d’un vecteur y
+ * - Construire des opérations matricielles modulo p
+ * - Évaluer la fonction fweak sur un vecteur x
+ * - Évaluer la version contrainte de la fonction
+ * - Gérer les allocations et libérations de structures BIGNUM
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include "../include/fweak.h"
 
 

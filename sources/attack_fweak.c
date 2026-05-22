@@ -1,3 +1,32 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce programme implémente un client réseau réalisant une
+ * attaque basée sur des transformations linéaires sur fweak.
+ *
+ * Le client communique avec un serveur via TCP afin d’envoyer
+ * des vecteurs, recevoir des paramètres et analyser les sorties
+ * afin de détecter une structure de type PRF .
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Se connecter à un serveur local 
+ * - Envoyer un vecteur initial y
+ * - Recevoir les paramètres p et la matrice S_y
+ * - Générer des vecteurs aléatoires x dans Z_p
+ * - Calculer les sorties Sn 
+ * - Compter les occurrences des Sn dans un dictionnaire
+ * - Identifier la sortie la plus fréquente
+ * - Vérifier la réponse auprès du serveur
+ * - Mesurer le temps d’exécution de l’attaque
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

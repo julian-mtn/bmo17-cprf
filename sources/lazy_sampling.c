@@ -1,3 +1,29 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce fichier implémente un mécanisme de “lazy sampling”
+ * basé sur une table de hachage simple associant des entrées
+ * BIGNUM à des sorties BIGNUM.
+ *
+ * Le but est de simuler une fonction déterministe stockant les
+ * couples (x -> y) : si une entrée existe déjà, elle est réutilisée,
+ * sinon une nouvelle valeur aléatoire est générée et mémorisée.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Implémenter une table de hachage statique (liste chaînée)
+ * - Associer chaque entrée BIGNUM à une sortie BIGNUM
+ * - Réutiliser une valeur déjà générée si l’entrée existe
+ * - Générer une valeur aléatoire si nouvelle entrée
+ * - Fournir une fonction de nettoyage mémoire complète
+ *
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <openssl/bn.h>
 #include <stdlib.h>
 #include <stdint.h>

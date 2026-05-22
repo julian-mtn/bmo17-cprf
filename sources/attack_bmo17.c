@@ -1,3 +1,29 @@
+/*
+ * ============================================================
+ * ------------------------------------------------------------
+ * Description :
+ * Ce programme implémente un client réseau qui interagit avec
+ * un serveur local via TCP afin de réaliser une attaque sur une
+ * fonction PRF contrainte.
+ *
+ * Le client envoie des requêtes "CONSTRAIN", "EVAL" et "ANSWER"
+ * au serveur pour tester la présence d'une PRF et tenter de la
+ * détecter sur une plage de valeurs.
+ *
+ * ------------------------------------------------------------
+ * Rôle principal :
+ * - Se connecter à un serveur local 
+ * - Récupérer des clés contraintes (e, N, STn)
+ * - Tester une hypothèse PRF sur des valeurs successives
+ * - Appliquer différentes variantes d’attaque (NORMAL, HASHED, LAZY)
+ * - Mesurer le temps d’exécution de chaque test
+ * - Sauvegarder les résultats dans un fichier log
+ * ------------------------------------------------------------
+ * Auteur : Julian Mouthon, Mario Razafinony
+ * Date   : 22/05/26
+ * ============================================================
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
