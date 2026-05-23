@@ -311,6 +311,15 @@ iterations of the public permutation starting from $ST_n$. The private key is ne
 in the constrained key, which ensures that only authorized evaluations are possible.
 
 \section{Study of other alternative permutations}
+
+The construction of BMO17 relies on the use of an iterated trapdoor permutation based on RSA. 
+However, it is interesting to study other possible constructions in order 
+to better understand the properties required for the security of a CPRF.
+
+We therefore investigate several alternatives to the RSA permutation: 
+a linear construction \(F^{\text{WEAK}}\), a Rabin-based construction, 
+and an approach using AES.
+
 \subsection{Linear permutation $F^{\text{WEAK}}$}
 
 In this section, we present an implementation of a CPRF whose input and output are vectors
@@ -770,12 +779,14 @@ An attacker will have the same advantage using this attack without performing ad
 
 However, the fact that $F^{\text{WEAK}}$ is not IND$^*$-NC-CPRF secure does not imply that $\textsf{Hashed}[F^{\text{WEAK}}]$ is not \textbf{SIM$^*$-AC-CPRF secure}. Therefore, this is not a proof that $\textsf{Hashed}[F^{\text{WEAK}}]$ is not \textbf{SIM$^*$-AC-CPRF secure}.
 
-\subsection{Rabin trapdoor permutation}
+\subsection{Rabin Trapdoor Function}
 
-\paragraph{}The Rabin permutation is a trapdoor function based on the hardness of integer factorization. It relies on the squaring operation modulo a composite integer.
+The Rabin function is a trapdoor function based on the hardness of integer factorization. It relies on the squaring operation modulo a composite integer.
+
+Unlike RSA, this function is not injective and therefore does not define a trapdoor permutation.
 
 \begin{itemize}
-\item\textbf{Key generation:}
+\item\textbf{Key Generation:}
 
 We choose two distinct prime numbers $p$ and $q$ such that:
 \[
@@ -791,21 +802,22 @@ The private key is the pair $(p, q)$.
 
 This condition on $p$ and $q$ allows efficient computation of square roots modulo these prime numbers.\\
 
-\item\textbf{Rabin permutation:}
+\item\textbf{Rabin Function:}
 
-The Rabin permutation is the function:
+The Rabin function:
 \[
 f : \mathbb{Z}_n \rightarrow \mathbb{Z}_n
 \]
-defined by:
+is defined by:
 \[
 f(x) = x^2 \bmod n
 \]
+
 This function is easy to compute, but difficult to invert without knowing the factorization of $n$.\\
 
-\item\textbf{Inverting the Rabin permutation:}
+\item\textbf{Inverting the Rabin Function:}
 
-Inverting the Rabin permutation amounts to solving the equation:
+Inverting the Rabin function amounts to solving the equation:
 \[
 x^2 \equiv y \pmod{n}
 \]
@@ -833,8 +845,7 @@ Similarly, modulo $q$:
 r_q = y^{\frac{q+1}{4}} \bmod q
 \]
 
-\newpage
-The solutions are therefore: 
+The solutions are therefore:
 
 \begin{itemize}
   \item $X_0 = (r_p * q * q^{-1}_{\bmod p} + r_q * p * p^{-1}_{\bmod q}) \bmod n $
@@ -846,16 +857,14 @@ The solutions are therefore:
   \item $X_3 = (-r_p * q * q^{-1}_{\bmod p} - r_q * p * p^{-1}_{\bmod q}) \bmod n$
 \end{itemize}
 
-
 \end{itemize}
 
 \paragraph{Problem:} Which of these roots corresponds to the original message?
+
 \paragraph{}
 The function \(f(x) = x^2 \bmod n\) is not injective: each ciphertext \(c\) has 4 preimages.
-Even with the secret key (\(p,q\)), it is possible to compute all the roots but \textbf{not directly determine which one corresponds to the original message}.
-Applying the inverse \(n-c\) times does not guarantee recovering the original message.
-
-
+Even with the secret key (\(p,q\)), it is possible to compute all the roots but \textbf{not to directly determine which one corresponds to the original message}.
+Applying the inverse \(n-c\) times does not guarantee recovering the original preimage.
 
 \begin{figure}[H]
   \centering
@@ -869,13 +878,13 @@ Applying the inverse \(n-c\) times does not guarantee recovering the original me
 ]
 
 \node[correct] {$ST_0$}
-  % Niveau 1
+  % Level 1
   child {node[correct] {$X_0$} 
-    % Niveau 2
+    % Level 2
     child {node {$X_0$}} 
     child {node {$X_1$}}
     child {node[correct] {$X_2$} 
-      % Niveau 3 
+      % Level 3 
       child {node[correct] {$\dots$} 
         child {node[correct] {$ST_n$}}
         child {node {$X_1$}}
@@ -892,14 +901,14 @@ Applying the inverse \(n-c\) times does not guarantee recovering the original me
   child {node {$X_2$}}
   child {node {$X_3$}};
 \end{tikzpicture}
-\caption{Tree of preimages in the Rabin permutation.}\label{fig:rabin-tree}
+\caption{Preimage tree in the Rabin function.}\label{fig:rabin-tree}
 \end{figure}
 
 \paragraph{Conclusion:}
-The Rabin permutation is not suitable for our CPRF because each value has four possible preimages. 
-Even with the private key, it is impossible to know which one corresponds to the original input, which prevents 
-the repeated application of the inverse $(n-c)$ times from correctly recovering the CPRF output.
-
+The Rabin function is not suitable for our CPRF construction,
+because it does not define a bijective permutation. Each value has four possible preimages.
+Even with the private key, it is impossible to know which one corresponds to the original input, which prevents
+the repeated application of the inverse $(n-c)$ times from correctly recovering the CPRF result.
 
 \subsection{AES trapdoor permutation}
 \paragraph{}

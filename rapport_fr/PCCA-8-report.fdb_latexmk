@@ -1,4 +1,5 @@
 # Fdb version 4
+<<<<<<< HEAD
 ["pdflatex"] 1779444605.7377 "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/rapport_fr/PCCA-8-report.tex" "PCCA-8-report.pdf" "PCCA-8-report" 1779444616.74909 0
   "/etc/texmf/web2c/texmf.cnf" 1768777829.47801 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/razafinony/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecbx0600.600pk" 1776189560.28997 14768 f6863d4a53faf5005f081b3f66e279a8 ""
@@ -18,6 +19,11 @@
   "/home/razafinony/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ecti0900.600pk" 1776189570.01 28796 fe60dde431c3dd8a55490c3699ea3caf ""
   "/home/razafinony/.texlive2023/texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0800.600pk" 1776189564.494 15172 eaaedbf36147ce4bafba188120662160 ""
   "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/rapport_fr/PCCA-8-report.tex" 1779444592.64859 52969 8f85b210b504f0373d1c2d44eaea3a64 ""
+=======
+["pdflatex"] 1779521809.15404 "/home/julian/Bureau/PCCA/bmo17-cprf/rapport_fr/PCCA-8-report.tex" "PCCA-8-report.pdf" "PCCA-8-report" 1779521810.74345 0
+  "/etc/texmf/web2c/texmf.cnf" 1761145480.36181 475 c0e671620eb5563b2130f56340a5fde8 ""
+  "/home/julian/Bureau/PCCA/bmo17-cprf/rapport_fr/PCCA-8-report.tex" 1779521809.16415 53278 31d9de09ca8a7e943f3a68986790bf78 ""
+>>>>>>> 9c3569a (intro section 3 + correction rabin (FR + EN))
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0500.tfm" 1136768653 3584 0913860e6fa2bdf78ecaf460b391112b ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/jknappen/ec/ecbx0600.tfm" 1136768653 3584 ad9fcbc26a2a7bccd6d08b0a5792fbe0 ""
@@ -238,6 +244,7 @@
   "/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty" 1700082560 55487 80a65caedd3722f4c20a14a69e785d8f ""
   "/usr/share/texlive/texmf-dist/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
+<<<<<<< HEAD
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1771842688.07278 128067 403859e4d35fdff4c458758f0e5ea400 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1771842693 6808180 60db700bce88f8f13d3a49df25aad502 ""
   "PCCA-8-report.aux" 1779444614.96964 25696 14262dace7a67be780127142a6d95e33 "pdflatex"
@@ -248,6 +255,18 @@
   "images/stat2.png" 1779442224.68057 79714 626461b2aaa42aa11e2f2428ebc08ab5 ""
   "images/stat3.png" 1779442224.71159 78799 5cabcaa9ed23b6effdc17d5c9076772b ""
   "images/stat4.png" 1779442224.74059 45729 8e87c0738aa3e268c1620ecda8277e6a ""
+=======
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770116836.56821 5349306 5bebe4c4513170eb7b91d5de73269dde ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770116845 6837886 995b4c421a219235e7928a91b461690a ""
+  "PCCA-8-report.aux" 1779521810.62815 25568 b3a3b2deb5edda4df041afd2d4eefeb0 "pdflatex"
+  "PCCA-8-report.tex" 1779521809.16415 53278 31d9de09ca8a7e943f3a68986790bf78 ""
+  "PCCA-8-report.toc" 1779521810.63315 4172 9d760ae869b5055360fab158b7f4f0bc "pdflatex"
+  "images/sorbonne.png" 1779390895.78305 7860 7634c442bbbc26e80b522a21fb5dd53f ""
+  "images/stat1.png" 1779390895.78305 42967 40c0dcb8fa301c90bede3ddec928ffab ""
+  "images/stat2.png" 1779390895.78305 79714 626461b2aaa42aa11e2f2428ebc08ab5 ""
+  "images/stat3.png" 1779390895.78405 78799 5cabcaa9ed23b6effdc17d5c9076772b ""
+  "images/stat4.png" 1779390895.78405 45729 8e87c0738aa3e268c1620ecda8277e6a ""
+>>>>>>> 9c3569a (intro section 3 + correction rabin (FR + EN))
   (generated)
   "PCCA-8-report.aux"
   "PCCA-8-report.log"

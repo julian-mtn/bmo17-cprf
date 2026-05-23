@@ -333,6 +333,16 @@ sont possibles.
 
 
 \section{Étude d'autres permutations alternatives}
+
+La construction de BMO17 repose sur l’utilisation d’une permutation à trappe
+itérable avec RSA. Il est toutefois intéressant
+d’étudier d’autres constructions possibles afin de mieux comprendre les propriétés
+nécessaires à la sécurité d’une CPRF.
+
+Nous étudions donc plusieurs alternatives à la permutation RSA :
+une construction linéaire $F^{\text{WEAK}}$, une basée sur Rabin
+ainsi qu’une approche utilisant AES.
+
 \subsection{Permutation linéaire $F^{WEAK}$}
 
 Dans cette section, nous allons voir une implémentation d'une CPRF dont l'entrée et la sortie seront des vecteurs $\vec{x} \in (\mathbb{Z}/p\mathbb{Z})^N $ et $\vec{y} \in (\mathbb{Z}/p\mathbb{Z})^M$ où $p$ est un nombre premier et $N$ et $M$ les dimensions des vecteurs.
@@ -790,9 +800,14 @@ Un attaquant aura les même avantages en utilisant cet attaque, sans effectuer d
 
 Toutefois, le fait que $F^{\text{WEAK}}$ n'est pas IND$^*$-NC-CPRF sécurisée n'implique pas que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}. Ceci n'est donc pas une preuve que $\textsf{Hashed}[F^{\text{WEAK}}]$ n'est pas \textbf{SIM$^*$-AC-CPRF sécurisée}.
 
-\subsection{Permutation à trappe de Rabin}
+\subsection{Fonction à trappe de Rabin}
 
-\paragraph{}La permutation de Rabin est une fonction à trappe fondée sur la difficulté de la factorisation des entiers. Elle repose sur l'opération de mise au carré modulo un entier composé.
+La fonction de Rabin est une fonction à trappe fondée sur la difficulté
+de la factorisation des entiers. Elle repose sur l’opération de mise au carré
+modulo un entier composé.
+
+Contrairement à RSA, cette fonction n’est pas injective et ne définit donc
+pas une permutation à trappe.
 
 \begin{itemize}
 \item\textbf{Génération de la clé :}
@@ -811,22 +826,22 @@ La clé privée est le couple $(p, q)$.
 
 Cette condition sur $p$ et $q$ permet un calcul efficace des racines carrées modulo ces nombres premiers.\\
 
-\item\textbf{Permutation de Rabin :}
+\item\textbf{Fonction de Rabin :}
 
-La permutation de Rabin est la fonction :
+La fonction de Rabin :
 \[
 f : \mathbb{Z}_n \rightarrow \mathbb{Z}_n
 \]
-définie par :
+est définie par :
 \[
 f(x) = x^2 \bmod n
 \]
 
 Cette fonction est facile à calculer, mais difficile à inverser sans connaître la factorisation de $n$.\\
 
-\item\textbf{Inverser la permutation de Rabin :}
+\item\textbf{Inverser la fonction de Rabin :}
 
-Inverser la permutation de Rabin revient à résoudre l'équation :
+Inverser la fonction de Rabin revient à résoudre l'équation :
 \[
 x^2 \equiv y \pmod{n}
 \]
@@ -873,7 +888,7 @@ Les solutions sont donc:
 \paragraph{}
 La fonction \(f(x) = x^2 \bmod n\) n'est pas injective: chaque chiffré \(c\) a 4 pré-images.
 Même avec la clé secrète (\(p,q\)), on peut calculer toutes les racines mais \textbf{pas déterminer directement celle qui correspond au message initial}.
-Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
+Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver la pré-image originale.
 
 
 
@@ -912,11 +927,12 @@ Appliquer l'inverse \(n-c\) fois n'assure pas de retrouver le message original.
   child {node {$X_2$}}
   child {node {$X_3$}};
 \end{tikzpicture}
-\caption{Arbre des pré-images dans la permutation de Rabin.}\label{fig:rabin-tree}
+\caption{Arbre des pré-images dans la fonction de Rabin.}\label{fig:rabin-tree}
 \end{figure}
 
 \paragraph{Conclusion :}
-La permutation de Rabin n'est pas adaptée pour notre CPRF car chaque valeur a quatre pré-images possibles. 
+La fonction de Rabin n’est pas adaptée à notre construction de CPRF,
+car elle ne définit pas une permutation bijective. Chaque valeur a quatre pré-images possibles. 
 Même avec la clé privée, il est impossible de savoir laquelle correspond à l'entrée originale, ce qui empêche 
 l'application répétée de l'inverse $(n-c)$ fois pour retrouver correctement le résultat de la CPRF.
 

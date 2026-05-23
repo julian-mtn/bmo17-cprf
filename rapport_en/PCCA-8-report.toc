@@ -28,8 +28,7 @@
 \contentsline {paragraph}{Constrained key request: }{8}{subsubsection.3.1.5}%
 \contentsline {paragraph}{Evaluation on constrained inputs: }{8}{subsubsection.3.1.5}%
 \contentsline {subsubsection}{\numberline {3.1.6}Security proof of hashed $F^{WEAK}$}{9}{subsubsection.3.1.6}%
-\contentsline {subsection}{\numberline {3.2}Rabin trapdoor permutation}{10}{subsection.3.2}%
-\contentsline {paragraph}{}{10}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.2}Rabin Trapdoor Function}{10}{subsection.3.2}%
 \contentsline {paragraph}{Problem:}{11}{subsection.3.2}%
 \contentsline {paragraph}{}{11}{subsection.3.2}%
 \contentsline {paragraph}{Conclusion:}{11}{figure.5}%
