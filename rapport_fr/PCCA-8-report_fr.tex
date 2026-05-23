@@ -1104,7 +1104,8 @@ Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour not
 
 Afin d'améliorer la sécurité de la construction de BMO17 face à l'attaque CJ25, il est possible d'implémenter une version hachée de la CPRF.
 Notons que nous avons tenté d'appliquer la transformation de Cheng et Jaeger à notre construction $F^{\text{WEAK}}$, afin d'obtenir une CPRF avec des contraintes plus expressives.
-Malheureusement, cette approche échoue : le théorème de CJ25 requiert que la CPRF sous-jacente soit IND$^*$-NC-CPRF sécurisée, ce que $F^{\text{WEAK}}$ ne satisfait pas, cependant, ce n'est pas un preuve que $Hashed(F^{\text{WEAK}})$ n'est pas SIM$^*$-AC-CPRF sécurisée.
+Malheureusement, cette approche échoue, le théorème de CJ25 requiert que la CPRF sous-jacente soit IND$^*$-NC-CPRF sécurisée, 
+ce que $F^{\text{WEAK}}$ ne satisfait pas.
 
 \subsection{Principe général de la CPRF hachée}
 
