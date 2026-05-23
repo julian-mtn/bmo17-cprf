@@ -1207,6 +1207,37 @@ Après avoir implémenté différentes variantes de la CPRF (version originale, 
 nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
 Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
 
+\section{Résultats expérimentaux}
+
+Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
+nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
+Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
+
+
+Toutes les expériences ont été réalisées sur la configuration matérielle suivante.
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Composant} & \textbf{Description} \\
+\hline
+Machine & Dell Inspiron 3501 \\
+Processeur & Intel Core i7-1165G7 (4 cœurs, 8 threads) \\
+Fréquence CPU & 2.80\,GHz (jusqu’à 4.70\,GHz) \\
+Mémoire vive & 7.5\,GB RAM \\
+Système d’exploitation & Ubuntu 24.04.4 LTS \\
+Noyau Linux & 6.8.0 \\
+Architecture & x86\_64 \\
+Accélération matérielle & Aucune (pas de GPU utilisé) \\
+\hline
+\end{tabular}
+
+\caption{Configuration matérielle utilisée pour les expériences.}
+\label{fig:setup}
+\end{figure}
+
+
 La figure \ref{fig:stat1} présente les résultats obtenus sur la version non hachée de la CPRF. 
 On observe que l’attaque CJ25 est très efficace dans ce cas, avec une probabilité de succès proche de 1 dès les premières requêtes. 
 Cela s’explique par le fait que la structure de la CPRF reste entièrement exploitable dans ce modèle, ce qui permet à l’attaquant de distinguer les comportements de la fonction.

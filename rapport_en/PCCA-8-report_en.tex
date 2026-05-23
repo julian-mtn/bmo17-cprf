@@ -1175,9 +1175,32 @@ The evaluation is defined by:
 
 \section{Experimental Results}
 
-\paragraph{}After implementing different variants of the CPRF (original version, hashed version with SHA-256, and hashed version with lazy sampling), 
+After implementing different variants of the CPRF (original version, hashed version with SHA-256, and hashed version with lazy sampling), 
 we conducted experiments in order to evaluate the effectiveness of the CJ25 attack on each of them. 
 The tests consist of executing 100 evaluation queries for each version and observing the evolution of the attack success rate throughout the queries.
+
+All experiments were conducted on the following hardware configuration.
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{ll}
+\hline
+\textbf{Component} & \textbf{Description} \\
+\hline
+Machine & Dell Inspiron 3501 \\
+Processor & Intel Core i7-1165G7 (4 cores, 8 threads) \\
+CPU frequency & 2.80\,GHz (up to 4.70\,GHz) \\
+Main memory & 7.5\,GB RAM \\
+Operating system & Ubuntu 24.04.4 LTS \\
+Linux kernel & 6.8.0 \\
+Architecture & x86\_64 \\
+Hardware acceleration & None (no GPU used) \\
+\hline
+\end{tabular}
+
+\caption{Hardware configuration used for the experiments.}
+\label{fig:setup}
+\end{figure}
 
 Figure \ref{fig:stat1} presents the results obtained on the non-hashed version of the CPRF. 
 We observe that the CJ25 attack is highly effective in this case, with a success probability close to 1 from the very first queries. 
