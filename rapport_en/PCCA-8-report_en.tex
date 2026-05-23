@@ -863,7 +863,7 @@ In other words, $f(\lambda)$ grows faster than any polynomial function.
 \end{defbox}
 
 \begin{itemize}
-\item \textbf{$\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ is super-polynomial in $\lambda$:}
+\item \textbf{Check if $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ is super-polynomial in $\lambda$:}
 
 In the implementation of the CPRF $F^{\text{WEAK}}$, we work with coefficients in $\mathbb{Z}/p\mathbb{Z}$ where $p$ has size $\lambda$. Therefore, $|\mathbb{Z}/p\mathbb{Z}| \approx 2^{\lambda}$.
 
@@ -873,7 +873,7 @@ Fix $x \in (\mathbb{Z}/p\mathbb{Z})^N$. For all $S,S' \in (\mathbb{Z}/p\mathbb{Z
 
 We conclude that $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)| \approx 2^{\lambda \times M \times N}$, which is super-polynomial in $\lambda$.
 
-\item \textbf{The random oracle used is non-programmable:}
+\item \textbf{Check if the random oracle used is non-programmable:}
 
 Recall that the lazy sampling function $P.Ls$ and the programming function $P.Prog$ are implemented as follows:
 
@@ -891,7 +891,7 @@ In our implementation of $F^{\text{WEAK}}$, we use lazy sampling to implement th
 
 We can therefore conclude that $P$ is non-programmable.
 
-\item \textbf{$F^{\text{WEAK}}$ is IND$^*$-NC-CPRF secure:}
+\item \textbf{Check if $F^{\text{WEAK}}$ is IND$^*$-NC-CPRF secure:}
 
 For this condition, we can prove that $CF$ is IND$^*$-NC-CPRF secure if there does not exist an attacker who:
 

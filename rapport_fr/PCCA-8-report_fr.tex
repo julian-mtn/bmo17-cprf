@@ -536,7 +536,7 @@ S \cdot \vec{x} & \text{si } \langle \vec{x}, \vec{y} \rangle = 0 \\
 \]
 Cette construction permet donc de restreindre l’évaluation de la fonction aux seuls vecteurs orthogonaux à $\vec{y}$. Lorsque l'attaquant envoie un vecteur $\vec{y}$, il est impératif que l'oracle doit refuser si $\vec{y} = \vec{0}$, sinon l'oracle va envoyer $S_{\vec{y}} = S$, ce qui révèlera la clé maîtresse à l'attaquant.
 
-\newpage
+
 \subsubsection{Approche d'une attaque à base d'un système linéaire}
 
 Notons $\vec{Si} \in (\mathbb{Z}/p\mathbb{Z})^N$ la ième ligne de $S$.
@@ -884,7 +884,7 @@ Autrement dit, $f(\lambda)$ croît plus vite que toute fonction polynomiale.
 \end{defbox}
 
 \begin{itemize}
-\item \textbf{$\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ est super-polynomial en $\lambda$ :}
+\item \textbf{Vérification si $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)|$ est super-polynomial en $\lambda$ :}
 
 Dans l'implémentation de la CPRF $F^{\text{WEAK}}$, nous travaillons avec des coefficients de $\mathbb{Z}/p\mathbb{Z}$ où $p$ est de taille $\lambda$. On a donc $|\mathbb{Z}/p\mathbb{Z}| \approx 2^{\lambda}$.
 
@@ -894,7 +894,7 @@ Fixons $x \in (\mathbb{Z}/p\mathbb{Z})^N$. Pour tout $S,S' \in (\mathbb{Z}/p\mat
 
 On conclue que $\min_x |\textsf{F}^{\text{WEAK}}\textsf{.Out}(\lambda, x)| \approx 2^{\lambda \times M \times N}$ qui est super-polynomial en $\lambda$.
 
-\item \textbf{L'oracle aléatoire utilisé est non-programmable :}
+\item \textbf{Vérification si l'oracle aléatoire utilisé est non-programmable :}
 
 On rappel que la fonction lazy sampling $P.Ls$ et la fonction de programmation $P.Prog$ sont implémentées comme suit :
 
@@ -914,7 +914,7 @@ Dans notre implémentation de $F^{\text{WEAK}}$, nous utilisons le lazy sampling
 
 On peut donc conclure que $P$ est non-programmable.
 
-\item \textbf{$F^{\text{WEAK}}$ est IND$^*$-NC-CPRF sécurisée :}
+\item \textbf{Vérification si $F^{\text{WEAK}}$ est IND$^*$-NC-CPRF sécurisée :}
 
 Pour cette condition, on peut prouver que $CF$ est IND$^*$-NC-CPRF sécurisée si il n'existe pas un attaquant qui :
 
