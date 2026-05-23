@@ -310,6 +310,153 @@ This key then allows evaluating the CPRF only for inputs $c < n$ by applying $(n
 iterations of the public permutation starting from $ST_n$. The private key is never included
 in the constrained key, which ensures that only authorized evaluations are possible.
 
+
+
+\section{The CJ25 attack}
+
+\subsection{General description and intuition behind the attack}
+
+\paragraph{}
+The CJ25 attack exploits the fact that an attacker can obtain a constrained key
+allowing them to evaluate the pseudo-random function on a subset of inputs,
+while still retaining access to a global evaluation oracle.
+
+\paragraph{}
+First, the adversary chooses an index $n$ and requests from the oracle a
+constrained key $(PK, ST_n, n)$. This key allows them to evaluate the function on any
+input $x$ such that $x < n$ using the associated public permutations.
+
+In a second step, the adversary queries the evaluation oracle on an input
+$x < n$ and obtains a value $ST_x$. At this stage, the attacker does not know whether $ST_x$
+comes from a constrained pseudo-random function or from a random function.
+
+Using the constrained key, the attacker successively applies the public permutations
+in order to compute the value $\pi_{PK}^{x-n}(ST_x)$.
+If the attacker recovers $ST_a = ST_x$, they can then conclude that the value $ST_x$ is the result of a constrained pseudo-random function.
+
+\paragraph{}It is therefore possible for an attacker to obtain information about the structure of the CPRF from the constrained key and the obtained evaluations, which allows them to distinguish a CPRF from a random function with non-negligible probability.\\
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=2.5cm]
+  % States
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
+  \node[right of=st0] (dots1) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stn1) {$ST_{n+1}$};
+  \node[right of=stn1] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
+
+  % Direct arrows with π
+  \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
+  \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
+  \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Attacker arrows (red, dashed)
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  red
+]
+  (st0.south west) -- (stn.south east)
+  node[midway, below=14pt, red] {constrained zone};
+
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  blue
+]
+  (stn1.south west) -- (stx.south east)
+  node[midway, below=14pt, blue] {evaluation zone outside the constraint};
+\end{tikzpicture}
+\caption{General diagram of the CJ25 attack}
+\end{figure}
+
+
+\subsection{Security game model and attacker advantage}
+\begin{defbox}{Security game for CPRFs}
+The attacker $\mathcal{A}$ interacts with an oracle $O$ which is either a $CPRF$ or a random function. 
+The goal of the attacker is to distinguish between the two cases.
+\begin{itemize}
+\item \textbf{Phase 1:} $\mathcal{A}$ requests a constrained key $K_C = (PK, ST_n, n)$ for a constraint $n$ of their choice, allowing them to evaluate the function on a subset of inputs.
+\item \textbf{Phase 2:} $\mathcal{A}$ makes several evaluation queries to the oracle $O$ on inputs $x > n$ in order to obtain unconstrained values $ST_x$.
+\item \textbf{Phase 3:} $\mathcal{A}$ uses the obtained values to evaluate $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ and compares it with $ST_n$.
+\item \textbf{Decision:} $\mathcal{A}$ decides that $O$ is the $CPRF$ if $ST_a = ST_n$, otherwise they decide that $O$ is a random function.
+\end{itemize}
+In the case where $O$ is a $CPRF$, the attacker $\mathcal{A}$ always recovers $ST_a = ST_n$, and never makes a mistake. On the other hand, if $O$ is a random function, the probability that $ST_a = ST_n$ is $1/N$, where $N$ is the size of the output space of the function. In this case, the attacker makes a mistake with probability $1/N$.
+The attacker $\mathcal{A}$ therefore succeeds with probability $1 - 1/N$ in correctly distinguishing the two cases, which is non-negligible for reasonable values of $N$.\\
+
+\begin{figure}[H]
+  \centering
+\begin{tikzpicture}[node distance=3cm]
+  % States
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
+  \node[right of=stnp2] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
+
+  % Direct CPRF arrows with pi written above
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
+  \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
+  \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Attacker arrows (red, dashed) below the boxes
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
+    node[below, red, align=center] {Attacker applies the permutation \\ to verify $ST_a = ST_n$} (stn.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
+    node[below, red, align=center] {} (stnp1.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.2,-1) and +(0,-1) .. 
+    node[below, red, align=center] {} (stnp2.south);
+
+\end{tikzpicture}
+\caption{Diagram of the permutations used in the attack within the unconstrained zone}
+\end{figure}
+
+
+
+
+\end{defbox}
+
+\subsection{Experimental implementation of the attack}
+
+To simulate the security game, we implemented a local client–server architecture 
+based on TCP. The server implements the game oracle 
+(evaluation and constrained key generation), 
+while the client plays the role of the attacker (evaluation and constraint requests, tests, ...).
+
+
+\subsubsection{Implementation of the security oracle}
+
+
+The oracle provides two interfaces accessible to the attacker:
+\begin{itemize}
+    \item \texttt{EVAL(x)} : returns a value associated with the input $x$.\\
+    In the PRF world, the oracle returns the evaluation of the CPRF using the master key.\\
+    In the random world, it returns a uniformly random value of the same size.
+
+    \item \texttt{CONSTRAIN(n)} : returns a constrained key associated with index $n$,
+    allowing the evaluation of the function on a subset of inputs.
+\end{itemize}
+\subsubsection{Implementation of the attacker and strategy}
+
+The attacker chooses an index $n$ and requests from the oracle the corresponding constrained
+key. This key allows them to evaluate the function on inputs
+strictly greater than $n$.
+
+They then perform \texttt{EVAL} queries on inputs
+$x > n$. Using the values returned by the oracle and the constrained key, they
+apply the public permutations in order to test the consistency of the CPRF structure.
+
+If the attacker finds a match, they can conclude that the oracle implements a CPRF rather than a random function.
+
+
+
+
 \section{Study of other alternative permutations}
 
 The construction of BMO17 relies on the use of an iterated trapdoor permutation based on RSA. 
@@ -924,147 +1071,7 @@ However, in order to decrypt, \textbf{the key \(k\) must absolutely be known}:
 Therefore, the use of AES as a trapdoor permutation is not suitable for our CPRF.
 
 
-\section{The CJ25 attack}
 
-\subsection{General description and intuition behind the attack}
-
-\paragraph{}
-The CJ25 attack exploits the fact that an attacker can obtain a constrained key
-allowing them to evaluate the pseudo-random function on a subset of inputs,
-while still retaining access to a global evaluation oracle.
-
-\paragraph{}
-First, the adversary chooses an index $n$ and requests from the oracle a
-constrained key $(PK, ST_n, n)$. This key allows them to evaluate the function on any
-input $x$ such that $x < n$ using the associated public permutations.
-
-In a second step, the adversary queries the evaluation oracle on an input
-$x < n$ and obtains a value $ST_x$. At this stage, the attacker does not know whether $ST_x$
-comes from a constrained pseudo-random function or from a random function.
-
-Using the constrained key, the attacker successively applies the public permutations
-in order to compute the value $\pi_{PK}^{x-n}(ST_x)$.
-If the attacker recovers $ST_a = ST_x$, they can then conclude that the value $ST_x$ is the result of a constrained pseudo-random function.
-
-\paragraph{}It is therefore possible for an attacker to obtain information about the structure of the CPRF from the constrained key and the obtained evaluations, which allows them to distinguish a CPRF from a random function with non-negligible probability.\\
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[node distance=2.5cm]
-  % States
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
-  \node[right of=st0] (dots1) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stn1) {$ST_{n+1}$};
-  \node[right of=stn1] (dots) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
-
-  % Direct arrows with π
-  \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
-  \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
-  \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
-  \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
-  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
-
-  % Attacker arrows (red, dashed)
-\draw[
-  decorate,
-  decoration={brace, mirror, amplitude=6pt, raise=8pt},
-  red
-]
-  (st0.south west) -- (stn.south east)
-  node[midway, below=14pt, red] {constrained zone};
-
-\draw[
-  decorate,
-  decoration={brace, mirror, amplitude=6pt, raise=8pt},
-  blue
-]
-  (stn1.south west) -- (stx.south east)
-  node[midway, below=14pt, blue] {evaluation zone outside the constraint};
-\end{tikzpicture}
-\caption{General diagram of the CJ25 attack}
-\end{figure}
-
-
-\subsection{Security game model and attacker advantage}
-\begin{defbox}{Security game for CPRFs}
-The attacker $\mathcal{A}$ interacts with an oracle $O$ which is either a $CPRF$ or a random function. 
-The goal of the attacker is to distinguish between the two cases.
-\begin{itemize}
-\item \textbf{Phase 1:} $\mathcal{A}$ requests a constrained key $K_C = (PK, ST_n, n)$ for a constraint $n$ of their choice, allowing them to evaluate the function on a subset of inputs.
-\item \textbf{Phase 2:} $\mathcal{A}$ makes several evaluation queries to the oracle $O$ on inputs $x > n$ in order to obtain unconstrained values $ST_x$.
-\item \textbf{Phase 3:} $\mathcal{A}$ uses the obtained values to evaluate $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ and compares it with $ST_n$.
-\item \textbf{Decision:} $\mathcal{A}$ decides that $O$ is the $CPRF$ if $ST_a = ST_n$, otherwise they decide that $O$ is a random function.
-\end{itemize}
-In the case where $O$ is a $CPRF$, the attacker $\mathcal{A}$ always recovers $ST_a = ST_n$, and never makes a mistake. On the other hand, if $O$ is a random function, the probability that $ST_a = ST_n$ is $1/N$, where $N$ is the size of the output space of the function. In this case, the attacker makes a mistake with probability $1/N$.
-The attacker $\mathcal{A}$ therefore succeeds with probability $1 - 1/N$ in correctly distinguishing the two cases, which is non-negligible for reasonable values of $N$.\\
-
-\begin{figure}[H]
-  \centering
-\begin{tikzpicture}[node distance=3cm]
-  % States
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
-  \node[right of=stnp2] (dots) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
-
-  % Direct CPRF arrows with pi written above
-  \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
-  \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
-  \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
-  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
-
-  % Attacker arrows (red, dashed) below the boxes
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
-    node[below, red, align=center] {Attacker applies the permutation \\ to verify $ST_a = ST_n$} (stn.south);
-
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
-    node[below, red, align=center] {} (stnp1.south);
-
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.2,-1) and +(0,-1) .. 
-    node[below, red, align=center] {} (stnp2.south);
-
-\end{tikzpicture}
-\caption{Diagram of the permutations used in the attack within the unconstrained zone}
-\end{figure}
-
-
-
-
-\end{defbox}
-
-\subsection{Experimental implementation of the attack}
-
-To simulate the security game, we implemented a local client–server architecture 
-based on TCP. The server implements the game oracle 
-(evaluation and constrained key generation), 
-while the client plays the role of the attacker (evaluation and constraint requests, tests, ...).
-
-
-\subsubsection{Implementation of the security oracle}
-
-
-The oracle provides two interfaces accessible to the attacker:
-\begin{itemize}
-    \item \texttt{EVAL(x)} : returns a value associated with the input $x$.\\
-    In the PRF world, the oracle returns the evaluation of the CPRF using the master key.\\
-    In the random world, it returns a uniformly random value of the same size.
-
-    \item \texttt{CONSTRAIN(n)} : returns a constrained key associated with index $n$,
-    allowing the evaluation of the function on a subset of inputs.
-\end{itemize}
-\subsubsection{Implementation of the attacker and strategy}
-
-The attacker chooses an index $n$ and requests from the oracle the corresponding constrained
-key. This key allows them to evaluate the function on inputs
-strictly greater than $n$.
-
-They then perform \texttt{EVAL} queries on inputs
-$x > n$. Using the values returned by the oracle and the constrained key, they
-apply the public permutations in order to test the consistency of the CPRF structure.
-
-If the attacker finds a match, they can conclude that the oracle implements a CPRF rather than a random function.
 
 \section{Strengthening the CPRF using hashing}
 

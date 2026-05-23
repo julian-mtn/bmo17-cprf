@@ -332,6 +332,155 @@ jamais incluse dans la clé contrainte, ce qui garantit que seules les évaluati
 sont possibles.
 
 
+
+\section{L'attaque CJ25}
+
+\subsection{Description générale et intuition de l’attaque}
+
+\paragraph{}
+L’attaque CJ25 exploite le fait qu’un attaquant peut obtenir une clé contrainte
+permettant d’évaluer la fonction pseudo‑aléatoire sur un sous‑ensemble d’entrées,
+tout en conservant l’accès à un oracle d’évaluation global.
+
+\paragraph{}
+Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
+clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
+entrée $x$ telle que $x < n$ à l’aide des permutations publiques associées.
+
+Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
+$x < n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
+provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
+
+À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
+publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
+Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
+
+\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.\\
+
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=2.5cm]
+  % Etats
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
+  \node[right of=st0] (dots1) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stn1) {$ST_{n+1}$};
+  \node[right of=stn1] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
+
+  % Flèches directes avec π
+  \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
+  \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
+  \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Flèches de l'attaquant (en rouge, dashed)
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  red
+]
+  (st0.south west) -- (stn.south east)
+  node[midway, below=14pt, red] {zone contrainte};
+
+\draw[
+  decorate,
+  decoration={brace, mirror, amplitude=6pt, raise=8pt},
+  blue
+]
+  (stn1.south west) -- (stx.south east)
+  node[midway, below=14pt, blue] {zone d'évaluation hors contrainte};
+\end{tikzpicture}
+\caption{Schéma général de l’attaque CJ25}
+\end{figure}
+
+
+\subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
+\begin{defbox}{Jeu de sécurité pour les CPRF}
+L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire. 
+L’objectif de l'attaquant est de distinguer les deux cas.
+\begin{itemize}
+\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C = (PK, ST_n, n)$ pour une contrainte $n$ de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
+\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées $x > n$ pour obtenir des valeurs $ST_x$ non contraintes.
+\item \textbf{Phase 3 :} $\mathcal{A}$ utilise les valeurs obtenues pour évaluer $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ et compare avec $ST_n$.
+\item \textbf{Décision :} $\mathcal{A}$ décide que $O$ est la $CPRF$ si $ST_a = ST_n$, sinon il décide que $O$ est une fonction aléatoire.
+\end{itemize}
+Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
+L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.\\
+
+\begin{figure}[H]
+  \centering
+\begin{tikzpicture}[node distance=3cm]
+  % Etats
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
+  \node[right of=stnp2] (dots) {$\dots$};
+  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
+
+  % Flèches directes CPRF avec pi écrit au-dessus
+  \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
+  \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
+  \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
+  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
+
+  % Flèches de l'attaquant (en rouge, dashed) sous les cases
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
+    node[below, red, align=center] {Attaquant applique la permutation \\ pour vérifier $ST_a = ST_n$} (stn.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
+    node[below, red, align=center] {} (stnp1.south);
+
+  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.2,-1) and +(0,-1) .. 
+    node[below, red, align=center] {} (stnp2.south);
+
+\end{tikzpicture}
+\caption{Schéma des permutation de l'attaque dans la zone hors contrainte}
+\end{figure}
+
+
+
+
+\end{defbox}
+
+\subsection{Mise en œuvre expérimentale de l’attaque}
+
+Pour simuler le jeu de sécurité, nous avons mis en place une architecture client–serveur locale 
+reposant sur TCP. Le serveur implémente l’oracle du jeu 
+(évaluation et génération de clés contraintes), 
+le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
+
+
+\subsubsection{Implémentation de l’oracle de sécurité}
+
+
+L’oracle met à disposition deux interfaces accessibles à l’attaquant :
+\begin{itemize}
+    \item \texttt{EVAL(x)} : retourne une valeur associée à l’entrée $x$.\\
+    En monde PRF, l’oracle retourne l’évaluation de la CPRF à l’aide de la clé maîtresse.\\
+    En monde aléatoire, il retourne une valeur uniforme de même taille.
+
+    \item \texttt{CONSTRAIN(n)} : retourne une clé contrainte associée à l’indice $n$,
+    permettant l’évaluation de la fonction sur un sous‑ensemble d’entrées.
+\end{itemize}
+
+
+\subsubsection{Implémentation de l’attaquant et stratégie}
+
+L’attaquant choisit un indice $n$ et demande à l’oracle la clé
+contrainte correspondante. Cette clé lui permet d’évaluer la fonction sur des entrées
+strictement supérieures à $n$.
+
+Ensuite il effectue des requêtes \texttt{EVAL} sur des entrées
+$x > n$. À partir des valeurs retournées par l’oracle et de la clé contrainte, il
+applique les permutations publiques afin de tester la cohérence de la structure de la CPRF.
+
+Si l’attaquant trouve une correspondance, il peut conclure que l’oracle implémente une CPRF plutôt qu’une fonction aléatoire.
+
+
+
 \section{Étude d'autres permutations alternatives}
 
 La construction de BMO17 repose sur l’utilisation d’une permutation à trappe
@@ -950,152 +1099,6 @@ Cependant, pour déchiffrer, \textbf{il faut absolument connaître la clé k} :
 \paragraph{}
 Donc l'utilisation d'AES comme permutation à trappe n'est pas adaptée pour notre CPRF.
 
-
-\section{L'attaque CJ25}
-
-\subsection{Description générale et intuition de l’attaque}
-
-\paragraph{}
-L’attaque CJ25 exploite le fait qu’un attaquant peut obtenir une clé contrainte
-permettant d’évaluer la fonction pseudo‑aléatoire sur un sous‑ensemble d’entrées,
-tout en conservant l’accès à un oracle d’évaluation global.
-
-\paragraph{}
-Dans un premier temps, l’adversaire choisit un indice $n$ et demande à l’oracle une
-clé contrainte $(PK, ST_n, n)$. Cette clé lui permet d’évaluer la fonction sur toute
-entrée $x$ telle que $x < n$ à l’aide des permutations publiques associées.
-
-Dans un second temps, l’adversaire interroge l’oracle d’évaluation sur une entrée
-$x < n$ et obtient une valeur $ST_x$. À ce stade, l’attaquant ne sait pas si $ST_x$
-provient d’une fonction pseudo‑aléatoire contrainte ou d’une fonction aléatoire.
-
-À l’aide de la clé contrainte, l’attaquant applique successivement les permutations
-publiques afin de calculer la valeur $\pi_{PK}^{x-n}(ST_x)$.
-Si l'attaquant retrouve $ST_a = ST_x$, il peut alors conclure que la valeur $ST_x$ est le résultat d'une fonction pseudo‑aléatoire contrainte.
-
-\paragraph{}Il est donc possible pour un attaquant d'avoir des informations sur la structure de la CPRF à partir de la clé contrainte et des évaluations obtenues, ce qui lui permet de distinguer une CPRF d'une fonction aléatoire avec une probabilité non négligeable.\\
-
-
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[node distance=2.5cm]
-  % Etats
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (st0) {$ST_0$};
-  \node[right of=st0] (dots1) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots1] (stn) {$ST_n$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stn1) {$ST_{n+1}$};
-  \node[right of=stn1] (dots) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
-
-  % Flèches directes avec π
-  \draw[->, thick] (st0) -- node[above] {$\pi$} (dots1);
-  \draw[->, thick] (dots1) -- node[above] {$\pi$} (stn);
-  \draw[->, thick] (stn) -- node[above] {$\pi$} (stn1);
-  \draw[->, thick] (stn1) -- node[above] {$\pi$} (dots);
-  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
-
-  % Flèches de l'attaquant (en rouge, dashed)
-\draw[
-  decorate,
-  decoration={brace, mirror, amplitude=6pt, raise=8pt},
-  red
-]
-  (st0.south west) -- (stn.south east)
-  node[midway, below=14pt, red] {zone contrainte};
-
-\draw[
-  decorate,
-  decoration={brace, mirror, amplitude=6pt, raise=8pt},
-  blue
-]
-  (stn1.south west) -- (stx.south east)
-  node[midway, below=14pt, blue] {zone d'évaluation hors contrainte};
-\end{tikzpicture}
-\caption{Schéma général de l’attaque CJ25}
-\end{figure}
-
-
-\subsection{Modélisation du jeu de sécurité et avantage de l’attaquant}
-\begin{defbox}{Jeu de sécurité pour les CPRF}
-L'attaquant $\mathcal{A}$ interagit avec un oracle $O$ qui est soit une $CPRF$ soit une fonction aléatoire. 
-L’objectif de l'attaquant est de distinguer les deux cas.
-\begin{itemize}
-\item \textbf{Phase 1 :} $\mathcal{A}$ demande une clé contrainte $K_C = (PK, ST_n, n)$ pour une contrainte $n$ de son choix, lui permettant d’évaluer la fonction sur un sous-ensemble d’entrées.
-\item \textbf{Phase 2 :} $\mathcal{A}$ fait un nombre de requêtes d’évaluation à l’oracle $O$ sur des entrées $x > n$ pour obtenir des valeurs $ST_x$ non contraintes.
-\item \textbf{Phase 3 :} $\mathcal{A}$ utilise les valeurs obtenues pour évaluer $ST_a = \pi_{PK}^{\,n-x}(ST_x)$ et compare avec $ST_n$.
-\item \textbf{Décision :} $\mathcal{A}$ décide que $O$ est la $CPRF$ si $ST_a = ST_n$, sinon il décide que $O$ est une fonction aléatoire.
-\end{itemize}
-Dans le cas où $O$ est une $CPRF$, l'attaquant $\mathcal{A}$ retrouve toujours $ST_a = ST_n$, et il ne se trompe jamais. En revanche, si $O$ est une fonction aléatoire, la probabilité que $ST_a = ST_n$ est de $1/N$, où $N$ est la taille de l’espace de sortie de la fonction. Dans ce cas, l'attaquant se trompe avec une probabilité de $1/N$.
-L'attaquant $\mathcal{A}$ gagne donc avec une probabilité de $1 - 1/N$ de distinguer correctement les deux cas, ce qui est non négligeable pour des tailles de $N$ raisonnables.\\
-
-\begin{figure}[H]
-  \centering
-\begin{tikzpicture}[node distance=3cm]
-  % Etats
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center] (stn) {$ST_n$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stn] (stnp1) {$ST_{n+1}$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=stnp1] (stnp2) {$ST_{n+2}$};
-  \node[right of=stnp2] (dots) {$\dots$};
-  \node[draw, rectangle, rounded corners, minimum height=8mm, minimum width=14mm, align=center, right of=dots] (stx) {$ST_x$};
-
-  % Flèches directes CPRF avec pi écrit au-dessus
-  \draw[->, thick] (stn) -- node[above] {$\pi$} (stnp1);
-  \draw[->, thick] (stnp1) -- node[above] {$\pi$} (stnp2);
-  \draw[->, thick] (stnp2) -- node[above] {$\pi$} (dots);
-  \draw[->, thick] (dots) -- node[above] {$\pi$} (stx);
-
-  % Flèches de l'attaquant (en rouge, dashed) sous les cases
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(0,-2.2) and +(0,-2.2) .. 
-    node[below, red, align=center] {Attaquant applique la permutation \\ pour vérifier $ST_a = ST_n$} (stn.south);
-
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.5,-1.5) and +(0,-1.5) .. 
-    node[below, red, align=center] {} (stnp1.south);
-
-  \draw[->, thick, dashed, red] (stx.south) .. controls +(-0.2,-1) and +(0,-1) .. 
-    node[below, red, align=center] {} (stnp2.south);
-
-\end{tikzpicture}
-\caption{Schéma des permutation de l'attaque dans la zone hors contrainte}
-\end{figure}
-
-
-
-
-\end{defbox}
-
-\subsection{Mise en œuvre expérimentale de l’attaque}
-
-Pour simuler le jeu de sécurité, nous avons mis en place une architecture client–serveur locale 
-reposant sur TCP. Le serveur implémente l’oracle du jeu 
-(évaluation et génération de clés contraintes), 
-le client joue le rôle de l’attaquant (requêtes d’évaluation et de contrainte, tests, ...).
-
-
-\subsubsection{Implémentation de l’oracle de sécurité}
-
-
-L’oracle met à disposition deux interfaces accessibles à l’attaquant :
-\begin{itemize}
-    \item \texttt{EVAL(x)} : retourne une valeur associée à l’entrée $x$.\\
-    En monde PRF, l’oracle retourne l’évaluation de la CPRF à l’aide de la clé maîtresse.\\
-    En monde aléatoire, il retourne une valeur uniforme de même taille.
-
-    \item \texttt{CONSTRAIN(n)} : retourne une clé contrainte associée à l’indice $n$,
-    permettant l’évaluation de la fonction sur un sous‑ensemble d’entrées.
-\end{itemize}
-
-
-\subsubsection{Implémentation de l’attaquant et stratégie}
-
-L’attaquant choisit un indice $n$ et demande à l’oracle la clé
-contrainte correspondante. Cette clé lui permet d’évaluer la fonction sur des entrées
-strictement supérieures à $n$.
-
-Ensuite il effectue des requêtes \texttt{EVAL} sur des entrées
-$x > n$. À partir des valeurs retournées par l’oracle et de la clé contrainte, il
-applique les permutations publiques afin de tester la cohérence de la structure de la CPRF.
-
-Si l’attaquant trouve une correspondance, il peut conclure que l’oracle implémente une CPRF plutôt qu’une fonction aléatoire.
 
 \section{Renforcement de la CPRF par hachage}
 
