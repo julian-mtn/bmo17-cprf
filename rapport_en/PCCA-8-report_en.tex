@@ -1075,8 +1075,9 @@ Therefore, the use of AES as a trapdoor permutation is not suitable for our CPRF
 
 \section{Strengthening the CPRF using hashing}
 
-In order to improve the security of the BMO17 construction against the CJ25 attack,
-it is possible to implement a hashed version of the CPRF.
+In order to improve the security of the BMO17 construction against the CJ25 attack, it is possible to implement a hashed version of the CPRF.
+We note that we attempted to apply the Cheng-Jaeger transformation to our $F^{\text{WEAK}}$ construction, aiming for a CPRF supporting more expressive constraints.
+Unfortunately, this approach fails: the CJ25 theorem requires the underlying CPRF to be IND$^*$-NC-CPRF secure, which $F^{\text{WEAK}}$ does not satisfy. However, this does not constitute a proof that $Hashed(F^{\text{WEAK}})$ is not SIM$^*$-AC-CPRF secure.
 
 \subsection{General principle of the hashed CPRF}
 
