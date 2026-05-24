@@ -3,7 +3,7 @@
 % Encoding and languages
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[french]{babel}
+\usepackage[english]{babel}
 % Mathematics
 \usepackage{amsmath,amssymb}
 % Hyperlinks and PDF
@@ -84,8 +84,8 @@
 \title{Constrained Pseudorandom Functions, Revisited}
 \author{
 \textbf{Julian Mouthon, Mario Razafinony}\\
-\small Master 1 in Cryptology, High-Performance Computing and Algorithms\\
-\small Sorbonne Université\\
+\small First-year M.Sc. students in Cryptology, High-Performance Computing and Algorithms\\
+\small Sorbonne Université
 }
 \date{\today}
 
@@ -762,7 +762,7 @@ Thus, in the previous linear system, we have $X = Id_{N-1}$ and $\forall j, x_{j
 Therefore, after requesting the evaluation of a vector $EVAL(\vec{x}) = \vec{y}$ from the oracle, in order to recover $S_{i,N}$, we have $S_{i,1} \cdot x_1 + \cdots + S_{i,N-1} \cdot x_{N-1} + S_{i,N} \cdot x_N = y_i$, hence
 $S_{i,N} = x_N^{-1} \cdot (y_i - S_{i,1} \cdot x_1 - \cdots - S_{i,N-1} \cdot x_{N-1})$
 
-\newpage
+
 \subsubsection{Security game for the attack on $F^{WEAK}$}
 
 \begin{defbox}{Security game on the CPRF $F^{WEAK}$}

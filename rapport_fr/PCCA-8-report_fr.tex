@@ -84,7 +84,7 @@
 \title{Constrained Pseudorandom Functions, Revisited}
 \author{
 \textbf{Julian Mouthon, Mario Razafinony}\\
-\small Master 1 Cryptologie, Calcul haute-performance et Algorithmique\\
+\small Master 1 Cryptologie, Calcul Haute-Performance et Algorithmes\\
 \small Sorbonne Université\\
 }
 \date{\today}
@@ -308,7 +308,7 @@ avec
 x^{e \cdot d} = x \bmod N , \forall x \in \mathbb{Z}_N.
 \] 
 
-\newpage
+
 \subsubsection{Implémentation de la clé maîtresse et génération de l’état initial}
 
 La clé maîtresse de la CPRF est composée d’un état initial secret $ST_0$ et d’une clé
@@ -1203,18 +1203,12 @@ L'évaluation est définie par :
 
 %///////////////////////////////ANNEXE%///////////////////////////////
 
-\section{Résultats expérimentaux}
-
-Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
-nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
-Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
 
 \section{Résultats expérimentaux}
 
 Après avoir implémenté différentes variantes de la CPRF (version originale, version hachée avec SHA-256 et version hachée avec lazy sampling), 
 nous avons mené des expériences afin d’évaluer l’efficacité de l’attaque CJ25 sur chacune d’elles. 
 Les tests consistent en l’exécution de 100 requêtes d’évaluation par version, et en l’observation de l’évolution du taux de succès de l’attaque au fil des requêtes.
-
 
 Toutes les expériences ont été réalisées sur la configuration matérielle suivante.
 
