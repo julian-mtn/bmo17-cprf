@@ -1,0 +1,252 @@
+
+\documentclass{beamer}
+
+\usetheme{Madrid}
+
+\usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+
+
+% Titre court dans le footer
+\title[CPRF Revisited]{Constrained Pseudorandom Functions, Revisited}
+
+% Auteurs courts
+\author[J. Mouthon \and M. Razafinony]
+{Julian Mouthon \and Mario Razafinony}
+
+% Institute court
+% Institute court
+\institute[SU]{
+Sorbonne Université \\
+Master 1 -- Cryptologie, Calcul Haute-Performance et Algorithmes
+}
+
+
+\date{\today}
+
+\begin{document}
+
+%------------------------------------------------
+
+\begin{frame}
+
+\begin{flushright}
+\includegraphics[width=0.18\textwidth]{../rapport_fr/images/sorbonne.png}
+\end{flushright}
+
+\vspace{-1cm}
+
+\titlepage
+
+\end{frame}
+
+
+%------------------------------------------------
+\begin{frame}{Contexte}
+\begin{itemize}
+    \item Les PRF sont utilisées en cryptographie moderne :
+    \begin{itemize}
+        \item chiffrement,
+        \item authentification,
+        \item dérivation de clés.
+    \end{itemize}
+
+    \vspace{0.3cm}
+
+    \item Problème :
+    comment déléguer seulement une partie des capacités d’évaluation ?
+
+    \vspace{0.3cm}
+
+    \item Solution :
+    les \textbf{Constrained Pseudorandom Functions (CPRF)}.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Qu’est-ce qu’une PRF ?}
+
+\textbf{PRF = Pseudorandom Function}
+(fonction pseudo-aléatoire)
+
+\vspace{0.5cm}
+
+C’est une fonction déterministe
+
+\[
+F_k : \{0,1\}^n \rightarrow \{0,1\}^m
+\]
+
+paramétrée par une clé secrète \(k\).
+
+\vspace{0.5cm}
+
+Sans connaître \(k\), \(F_k(x)\) est indistinguable d’une fonction aléatoire.
+
+\end{frame}
+
+%-----------------------------------------------
+\begin{frame}{Principe des CPRF}
+
+Une CPRF est une PRF dont l’évaluation peut être restreinte.
+
+\vspace{0.4cm}
+
+Exemple de contrainte :
+
+\[
+C_n(x) = [x < n]
+\]
+
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item Clé maître : accès complet.
+    \item Clé contrainte : accès limité à certaines entrées.
+\end{itemize}
+
+\vspace{0.5cm}
+
+Objectif :
+déléguer des capacités sans révéler la clé secrète.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Construction BMO17 : intuition}
+
+La construction repose sur une permutation à trappe itérée.
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+
+\node[draw,rectangle] (s0) {$ST_0$};
+\node[draw,rectangle,right of=s0] (s1) {$ST_1$};
+\node[right of=s1] (dots) {$\dots$};
+\node[draw,rectangle,right of=dots] (sn) {$ST_n$};
+
+\draw[->] (s0) -- node[above] {$\pi^{-1}$} (s1);
+\draw[->] (s1) -- node[above] {$\pi^{-1}$} (dots);
+\draw[->] (dots) -- node[above] {$\pi^{-1}$} (sn);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+\[
+Eval(c)=\pi^{-c}(ST_0)
+\]
+
+Avec la clé secrète, on peut calculer tous les états.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Utilisation de RSA}
+
+Permutation publique :
+
+\[
+\pi(x)=x^e \mod N
+\]
+
+\vspace{0.4cm}
+
+Inverse de la permutation :
+
+\[
+\pi^{-1}(x)=x^d \mod N
+\]
+
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item La clé privée permet de remonter la chaîne.
+    \item La clé publique permet uniquement d’avancer.
+    \item RSA fournit une permutation bijective adaptée à la construction.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Clé contrainte}
+
+Pour une contrainte \(x < n\), on donne :
+
+\[
+(PK, ST_n, n)
+\]
+
+\vspace{0.5cm}
+
+avec :
+
+\[
+ST_n=\pi^{-n}(ST_0)
+\]
+
+\vspace{0.5cm}
+
+L’évaluation contrainte devient :
+
+\[
+EvalC(c)=\pi^{n-c}(ST_n)
+\]
+
+\vspace{0.5cm}
+
+\begin{itemize}
+    \item possible si \(c<n\),
+    \item impossible d’aller au-delà sans la clé privée.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Attaque CJ25 : idée générale}
+
+L’attaquant obtient :
+\begin{itemize}
+    \item une clé contrainte,
+    \item des évaluations hors contrainte.
+\end{itemize}
+
+\vspace{0.4cm}
+
+Puis il exploite la structure publique de la chaîne.
+
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Intuition visuelle de l’attaque}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+
+\node[draw,rectangle] (sn) {$ST_n$};
+\node[draw,rectangle,right of=sn] (sn1) {$ST_{n+1}$};
+\node[right of=sn1] (dots) {$\dots$};
+\node[draw,rectangle,right of=dots] (sx) {$ST_x$};
+
+\draw[->] (sn) -- node[above] {$\pi$} (sn1);
+\draw[->] (sn1) -- node[above] {$\pi$} (dots);
+\draw[->] (dots) -- node[above] {$\pi$} (sx);
+
+\draw[->,red,dashed,bend right=40] (sx) to node[below] {$\pi^{x-n}$} (sn);
+
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+L’attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
+\end{frame}
+
+
+
+\end{document}
