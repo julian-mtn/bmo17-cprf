@@ -1,8 +1,8 @@
 \babel@toc {french}{}\relax 
-\beamer@sectionintoc {1}{Motivations et définitions}{3}{0}{1}
+\beamer@sectionintoc {1}{Motivations et definitions}{3}{0}{1}
 \beamer@sectionintoc {2}{Construction BMO17}{5}{0}{2}
 \beamer@sectionintoc {3}{L'attaque CJ25}{7}{0}{3}
-\beamer@sectionintoc {4}{Alternatives à RSA}{9}{0}{4}
-\beamer@sectionintoc {5}{CPRF hachée et sécurité}{11}{0}{5}
-\beamer@sectionintoc {6}{Résultats expérimentaux}{12}{0}{6}
-\beamer@sectionintoc {7}{Conclusion}{13}{0}{7}
+\beamer@sectionintoc {4}{Alternatives a RSA}{9}{0}{4}
+\beamer@sectionintoc {5}{CPRF hachee et securite}{11}{0}{5}
+\beamer@sectionintoc {6}{Resultats experimentaux}{13}{0}{6}
+\beamer@sectionintoc {7}{Conclusion}{15}{0}{7}
