@@ -1,598 +1,618 @@
-\documentclass[aspectratio=169]{beamer}
+\documentclass{beamer}
 
 \usetheme{Madrid}
-\usecolortheme{default}
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb}
 \usepackage{tikz}
-\usepackage{graphicx}
 \usepackage{xcolor}
-\usepackage{booktabs}
-\usetikzlibrary{arrows.meta, positioning, decorations.pathreplacing, calc}
+\usetikzlibrary{arrows.meta,positioning,decorations.pathreplacing,calc}
 
-\definecolor{cprf-navy}{RGB}{30,39,97}
-\definecolor{cprf-ice}{RGB}{202,220,252}
-\definecolor{cprf-accent}{RGB}{240,84,84}
-\definecolor{cprf-light}{RGB}{235,240,255}
-\definecolor{cprf-gray}{RGB}{100,110,140}
-\definecolor{cprf-green}{RGB}{40,130,80}
+% Titre court dans le footer
+\title[CPRF Revisited]{Constrained Pseudorandom Functions, Revisited}
 
-\setbeamercolor{palette primary}{bg=cprf-navy, fg=white}
-\setbeamercolor{palette secondary}{bg=cprf-navy!80, fg=white}
-\setbeamercolor{palette tertiary}{bg=cprf-navy!60, fg=white}
-\setbeamercolor{palette quaternary}{bg=cprf-navy, fg=white}
-\setbeamercolor{structure}{fg=cprf-navy}
-\setbeamercolor{block title}{bg=cprf-navy, fg=white}
-\setbeamercolor{block body}{bg=cprf-light}
-\setbeamercolor{block title alerted}{bg=cprf-accent, fg=white}
-\setbeamercolor{block body alerted}{bg=cprf-accent!10}
-\setbeamercolor{block title example}{bg=cprf-green, fg=white}
-\setbeamercolor{block body example}{bg=cprf-green!10}
-\setbeamercolor{alerted text}{fg=cprf-accent}
-\setbeamercolor{frametitle}{bg=cprf-navy, fg=white}
-\setbeamercolor{item}{fg=cprf-navy}
+\author[J. Mouthon \and M. Razafinony]
+{Julian Mouthon \and Mario Razafinony}
 
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{itemize item}{\color{cprf-accent}\textbullet}
-\setbeamertemplate{itemize subitem}{\color{cprf-gray}$\circ$}
-
-\makeatletter
-\setbeamertemplate{footline}{%
-  \leavevmode%
-  \hbox{%
-    \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,left,leftskip=1em]{palette primary}%
-      \usebeamerfont{author in head/foot}\insertshortauthor%
-    \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.5ex,dp=1ex,center]{palette secondary}%
-      \usebeamerfont{title in head/foot}\insertshorttitle%
-    \end{beamercolorbox}%
-    \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.5ex,dp=1ex,right,rightskip=1em]{palette tertiary}%
-      \insertframenumber/\inserttotalframenumber%
-    \end{beamercolorbox}%
-  }%
+\institute[SU]{
+Sorbonne Université \\
+Master 1 -- Cryptologie, Calcul Haute-Performance et Algorithmes
 }
-\makeatother
 
-\title[CPRF, Revisited]{Constrained Pseudorandom Functions, Revisited}
-\subtitle{Soutenance de projet -- Master 1 Cryptologie}
-\author[Mouthon \& Razafinony]{Julian Mouthon \quad Mario Razafinony}
-\institute{Sorbonne Universite}
 \date{\today}
 
-% ============================================================
 \begin{document}
 
-% ---- SLIDE TITRE ----
-{
-\setbeamertemplate{footline}{}
+%------------------------------------------------
 \begin{frame}
-  \vspace{0.8cm}
-  \begin{center}
-    {\color{cprf-navy}\LARGE\textbf{Constrained Pseudorandom Functions}}\\[0.4cm]
-    {\color{cprf-gray}\large Revisited}\\[1.0cm]
-    \begin{beamercolorbox}[rounded=true,sep=10pt,center,wd=0.75\textwidth]{block title}
-      \large Soutenance de projet --- Master 1 Cryptologie
-    \end{beamercolorbox}
-    \vspace{0.7cm}
-    {\large Julian Mouthon \quad \& \quad Mario Razafinony}\\[0.3cm]
-    {\color{cprf-gray} Sorbonne Universite --- \today}
-  \end{center}
-\end{frame}
-}
-
-% ---- PLAN ----
-\begin{frame}{Plan de la presentation}
-  \tableofcontents
+\begin{flushright}
+\includegraphics[width=0.18\textwidth]{../rapport_fr/images/sorbonne.png}
+\end{flushright}
+\vspace{-1cm}
+\titlepage
 \end{frame}
 
-% ============================================================
-\section{Motivations et definitions}
+%------------------------------------------------
+\begin{frame}{Contexte}
+\begin{itemize}
+    \item Les PRF sont utilisées en cryptographie moderne :
+    \begin{itemize}
+        \item chiffrement,
+        \item authentification,
+        \item dérivation de clés.
+    \end{itemize}
 
-\begin{frame}{Pourquoi les CPRF ?}
-  \begin{columns}
-    \begin{column}{0.55\textwidth}
-      \textbf{Probleme concret}
-      \begin{itemize}
-        \item On veut deleguer l'evaluation d'une PRF sur un sous-ensemble d'entrees
-        \item Sans reveler la cle secrete complete
-        \item Applications : \textit{Searchable Symmetric Encryption}, stockage externalise
-      \end{itemize}
-      \vspace{0.5cm}
-      \textbf{Solution : les CPRF}
-      \begin{itemize}
-        \item Une \textbf{PRF} : sortie indiscernable du hasard
-        \item Une \textbf{CPRF} : restreint l'evaluation par une contrainte $C$
-        \item La cle contrainte $K_C$ ne permet pas de retrouver $K$
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.42\textwidth}
-      \begin{block}{Analogie}
-        Comme un \textbf{badge d'acces partiel} : il ouvre certaines portes, pas toutes, sans reveler le passe maitre.
-      \end{block}
-      \vspace{0.4cm}
-      \begin{alertblock}{Notre contrainte principale}
-        \[ C_n(x) = [x < n] \]
-        Autoriser les entrees $< n$.
-      \end{alertblock}
-    \end{column}
-  \end{columns}
+    \vspace{0.3cm}
+
+    \item Problème :
+    comment déléguer seulement une partie des capacités d'évaluation ?
+
+    \vspace{0.3cm}
+
+    \item Solution :
+    les \textbf{Constrained Pseudorandom Functions (CPRF)}.
+\end{itemize}
 \end{frame}
 
-\begin{frame}{Definition formelle d'une CPRF}
-  \begin{columns}[t]
-    \begin{column}{0.23\textwidth}
-      \begin{block}{$\textsf{Setup}(1^\lambda) \to K$}
-        Genere la \textbf{cle maitre} $K$
-      \end{block}
-    \end{column}
-    \begin{column}{0.23\textwidth}
-      \begin{block}{$\textsf{Constrain}(K, C) \to K_C$}
-        Cree une \textbf{cle contrainte} pour $C$
-      \end{block}
-    \end{column}
-    \begin{column}{0.23\textwidth}
-      \begin{block}{$\textsf{Eval}(K, x) \to y$}
-        Evalue avec la \textbf{cle maitre}
-      \end{block}
-    \end{column}
-    \begin{column}{0.23\textwidth}
-      \begin{block}{$\textsf{EvalC}(K_C, x) \to y$}
-        Evalue avec $K_C$ si $C(x)=1$
-      \end{block}
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{Qu'est-ce qu'une PRF ?}
 
-  \vspace{0.5cm}
+\textbf{PRF = Pseudorandom Function}
+(fonction pseudo-aléatoire)
 
-  \begin{columns}
-    \begin{column}{0.48\textwidth}
-      \begin{alertblock}{Propriete de correction}
-        \[ \forall x \text{ tel que } C(x)=1 : \]
-        \[ \textsf{EvalC}(K_C, x) \;=\; \textsf{Eval}(K, x) \]
-        La cle contrainte donne le meme resultat que la cle maitre sur les entrees autorisees.
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{exampleblock}{Securite intuitive}
-        Connaitre $K_C$ ne doit \textbf{pas} permettre de calculer $\textsf{Eval}(K, x)$ pour $x$ tel que $C(x) = 0$.\\[0.3cm]
-        Autrement dit : la cle contrainte ne revele rien sur les entrees interdites.
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
+\vspace{0.5cm}
+
+C'est une fonction déterministe
+
+\[
+F_k : \{0,1\}^n \rightarrow \{0,1\}^m
+\]
+
+paramétrée par une clé secrète \(k\).
+
+\vspace{0.5cm}
+
+Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
+
 \end{frame}
 
-% ============================================================
-\section{Construction BMO17}
+%-----------------------------------------------
+\begin{frame}{Principe des CPRF}
 
-\begin{frame}{La construction BMO17 --- Principe}
-  \begin{columns}
-    \begin{column}{0.48\textwidth}
-      \textbf{Idee centrale}
-      \begin{itemize}
-        \item Permutation a trappe $\pi$ basee sur RSA
-        \item Etat initial secret $ST_0$
-        \item Evaluer en $c$ = appliquer $\pi^{-1}$ exactement $c$ fois
-      \end{itemize}
-      \vspace{0.4cm}
-      \textbf{Cle maitre :} $(ST_0,\; SK)$
-      \[
-        \textsf{Eval}\bigl((SK, ST_0),\, c\bigr) = \pi_{SK}^{-c}(ST_0)
-      \]
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=1.9cm]
-        \tikzset{st/.style={draw=cprf-navy, fill=cprf-light, rectangle, rounded corners,
-                            minimum height=8mm, minimum width=14mm, font=\small}}
-        \node[st] (s0) {$ST_0$};
-        \node[st, right of=s0] (s1) {$ST_1$};
-        \node[right of=s1, font=\large] (dots) {$\cdots$};
-        \node[st, right of=dots] (sc) {$ST_c$};
-        \draw[->, thick, cprf-accent] (s0) -- node[above]{\footnotesize$\pi^{-1}$} (s1);
-        \draw[->, thick, cprf-accent] (s1) -- node[above]{\footnotesize$\pi^{-1}$} (dots);
-        \draw[->, thick, cprf-accent] (dots) -- node[above]{\footnotesize$\pi^{-1}$} (sc);
-        \node[below=0.3cm of s0, font=\footnotesize, color=cprf-gray] {etat initial};
-        \node[below=0.3cm of sc, font=\footnotesize, color=cprf-navy, align=center]
-              {resultat\\$= F(K,c)$};
-      \end{tikzpicture}
-    \end{column}
-  \end{columns}
+Une CPRF est une PRF dont l'évaluation peut être restreinte.
+
+\vspace{0.4cm}
+
+Exemple de contrainte :
+
+\[
+C_n(x) = [x < n]
+\]
+
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item Clé maître : accès complet.
+    \item Clé contrainte : accès limité à certaines entrées.
+\end{itemize}
+
+\vspace{0.5cm}
+
+Objectif :
+déléguer des capacités sans révéler la clé secrète.
 \end{frame}
 
-\begin{frame}{La construction BMO17 --- Cle contrainte}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Cle contrainte pour $C(x) = [x < n]$}
-      \begin{itemize}
-        \item Cle publique $PK$
-        \item Etat $ST_n = \pi_{SK}^{-n}(ST_0)$
-        \item Seuil $n$
-        \item[$\Rightarrow$] La cle secrete $SK$ n'est \textbf{jamais} incluse
-      \end{itemize}
-      \vspace{0.4cm}
-      \textbf{Evaluation contrainte} ($c < n$) :
-      \[
-        \textsf{EvalC}\bigl((PK, ST_n, n),\, c\bigr) = \pi_{PK}^{\,n-c}(ST_n)
-      \]
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=1.9cm]
-        \tikzset{st/.style={draw=cprf-navy, fill=cprf-light, rectangle, rounded corners,
-                            minimum height=8mm, minimum width=14mm, font=\small}}
-        \node[st] (sn) {$ST_n$};
-        \node[st, right of=sn] (sm) {$\cdots$};
-        \node[st, right of=sm] (sc) {$ST_c$};
-        \draw[->, thick, cprf-navy] (sn) -- node[above]{\footnotesize$\pi$} (sm);
-        \draw[->, thick, cprf-navy] (sm) -- node[above]{\footnotesize$\pi$} (sc);
-        \node[below=0.3cm of sn, font=\footnotesize, color=cprf-gray, align=center]
-              {cle\\contrainte};
-        \node[below=0.3cm of sc, font=\footnotesize, color=cprf-navy, align=center]
-              {resultat\\$= F(K,c)$};
-      \end{tikzpicture}
-      \vspace{0.4cm}
-      \begin{alertblock}{Correction}
-        $\pi^{n-c}(ST_n) = \pi^{n-c}(\pi^{-n}(ST_0)) = \pi^{-c}(ST_0)$ \checkmark
-      \end{alertblock}
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{Construction BMO17 : intuition}
+
+La construction repose sur une permutation à trappe itérée.
+
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node[draw,rectangle] (s0) {$ST_0$};
+\node[draw,rectangle,right of=s0] (s1) {$ST_1$};
+\node[right of=s1] (dots) {$\dots$};
+\node[draw,rectangle,right of=dots] (sn) {$ST_n$};
+\draw[->] (s0) -- node[above] {$\pi^{-1}$} (s1);
+\draw[->] (s1) -- node[above] {$\pi^{-1}$} (dots);
+\draw[->] (dots) -- node[above] {$\pi^{-1}$} (sn);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+\[
+\mathit{Eval}(c) = \pi^{-c}(ST_0)
+\]
+
+Avec la clé secrète, on peut calculer tous les états.
 \end{frame}
 
-% ============================================================
-\section{L'attaque CJ25}
+%------------------------------------------------
+\begin{frame}{Utilisation de RSA}
 
-\begin{frame}{L'attaque CJ25 --- Intuition}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Idee de l'attaque}
-      \begin{enumerate}
-        \item Demander la cle contrainte $(PK, ST_n, n)$
-        \item Interroger l'oracle sur $x > n$, obtenir $ST_x$
-        \item Calculer $\pi_{PK}^{x-n}(ST_x)$ et comparer a $ST_n$
-        \item Si egal $\Rightarrow$ c'est une CPRF !
-      \end{enumerate}
-      \vspace{0.4cm}
-      \begin{alertblock}{Avantage de l'attaquant}
-        \[\Pr[\mathcal{A} \text{ distingue}] \approx 1 - \tfrac{1}{N}\]
-        Negligeable seulement si $N$ est exponentiel.
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=1.7cm]
-        \tikzset{st/.style={draw=cprf-navy, fill=cprf-light, rectangle, rounded corners,
-                            minimum height=7mm, minimum width=12mm, font=\small}}
-        \node[st] (s0) {$ST_0$};
-        \node[st, right of=s0] (sn) {$ST_n$};
-        \node[st, right of=sn] (sn1) {$ST_{n+1}$};
-        \node[st, right of=sn1] (sx) {$ST_x$};
-        \draw[->, thick] (s0) -- node[above]{\tiny$\pi$} (sn);
-        \draw[->, thick] (sn) -- node[above]{\tiny$\pi$} (sn1);
-        \draw[->, thick] (sn1) -- node[above]{\tiny$\pi$} (sx);
-        \draw[decorate, decoration={brace,mirror,amplitude=4pt}, cprf-navy, thick]
-          (s0.south west) -- (sn.south east)
-          node[midway, below=7pt, font=\scriptsize, cprf-navy] {contrainte};
-        \draw[decorate, decoration={brace,mirror,amplitude=4pt}, cprf-accent, thick]
-          (sn1.south west) -- (sx.south east)
-          node[midway, below=7pt, font=\scriptsize, cprf-accent] {hors contrainte};
-        \draw[->, thick, dashed, cprf-accent]
-          (sx.south) .. controls +(0,-1.4) and +(0,-1.4) ..
-          node[below, font=\scriptsize, cprf-accent, align=center]{verif. $\pi^{x-n}$} (sn.south);
-      \end{tikzpicture}
-    \end{column}
-  \end{columns}
+Permutation publique :
+\[
+\pi(x) = x^e \bmod N
+\]
+
+Inverse de la permutation :
+\[
+\pi^{-1}(x) = x^d \bmod N
+\]
+
+\vspace{0.4cm}
+
+\begin{itemize}
+    \item La clé privée permet de remonter la chaîne.
+    \item La clé publique permet uniquement d'avancer.
+    \item RSA fournit une permutation bijective adaptée à la construction.
+\end{itemize}
+
 \end{frame}
 
-\begin{frame}{L'attaque CJ25 --- Implementation}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Architecture client--serveur TCP}
-      \vspace{0.2cm}
-      \begin{block}{Serveur = Oracle}
-        \begin{itemize}
-          \item \texttt{EVAL(x)} : retourne $F(K,x)$ ou valeur aleatoire selon le monde
-          \item \texttt{CONSTRAIN(n)} : retourne $(PK, ST_n, n)$
-        \end{itemize}
-      \end{block}
-      \vspace{0.3cm}
-      \begin{block}{Client = Attaquant}
-        \begin{itemize}
-          \item Choisit $n$, demande la cle contrainte
-          \item Fait des requetes $x > n$
-          \item Verifie la coherence via $\pi^{x-n}$
-        \end{itemize}
-      \end{block}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \begin{alertblock}{Resultat}
-        L'attaque reussit avec probabilite $\approx 1$ des la premiere requete sur la version \textbf{non hachee}.
-      \end{alertblock}
-      \vspace{0.4cm}
-      \begin{exampleblock}{Conclusion}
-        BMO17 sans hachage \textbf{n'est pas} IND-securisee. La structure algebrique est completement exploitable.
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{Clé contrainte}
+
+Pour une contrainte \(x < n\), on donne :
+\[
+(PK,\ ST_n,\ n) \qquad \text{avec } ST_n = \pi^{-n}(ST_0)
+\]
+
+L'évaluation contrainte devient :
+\[
+\mathit{EvalC}(c) = \pi^{n-c}(ST_n)
+\]
+
+\begin{itemize}
+    \item Possible si \(c < n\).
+    \item Impossible d'aller au-delà sans la clé privée.
+\end{itemize}
+
 \end{frame}
 
-% ============================================================
-\section{Alternatives a RSA}
+%------------------------------------------------
+\begin{frame}{Attaque CJ25 : idée générale}
 
-\begin{frame}{Alternatives a la permutation RSA}
-  \begin{columns}[t]
-    \begin{column}{0.32\textwidth}
-      \begin{block}{$F^{\text{WEAK}}$ --- lineaire}
-        \[ \text{Eval}(S, \vec{x}) = S \cdot \vec{x} \]
-        $S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}$
-      \end{block}
-      \vspace{0.15cm}
-      \begin{alertblock}{Cassee}
-        Systeme lineaire soluble avec $N-1$ requetes : on retrouve $S$ entierement. \textbf{Pas de trappe iterative.}
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{Rabin}
-        \[ f(x) = x^2 \bmod n \]
-        Basee sur la factorisation.
-      \end{block}
-      \vspace{0.15cm}
-      \begin{alertblock}{Non injective}
-        4 pre-images par image : impossible d'iterer $f^{-1}$ de facon deterministe. \textbf{Ambiguite a chaque inversion.}
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.32\textwidth}
-      \begin{block}{AES}
-        \[ f(x) = E_k(x) \]
-        Bijection sur blocs 128 bits.
-      \end{block}
-      \vspace{0.15cm}
-      \begin{alertblock}{Sans trappe publique}
-        Inverser necessite $k$ : pas de separation public/prive. \textbf{Pas de cle contrainte possible.}
-      \end{alertblock}
-    \end{column}
-  \end{columns}
-  \vspace{0.2cm}
-  \begin{block}{}
-    \centering
-    \textbf{Bijectivite} $+$ \textbf{Trappe public/prive} $+$ \textbf{Efficacite} $\;\Rightarrow\;$ \textbf{Seul RSA satisfait les trois.}
-  \end{block}
+L'attaquant obtient :
+\begin{itemize}
+    \item une clé contrainte \((PK, ST_n, n)\),
+    \item des évaluations hors contrainte \(\mathit{Eval}(x)\) pour \(x > n\).
+\end{itemize}
+
+\vspace{0.4cm}
+
+Puis il exploite la structure publique de la chaîne.
+
 \end{frame}
 
-\begin{frame}{$F^{\text{WEAK}}$ : attaque et renforcement}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Attaque par systeme lineaire}
-      \begin{itemize}
-        \item Choisir $\vec{y} = (0,\ldots,0,1)$, obtenir $S_{\vec{y}}$
-        \item Calculer $k_i = S_{\vec{y}_i} \cdot \vec{x}_j$ pour $N-1$ vecteurs $\vec{x}_j \perp \vec{y}$
-        \item Resoudre $X \cdot \vec{S}_i^T = \vec{k}_i$ : systeme $(N-1)\times(N-1)$ inversible
-        \item[$\Rightarrow$] On retrouve $S$ en entier avec 1 requete d'evaluation
-      \end{itemize}
-      \vspace{0.3cm}
-      \begin{alertblock}{$F^{\text{WEAK}}$ est cassee}
-        Un seul appel a \texttt{EVAL} suffit a retrouver la cle maitre.
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \begin{block}{Renforcement par hachage}
-        \[ \text{Eval}_H(\vec{x}) = H(S \cdot \vec{x}) \]
-        Retrouver $S$ necessite une pre-image de $H$ $\Rightarrow$ infaisable.
-      \end{block}
-      \vspace{0.3cm}
-      \begin{exampleblock}{Mais une limite demeure}
-        $F^{\text{WEAK}}$ n'est \textbf{pas} IND$^*$-NC-CPRF securisee. Le theoreme de CJ25 ne peut donc pas s'appliquer directement pour prouver la securite de $\textsf{Hashed}[F^{\text{WEAK}}]$.
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{Intuition visuelle de l'attaque}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2cm]
+\node[draw,rectangle] (sn) {$ST_n$};
+\node[draw,rectangle,right of=sn] (sn1) {$ST_{n+1}$};
+\node[right of=sn1] (dots) {$\dots$};
+\node[draw,rectangle,right of=dots] (sx) {$ST_x$};
+\draw[->] (sn) -- node[above] {$\pi$} (sn1);
+\draw[->] (sn1) -- node[above] {$\pi$} (dots);
+\draw[->] (dots) -- node[above] {$\pi$} (sx);
+\draw[->,red,dashed,bend right=40] (sx) to node[below] {$\pi^{x-n}$} (sn);
+\end{tikzpicture}
+\end{center}
+
+\vspace{0.5cm}
+
+L'attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
 \end{frame}
 
-% ============================================================
-\section{CPRF hachee et securite}
+%================================================
+% NOUVELLES SLIDES
+%================================================
 
-\begin{frame}{Renforcement par hachage --- Principe}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Idee} : appliquer un oracle aleatoire $P$ sur la sortie de la CPRF
-      \[
-        \textsf{Eval}_H(K, x) = P\!\bigl(\textsf{Eval}(K, x)\bigr)
-      \]
-      \vspace{0.3cm}
-      \textbf{Lazy Sampling} : $P$ attribue une valeur aleatoire a chaque entree, memorisee
-      \begin{itemize}
-        \item Si $z \notin \sigma_P$ : choisir $y \leftarrow \{0,1\}^\lambda$, memoriser $(z,y)$
-        \item Sinon : retourner le $y$ memorise
-      \end{itemize}
-      \vspace{0.3cm}
-      \textbf{Deux implementations}
-      \begin{itemize}
-        \item Version SHA-256 (pratique)
-        \item Version lazy sampling (modele theorique CJ25)
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \centering
-      \begin{tikzpicture}[node distance=2.0cm]
-        \tikzset{
-          st/.style={draw=cprf-navy, fill=cprf-light, rectangle, rounded corners,
-                     minimum height=8mm, minimum width=16mm, font=\small},
-          hst/.style={draw=cprf-accent, fill=cprf-accent!10, rectangle, rounded corners,
-                      minimum height=8mm, minimum width=16mm, font=\small}
-        }
-        \node[st] (a0) {$ST_x$};
-        \node[st, right=2.2cm of a0] (a1) {$ST_n$};
-        \node[above=0.15cm of a0, font=\small\bfseries, cprf-navy] {CPRF};
-        \draw[->, thick, cprf-navy] (a0) -- node[above]{\small$\pi^{x-n}$} (a1);
+%------------------------------------------------
+\begin{frame}{BMO17 hachée : principe}
 
-        \node[hst, below=1.5cm of a0] (b0) {$H(ST_x)$};
-        \node[hst, right=2.2cm of b0] (b1) {$H(ST_n)$};
-        \node[above=0.15cm of b0, font=\small\bfseries, cprf-accent] {Hashed CPRF};
-        \draw[dashed, thick, cprf-accent] (b0) -- node[above]{\Large$\times$} (b1);
+\textbf{Idée} : appliquer une fonction de hachage $H$ sur la sortie de la CPRF.
 
-        \draw[->, cprf-gray, thick] (a0) -- node[left]{\small$H$} (b0);
-        \draw[->, cprf-gray, thick] (a1) -- node[right]{\small$H$} (b1);
-      \end{tikzpicture}
-      \vspace{0.3cm}
-      \begin{alertblock}{Effet cle}
-        L'attaquant ne peut plus verifier $\pi^{x-n}(ST_x) = ST_n$ car il ne voit que les haches.
-      \end{alertblock}
-    \end{column}
-  \end{columns}
+\vspace{0.4cm}
+
+\begin{columns}[t]
+\begin{column}{0.48\textwidth}
+\textbf{Évaluation hachée}
+\[
+\mathit{Eval}_H(c) = H\!\left(\pi^{-c}(ST_0)\right)
+\]
+
+\textbf{Évaluation contrainte hachée}
+\[
+\mathit{EvalC}_H(c) = H\!\left(\pi^{n-c}(ST_n)\right)
+\]
+
+\textbf{Génération de la clé contrainte}
+\[
+(PK, ST_n,n)
+\]
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{center}
+\begin{tikzpicture}[node distance=1.8cm]
+\node[draw,rectangle] (sx) {$ST_x$};
+\node[draw,rectangle,right of=sx] (sn) {$ST_n$};
+\node[draw,rectangle,below=0.7cm of sx,fill=blue!15] (hx) {$H(ST_x)$};
+\node[draw,rectangle,below=0.7cm of sn,fill=blue!15] (hn) {$H(ST_n)$};
+\draw[->] (sx) -- node[above]{\small $\pi^{x-n}$} (sn);
+\draw[->] (sx) -- node[left]{\small $H$} (hx);
+\draw[->] (sn) -- node[right]{\small $H$} (hn);
+\draw[dashed,red,thick] (hx) -- node[below]{\large $\times$} (hn);
+\end{tikzpicture}
+\end{center}
+\end{column}
+\end{columns}
+
 \end{frame}
 
-\begin{frame}{Renforcement par hachage --- Theoreme CJ25}
-  \begin{columns}
-    \begin{column}{0.52\textwidth}
-      \begin{block}{Theoreme (Cheng--Jaeger 2025)}
-        Si les trois conditions suivantes sont satisfaites :
-        \begin{enumerate}
-          \item $\min_x |\textsf{CF.Out}(\lambda, x)|$ est super-polynomial en $\lambda$
-          \item $CF$ est \textbf{IND$^*$-NC-CPRF securisee}
-          \item L'oracle aleatoire est \textbf{non-programmable}
-        \end{enumerate}
-        \vspace{0.2cm}
-        Alors $\textsf{Hashed}[CF]$ est \textbf{SIM$^*$-AC-CPRF securisee}.
-      \end{block}
-    \end{column}
-    \begin{column}{0.44\textwidth}
-      \textbf{Application a BMO17 (RSA)}
-      \begin{itemize}
-        \item \checkmark Espace de sortie $\approx 2^{4096}$ : super-polynomial
-        \item \checkmark RSA est IND$^*$-NC securisee
-        \item \checkmark Oracle non-programmable (lazy sampling)
-      \end{itemize}
-      \vspace{0.3cm}
-      \begin{exampleblock}{Bilan}
-        $\textsf{Hashed}[\text{BMO17}]$ est \textbf{prouvablement securisee} contre l'attaque CJ25.
-      \end{exampleblock}
-      \vspace{0.2cm}
-      \textbf{Application a $F^{\text{WEAK}}$}\\
-      $\times$ Condition (2) non satisfaite\\
-      $\Rightarrow$ Le theoreme ne s'applique pas.
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{BMO17 hachée : pourquoi ça bloque l'attaque ?}
+
+\textbf{Rappel de l'attaque CJ25 :}
+\begin{itemize}
+    \item L'attaquant obtient $\mathit{Eval}(x) = ST_x$ et calcule $\pi^{x-n}(ST_x)$.
+    \item Il compare le résultat à $ST_n$.
+\end{itemize}
+
+\vspace{0.4cm}
+
+\textbf{Avec le hachage :}
+\begin{itemize}
+    \item L'attaquant ne reçoit plus $ST_x$, mais \alert{$H(ST_x)$}.
+    \item Il ne peut pas appliquer $\pi^{x-n}$ sur $H(ST_x)$.
+    \item La comparaison devient \alert{impossible} : l'attaque est bloquée.
+\end{itemize}
+
+\vspace{0.3cm}
+
+
 \end{frame}
 
-% ============================================================
-\section{Resultats experimentaux}
+%------------------------------------------------
+\begin{frame}{Alternative : permutation AES}
 
-\begin{frame}{Resultats experimentaux --- Configuration}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Configuration materielle}
-      \vspace{0.3cm}
+\textbf{Idée} : remplacer RSA par AES comme permutation à trappe.
 
-      \begin{tabular}{ll}
-        \toprule
-        \textbf{Composant} & \textbf{Detail} \\
-        \midrule
-        Machine      & Dell Inspiron 3501 \\
-        CPU          & Intel Core i7-1165G7 \\
-                     & 4 coeurs, 8 threads \\
-        Frequence    & 2.80 GHz (jusqu'a 4.70) \\
-        RAM          & 7.5 GB \\
-        OS           & Ubuntu 24.04.4 LTS \\
-        Noyau        & Linux 6.8.0 \\
-        Architecture & x86\_64 \\
-        GPU          & Aucun \\
-        \bottomrule
-      \end{tabular}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \textbf{Protocole experimental}
-      \begin{itemize}
-        \item 100 requetes d'evaluation par variante
-        \item Taux de succes de l'attaque CJ25 mesure en fonction du nombre de requetes
-        \item 4 variantes testees :
-          \begin{itemize}
-            \item CPRF BMO17 non hachee
-            \item CPRF BMO17 hachee SHA-256
-            \item CPRF BMO17 hachee lazy sampling
-            \item $F^{\text{WEAK}}$ non hachee
-          \end{itemize}
-      \end{itemize}
-    \end{column}
-  \end{columns}
+\vspace{0.4cm}
+
+AES définit une bijection sur les blocs de 128 bits :
+\[
+f_k(x) = E_k(x), \qquad f_k^{-1}(x) = D_k(x)
+\]
+
+\vspace{0.4cm}
+
+\textbf{Problème fondamental :}
+
+\begin{itemize}
+    \item Pour inverser, il faut \textbf{obligatoirement} connaître la clé $k$.
+    \item Il est impossible de donner une clé contrainte \textbf{sans révéler} la clé $k$.
+\end{itemize}
+
+\vspace{0.3cm}
+
+
 \end{frame}
 
-\begin{frame}{Resultats experimentaux --- Observations}
-  \begin{columns}[t]
-    \begin{column}{0.48\textwidth}
-      \begin{alertblock}{CPRF non hachee}
-        Taux $\approx \mathbf{1}$ des la \textbf{1\`ere requete}.\\
-        Structure algebrique directement exploitable.
-      \end{alertblock}
-      \vspace{0.4cm}
-      \begin{alertblock}{$F^{\text{WEAK}}$ non hachee}
-        Avantage significatif visible rapidement.\\
-        Matrice $S$ retrouvee en quelques requetes.
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{exampleblock}{CPRF hachee SHA-256}
-        Taux $\approx \mathbf{0.5}$ : decision \textbf{aleatoire}.\\
-        L'attaquant ne distingue plus rien.
-      \end{exampleblock}
-      \vspace{0.4cm}
-      \begin{exampleblock}{CPRF hachee lazy sampling}
-        Taux $\approx \mathbf{0.5}$ egalement.\\
-        Resultats identiques a SHA-256.
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
+%------------------------------------------------
+\begin{frame}{Alternative : fonction de Rabin}
 
-  \vspace{0.4cm}
-  \begin{block}{Conclusion}
-    \centering
-    Le hachage (SHA-256 ou lazy sampling) \textbf{neutralise completement} l'attaque CJ25.\\
-    Les deux approches sont \textbf{equivalentes} en pratique.
-  \end{block}
+La fonction de Rabin est définie par :
+\[
+f(x) = x^2 \bmod n, \qquad n = p \cdot q
+\]
+
+\vspace{0.3cm}
+
+\textbf{Inversion} (avec la clé secrète $(p, q)$) :
+résoudre $x^2 \equiv y \pmod{n}$ donne \textbf{4 racines} :
+\[
+\pm r_p \cdot q \cdot (q^{-1} \bmod p) \;\pm\; r_q \cdot p \cdot (p^{-1} \bmod q) \pmod{n}
+\]
+
+\vspace{0.3cm}
+
+\textbf{Problème fondamental :}
+\begin{itemize}
+    \item $f$ n'est \textbf{pas injective} : une image admet 4 pré-images.
+    \item Même avec la clé privée, on ne sait pas laquelle est la \og bonne \fg.
+    \item Il est donc impossible d'itérer $f^{-1}$ de façon déterministe.
+\end{itemize}
+
+\vspace{0.3cm}
+
+
 \end{frame}
 
-% ============================================================
-\section{Conclusion}
+%------------------------------------------------
+\begin{frame}{Alternative : $F^{\mathrm{WEAK}}$ --- construction}
 
-\begin{frame}{Conclusion}
-  \begin{columns}
-    \begin{column}{0.50\textwidth}
-      \textbf{Ce que nous avons realise}
-      \begin{itemize}
-        \item BMO17 avec RSA 4096 bits (OpenSSL)
-        \item Attaque CJ25 en client--serveur TCP
-        \item Analyse : $F^{\text{WEAK}}$, Rabin, AES
-        \item CPRF hachee : SHA-256 et lazy sampling
-        \item Etude de $\textsf{Hashed}[F^{\text{WEAK}}]$
-      \end{itemize}
-      \vspace{0.25cm}
-      \textbf{Resultats principaux}
-      \begin{itemize}
-        \item Le hachage \textbf{neutralise} l'attaque CJ25
-        \item RSA : seule permutation a trappe adaptee
-        \item $F^{\text{WEAK}}$ cassee mais instructive
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \begin{exampleblock}{Perspectives}
-        \begin{itemize}
-          \item Contraintes plus expressives\\(intervalles, circuits)
-          \item Constructions : LWE, couplages
-          \item Preuve formelle de $\textsf{Hashed}[F^{\text{WEAK}}]$
-        \end{itemize}
-      \end{exampleblock}
-      \vspace{0.3cm}
-      \begin{block}{Code source}
-        \centering
-        \texttt{\small github.com/julian-mtn/bmo17-cprf}
-      \end{block}
-    \end{column}
-  \end{columns}
-  \vspace{0.4cm}
-  \begin{center}
-    \Large\color{cprf-navy}\textbf{Merci pour votre attention !}
-    \quad {\normalsize\color{cprf-gray} Questions ?}
-  \end{center}
+\textbf{Idée} : utiliser une application linéaire comme permutation.
+
+\vspace{0.3cm}
+
+\begin{columns}[t]
+\begin{column}{0.48\textwidth}
+\textbf{Clé maître}
+\[
+S \in (\mathbb{Z}/p\mathbb{Z})^{M \times N}
+\]
+matrice choisie aléatoirement.
+
+\vspace{0.3cm}
+
+\textbf{Évaluation}
+\[
+\mathit{Eval}(S, \vec{x}) = S \cdot \vec{x}
+\]
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Clé contrainte pour $\vec{y}$}
+
+L'oracle tire $\vec{d} \neq \vec{0}$ et renvoie :
+\[
+S_{\vec{y}} = S + \vec{d} \cdot \vec{y}^T
+\]
+
+\vspace{0.3cm}
+
+\textbf{Évaluation contrainte}
+\[
+\mathit{EvalC}(S_{\vec{y}}, \vec{x}) = S_{\vec{y}} \cdot \vec{x}
+\]
+correcte si et seulement si $\langle \vec{x}, \vec{y} \rangle = 0$.
+\end{column}
+\end{columns}
+
 \end{frame}
 
+%------------------------------------------------
+\begin{frame}{Attaque sur $F^{\mathrm{WEAK}}$ --- principe}
+
+\textbf{Objectif} : retrouver la clé maître $S$ à partir d'une clé contrainte et d'évaluations.
+
+\vspace{0.3cm}
+
+\textbf{Choix de l'attaquant} : demander la clé contrainte pour
+\[
+\vec{y} = (0, \ldots, 0, 1)
+\]
+
+Il reçoit $S_{\vec{y}} = S + \vec{d} \cdot \vec{y}^T$.
+
+\vspace{0.3cm}
+
+\textbf{Observation clé} : pour tout $\vec{x} \perp \vec{y}$,
+\[
+S_{\vec{y}} \cdot \vec{x} = S \cdot \vec{x}
+\]
+Les $N-1$ premières colonnes de $S$ sont directement accessibles via $S_{\vec{y}}$.
+
+\vspace{0.3cm}
+
+Il reste à retrouver la dernière colonne $S_{\cdot, N}$.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Attaque sur $F^{\mathrm{WEAK}}$ --- résolution}
+
+\textbf{Pour retrouver $S_{i,N}$} : demander $\mathit{Eval}(\vec{x})$ avec $x_N \neq 0$.
+
+Pour chaque ligne $i$ de $S$, on a :
+\[
+S_{i,1} x_1 + \cdots + S_{i,N-1} x_{N-1} + S_{i,N} x_N = y_i
+\]
+
+Puisque $S_{i,1}, \ldots, S_{i,N-1}$ sont connus, on en déduit :
+\[
+S_{i,N} = x_N^{-1}\left(y_i - \sum_{j=1}^{N-1} S_{i,j} x_j\right)
+\]
+
+
+\vspace{0.3cm}
+
+\begin{itemize}
+    \item Si l'oracle utilise une fonction aléatoire : l'attaquant reçoit une valeur aléatoire de $S_{i,N}$
+    \item Si l'oracle utilise $F^{\mathrm{WEAK}}$ : l'attaquant reçoit la bonne valeur de $S_{i,N}$
+    \item Après quelques requêtes, l'attaquant retrouve que la bonne valeur $S_{i,N}$ est celle qui revient le plus souvent
+\end{itemize}
+
+
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Renforcement de $F^{\mathrm{WEAK}}$ par hachage}
+
+\textbf{Idée} : composer $F^{\mathrm{WEAK}}$ avec une fonction de hachage $H$.
+
+\vspace{0.3cm}
+
+\begin{columns}[t]
+\begin{column}{0.48\textwidth}
+\textbf{Sans hachage}
+\[
+\mathit{Eval}(\vec{x}) = S \cdot \vec{x}
+\]
+\textcolor{red}{$\Rightarrow$ attaque linéaire possible.}
+
+\vspace{0.4cm}
+
+\textbf{Avec hachage}
+\[
+\mathit{Eval}_H(\vec{x}) = H(S \cdot \vec{x})
+\]
+Retrouver $S$ nécessite une pré-image de $H$.
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Théorème (CJ25)}
+Soit $CF$ une CPRF. Si :
+\begin{enumerate}
+    \item $|\mathit{CF.Out}(\lambda,x)|$ est super-polynomial en $\lambda$,
+    \item $CF$ est IND$^*$-NC-CPRF sécurisée,
+    \item l'oracle aléatoire est non-programmable,
+\end{enumerate}
+alors $\mathsf{Hashed}[CF]$ est\\
+\textbf{SIM$^*$-AC-CPRF sécurisée}.
+\end{block}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Vérification --- Condition 1 : super-polynomial}
+
+\textbf{Condition 1 : } $|\mathit{F^{\mathrm{WEAK}}.Out}(\lambda, x)|$ est super-polynomial en $\lambda$.
+
+\vspace{0.3cm}
+
+Les coefficients sont dans $\mathbb{Z}/p\mathbb{Z}$ avec $|p| \approx \lambda$ bits.\\
+La matrice $S$ contient $M \times N$ coefficients, donc :
+\[
+|\mathit{F^{\mathrm{WEAK}}.Out}| \approx 2^{\lambda \cdot M \cdot N}
+\]
+\textcolor{green!60!black}{\checkmark} \textbf{Condition 1 vérifiée.}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Vérification --- Condition 3 : oracle non-programmable}
+ 
+\textbf{Condition 3 :} l'oracle aléatoire $H$ est \textbf{non-programmable}.
+ 
+\vspace{0.3cm}
+
+
+
+\textbf{Implémentation d'une fonction de hachage par lazy sampling :}
+ 
+\vspace{0.2cm}
+
+
+\begin{block}{Définition}
+Un oracle $P$ est non-programmable si :
+\begin{itemize}
+    \item on ne peut pas \textbf{forcer} $P(z) = y$ pour une valeur $y$ choisie à l'avance,
+    \item la distribution de $P(z)$ pour une entrée non encore évaluée est toujours \textbf{uniforme et indépendante}.
+\end{itemize}
+\end{block}
+ 
+\vspace{0.3cm}
+ 
+\begin{itemize}
+    \item Si $z$ \textbf{déjà évalué} : retourner la valeur mémorisée $H(z)$.
+    \item Sinon : tirer $y \leftarrow \{0,1\}^\lambda$ aléatoirement, mémoriser $(z, y)$, retourner $y$.
+\end{itemize}
+ 
+\vspace{0.15cm}
+
+La valeur de $H(z)$ est fixée \textbf{au moment de la première évaluation} et ne peut plus être modifiée.
+ 
+\vspace{0.3cm}
+ 
+\textcolor{green!60!black}{\Large\checkmark} \textbf{Condition 3 vérifiée.}
+ 
+\end{frame}
+ 
+%------------------------------------------------
+\begin{frame}{Vérification --- Condition 2 : IND$^*$-NC-CPRF (1/2)}
+ 
+\textbf{Condition 2 :} $F^{\mathrm{WEAK}}$ est IND$^*$-NC-CPRF sécurisée.
+ 
+\vspace{0.3cm}
+ 
+\begin{block}{Rappel : que signifie IND$^*$-NC ?}
+La CPRF $CF$ est IND$^*$-NC sécurisée si \textbf{aucun attaquant efficace} ne peut :
+\begin{enumerate}
+    \item demander \textbf{toutes} ses évaluations d'un coup (non-adaptativement),
+    \item effectue ses calculs,
+    \item renvoye sa décision à l'oracle tout en ayant un \textbf{avantage significatif}
+\end{enumerate}
+\end{block}
+ 
+\vspace{0.3cm}
+ 
+Pour prouver que $F^{\mathrm{WEAK}}$ n'est \textbf{pas} IND$^*$-NC sécurisée, il suffit de décrire un tel attaquant.
+ 
+\end{frame}
+ 
+%------------------------------------------------
+\begin{frame}{Vérification --- Condition 2 : IND$^*$-NC-CPRF (2/2)}
+ 
+\textbf{Jeu de sécurité simplifié contre $F^{\mathrm{WEAK}}$ :}
+ 
+\vspace{0.1cm}
+ 
+\begin{enumerate}
+ 
+    \item[\textbf{1.}] \textbf{Clé contrainte.} $\mathcal{A}$ demande $S_{\vec{y}}$ pour $\vec{y} = (0,\ldots,0,1)$.\\
+    $\Rightarrow$ $\mathcal{A}$ récupère les $N-1$ premières colonnes de $S$.
+ 
+ 
+    \item[\textbf{2.}] \textbf{Évaluations (non-adaptatives).} $\mathcal{A}$ envoie \textbf{en une seule fois}\\
+    $n$ vecteurs $\vec{x}^{(1)}, \ldots, \vec{x}^{(n)}$ avec $x^{(k)}_N \neq 0$,\\
+    et reçoit toutes les réponses $\vec{y}^{(1)}, \ldots, \vec{y}^{(n)}$ en retour.
+ 
+ 
+    \item[\textbf{3.}] \textbf{Calcul.} Pour chaque requête $k$ et chaque ligne $i$, $\mathcal{A}$ calcule :
+    \[
+    \tilde{S}_{i,N}^{(k)} = \bigl(x^{(k)}_N\bigr)^{-1}\!\left(y^{(k)}_i - \sum_{j=1}^{N-1} S_{i,j}\, x^{(k)}_j\right)
+    \]
+ 
+ 
+    \item[\textbf{4.}] \textbf{Décision.} Pour les $\tilde{S}_{i,N}^{(k)}$ \textbf{identiques} $\Rightarrow$ CPRF.\\
+    Sinon $\Rightarrow$ fonction aléatoire.
+\end{enumerate}
+ 
+\vspace{0.1cm}
+ 
+\textcolor{red!60!black}{$\times$} \textbf{Condition 2 non vérifiée.}
+ 
+\end{frame}
+ 
+%------------------------------------------------
+\begin{frame}{Conclusion sur $\mathsf{Hashed}[F^{\mathrm{WEAK}}]$}
+ 
+
+\begin{center}
+\begin{tabular}{clc}
+\hline
+\textbf{Condition} & \textbf{Énoncé} & \textbf{Statut} \\
+\hline
+1 & Espace de sortie super-polynomial & \textcolor{green!60!black}{\checkmark} \\
+2 & IND$^*$-NC-CPRF sécurisée & \textcolor{red}{$\times$} \\
+3 & Oracle non-programmable (lazy sampling) & \textcolor{green!60!black}{\checkmark} \\
+\hline
+\end{tabular}
+\end{center}
+ 
+\vspace{0.4cm}
+ 
+La condition 2 n'est pas vérifiée : on ne peut pas utiliser ce théorème pour
+prouver la sécurité de $\mathsf{Hashed}[F^{\mathrm{WEAK}}]$.
+
+ 
+\vspace{0.3cm}
+ 
+
+Cela \textbf{ne prouve pas} que $\mathsf{Hashed}[F^{\mathrm{WEAK}}]$ est non sécurisée.\\[0.2cm]
+La sécurité de $\mathsf{Hashed}[F^{\mathrm{WEAK}}]$ reste une \textbf{question ouverte}.
+
+ 
+\end{frame}
+ 
+%------------------------------------------------
 \end{document}
