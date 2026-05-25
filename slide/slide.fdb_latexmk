@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1779694952.00446 "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779694953.35548 0
+["pdflatex"] 1779702517.00382 "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779702518.38502 0
   "../rapport_fr/images/sorbonne.png" 1779390895.78305 7860 7634c442bbbc26e80b522a21fb5dd53f ""
   "/etc/texmf/web2c/texmf.cnf" 1761145480.36181 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" 1779694950.1212 15858 a73660377c1d10f5d33dd5fc16c70fe8 ""
+  "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" 1779702517.2914 15715 a3ba88b28bb982c5e3d87287fc6246f8 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -244,10 +244,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770116836.56821 5349306 5bebe4c4513170eb7b91d5de73269dde ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770116845 6837886 995b4c421a219235e7928a91b461690a ""
-  "slide.aux" 1779694953.26817 3300 2a8fa216506886a00c1c32cd93967efa "pdflatex"
-  "slide.nav" 1779694953.26917 2132 9ecbcfc9f7de68c052dc9846a033acac "pdflatex"
-  "slide.out" 1779694952.56517 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "slide.tex" 1779694950.1212 15858 a73660377c1d10f5d33dd5fc16c70fe8 ""
+  "slide.aux" 1779702518.30538 3300 2a8fa216506886a00c1c32cd93967efa "pdflatex"
+  "slide.nav" 1779702518.30538 2132 9ecbcfc9f7de68c052dc9846a033acac "pdflatex"
+  "slide.out" 1779702517.57339 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "slide.tex" 1779702517.2914 15715 a3ba88b28bb982c5e3d87287fc6246f8 ""
   (generated)
   "slide.aux"
   "slide.log"

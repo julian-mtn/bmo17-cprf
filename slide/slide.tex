@@ -47,11 +47,11 @@ C'est une fonction déterministe
 F_k : \{0,1\}^n \rightarrow \{0,1\}^m
 \]
 
-paramétrée par une clé secrète \(k\).
+paramétrée par une clé secrète \(k\)
 
 \vspace{0.5cm}
 
-Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
+Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire
 
 \end{frame}
 
@@ -60,9 +60,9 @@ Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
 \begin{itemize}
     \item Les PRF sont utilisées en cryptographie moderne :
     \begin{itemize}
-        \item chiffrement,
-        \item authentification,
-        \item dérivation de clés.
+        \item chiffrement
+        \item authentification
+        \item dérivation de clés
     \end{itemize}
 
     \vspace{0.3cm}
@@ -81,7 +81,7 @@ Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
 %-----------------------------------------------
 \begin{frame}{Principe des CPRF}
 
-Une CPRF est une PRF dont l'évaluation peut être restreinte.
+Une CPRF est une PRF dont l'évaluation peut être restreinte
 
 \vspace{0.4cm}
 
@@ -94,20 +94,20 @@ C_n(x) = [x < n]
 \vspace{0.4cm}
 
 \begin{itemize}
-    \item Clé maître : accès complet.
-    \item Clé contrainte : accès limité à certaines entrées.
+    \item Clé maître : accès complet
+    \item Clé contrainte : accès limité à certaines entrées
 \end{itemize}
 
 \vspace{0.5cm}
 
 Objectif :
-déléguer des capacités sans révéler la clé secrète.
+déléguer des capacités sans révéler la clé secrète
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Construction BMO17 : intuition}
+\begin{frame}{Construction BMO17}
 
-La construction repose sur une permutation à trappe itérée.
+La construction repose sur une permutation à trappe itérée
 
 \vspace{0.5cm}
 
@@ -129,7 +129,7 @@ La construction repose sur une permutation à trappe itérée.
 \mathit{Eval}(c) = \pi^{-c}(ST_0)
 \]
 
-Avec la clé secrète, on peut calculer tous les états.
+Avec la clé secrète, on peut calculer tous les états
 \end{frame}
 
 %------------------------------------------------
@@ -148,9 +148,9 @@ Inverse de la permutation :
 \vspace{0.4cm}
 
 \begin{itemize}
-    \item La clé privée permet de remonter la chaîne.
-    \item La clé publique permet uniquement d'avancer.
-    \item RSA fournit une permutation bijective adaptée à la construction.
+    \item La clé privée permet de remonter la chaîne
+    \item La clé publique permet uniquement d'avancer
+    \item RSA fournit une permutation bijective adaptée à la construction
 \end{itemize}
 
 \end{frame}
@@ -170,23 +170,23 @@ L'évaluation contrainte devient :
 
 \begin{itemize}
     \item Possible si \(c < n\).
-    \item Impossible d'aller au-delà sans la clé privée.
+    \item Impossible d'aller au-delà sans la clé privée
 \end{itemize}
 
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Attaque CJ25 : idée générale}
+\begin{frame}{Attaque CJ25}
 
 L'attaquant obtient :
 \begin{itemize}
-    \item une clé contrainte \((PK, ST_n, n)\),
-    \item des évaluations hors contrainte \(\mathit{Eval}(x)\) pour \(x > n\).
+    \item une clé contrainte \((PK, ST_n, n)\)
+    \item des évaluations hors contrainte \(\mathit{Eval}(x)\) pour \(x > n\)
 \end{itemize}
 
 \vspace{0.4cm}
 
-Puis il exploite la structure publique de la chaîne.
+Puis il utilise la structure de la chaîne de permutation
 
 \begin{center}
 \begin{tikzpicture}[node distance=2cm]
@@ -203,7 +203,6 @@ Puis il exploite la structure publique de la chaîne.
 
 \vspace{0.5cm}
 
-L'attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
 \end{frame}
 
 %================================================
@@ -211,9 +210,9 @@ L'attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
 %================================================
 
 %------------------------------------------------
-\begin{frame}{BMO17 hachée : principe}
+\begin{frame}{BMO17 hachée}
 
-\textbf{Idée} : appliquer une fonction de hachage $H$ sur la sortie de la CPRF.
+\textbf{Idée} : appliquer une fonction de hachage $H$ sur la sortie de la CPRF
 
 \vspace{0.4cm}
 
@@ -229,22 +228,22 @@ L'attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
 \mathit{EvalC}_H(c) = H\!\left(\pi^{n-c}(ST_n)\right)
 \]
 
-\textbf{Génération de la clé contrainte}
-\[
-(PK, ST_n,n)
-\]
 \end{column}
+
 \begin{column}{0.48\textwidth}
 \begin{center}
-\begin{tikzpicture}[node distance=1.8cm]
+\begin{tikzpicture}[node distance=3.2cm]
+
 \node[draw,rectangle] (sx) {$ST_x$};
-\node[draw,rectangle,right of=sx] (sn) {$ST_n$};
-\node[draw,rectangle,below=0.7cm of sx,fill=blue!15] (hx) {$H(ST_x)$};
-\node[draw,rectangle,below=0.7cm of sn,fill=blue!15] (hn) {$H(ST_n)$};
+\node[draw,rectangle,right=2cm of sx] (sn) {$ST_n$};
+
+\node[draw,rectangle,below=1.2cm of sx,fill=blue!15] (hx) {$H(ST_x)$};
+\node[draw,rectangle,below=1.2cm of sn,fill=blue!15] (hn) {$H(ST_n)$};
+
 \draw[->] (sx) -- node[above]{\small $\pi^{x-n}$} (sn);
 \draw[->] (sx) -- node[left]{\small $H$} (hx);
 \draw[->] (sn) -- node[right]{\small $H$} (hn);
-\draw[dashed,red,thick] (hx) -- node[below]{\large $\times$} (hn);
+
 \end{tikzpicture}
 \end{center}
 \end{column}
@@ -255,30 +254,37 @@ L'attaquant peut vérifier une cohérence impossible dans le monde aléatoire.
 %------------------------------------------------
 \begin{frame}{BMO17 hachée : pourquoi ça bloque l'attaque ?}
 
-\textbf{Rappel de l'attaque CJ25 :}
-\begin{itemize}
-    \item L'attaquant obtient $\mathit{Eval}(x) = ST_x$ et calcule $\pi^{x-n}(ST_x)$.
-    \item Il compare le résultat à $ST_n$.
-\end{itemize}
 
-\vspace{0.4cm}
 
-\textbf{Avec le hachage :}
+\textbf{Avec hachage :}
 \begin{itemize}
-    \item L'attaquant ne reçoit plus $ST_x$, mais \alert{$H(ST_x)$}.
-    \item Il ne peut pas appliquer $\pi^{x-n}$ sur $H(ST_x)$.
-    \item La comparaison devient \alert{impossible} : l'attaque est bloquée.
+    \item L'attaquant ne reçoit plus $ST_x$, mais \alert{$H(ST_x)$}
+    \item Il ne peut pas appliquer $\pi^{x-n}$ sur $H(ST_x)$
 \end{itemize}
 
 \vspace{0.3cm}
 
+\begin{center}
+\begin{tikzpicture}[
+    scale=1.4,
+    every node/.style={transform shape},
+    node distance=4cm
+]
+
+\node[draw,rectangle,fill=blue!15,minimum width=1cm,minimum height=1cm] (hx) {$H(ST_x)$};
+\node[draw,rectangle,right of=hx,fill=blue!15,minimum width=1cm,minimum height=1cm] (hn) {$H(ST_n)$};
+
+\draw[dashed,red,thick] (hx) -- node[below]{\large $\times$} (hn);
+
+\end{tikzpicture}
+\end{center}
 
 \end{frame}
 
 %------------------------------------------------
 \begin{frame}{Alternative : permutation AES}
 
-\textbf{Idée} : remplacer RSA par AES comme permutation à trappe.
+\textbf{Idée} : remplacer RSA par AES comme permutation à trappe
 
 \vspace{0.4cm}
 
