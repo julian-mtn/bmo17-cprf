@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1779738211.83162 "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779738221.35282 0
+["pdflatex"] 1779738416.50714 "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779738427.29824 0
   "../rapport_fr/images/sorbonne.png" 1779442224.61557 7860 7634c442bbbc26e80b522a21fb5dd53f ""
   "/etc/texmf/web2c/texmf.cnf" 1768777829.47801 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/slide/slide.tex" 1779738199.11672 15768 6c555cd6016c91d5b2864a13df6b0caa ""
+  "/mnt/c/Users/razaf/Desktop/M1/Semestre_2/Projet_CCA/Git/bmo17-cprf/slide/slide.tex" 1779738403.26418 15769 c49147b370df26df00b3d5be846e1fd1 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -44,6 +44,7 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi12.pfb" 1248133631 25095 0ff1f6d531b320ecbbd6ea84d875816c ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb" 1248133631 25168 33771b85f45c82138dd7745db7092d1c ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1248133631 32587 1788b0c1c5b39540c96f5e42ccd6dae8 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb" 1248133631 31764 459c573c03a4949a528c2cc7f557e217 ""
@@ -236,10 +237,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1771842688.07278 128067 403859e4d35fdff4c458758f0e5ea400 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1771842693 6808180 60db700bce88f8f13d3a49df25aad502 ""
-  "slide.aux" 1779738220.77543 3042 b524a4a695d8287a79736f2cb8085686 "pdflatex"
-  "slide.nav" 1779738220.80471 1946 cc1d57bc897673374b837eab8153475a "pdflatex"
-  "slide.out" 1779738217.73141 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "slide.tex" 1779738199.11672 15768 6c555cd6016c91d5b2864a13df6b0caa ""
+  "slide.aux" 1779738426.61051 3171 f8ffaba20b516eced04d2c0450d2562f "pdflatex"
+  "slide.nav" 1779738426.6495 2039 5a4196ea47006e239fc20568aaec1af6 "pdflatex"
+  "slide.out" 1779738422.98649 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "slide.tex" 1779738403.26418 15769 c49147b370df26df00b3d5be846e1fd1 ""
   (generated)
   "slide.aux"
   "slide.log"
