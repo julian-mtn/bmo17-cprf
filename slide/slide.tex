@@ -34,6 +34,28 @@ Master 1 -- Cryptologie, Calcul Haute-Performance et Algorithmes
 \end{frame}
 
 %------------------------------------------------
+\begin{frame}{Qu'est-ce qu'une PRF ?}
+
+\textbf{PRF = Pseudorandom Function}
+(fonction pseudo-aléatoire)
+
+\vspace{0.5cm}
+
+C'est une fonction déterministe
+
+\[
+F_k : \{0,1\}^n \rightarrow \{0,1\}^m
+\]
+
+paramétrée par une clé secrète \(k\).
+
+\vspace{0.5cm}
+
+Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
+
+\end{frame}
+
+%------------------------------------------------
 \begin{frame}{Contexte}
 \begin{itemize}
     \item Les PRF sont utilisées en cryptographie moderne :
@@ -55,27 +77,6 @@ Master 1 -- Cryptologie, Calcul Haute-Performance et Algorithmes
 \end{itemize}
 \end{frame}
 
-%------------------------------------------------
-\begin{frame}{Qu'est-ce qu'une PRF ?}
-
-\textbf{PRF = Pseudorandom Function}
-(fonction pseudo-aléatoire)
-
-\vspace{0.5cm}
-
-C'est une fonction déterministe
-
-\[
-F_k : \{0,1\}^n \rightarrow \{0,1\}^m
-\]
-
-paramétrée par une clé secrète \(k\).
-
-\vspace{0.5cm}
-
-Sans connaître \(k\), \(F_k(x)\) est indistinguable d'une fonction aléatoire.
-
-\end{frame}
 
 %-----------------------------------------------
 \begin{frame}{Principe des CPRF}
@@ -186,11 +187,6 @@ L'attaquant obtient :
 \vspace{0.4cm}
 
 Puis il exploite la structure publique de la chaîne.
-
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{Intuition visuelle de l'attaque}
 
 \begin{center}
 \begin{tikzpicture}[node distance=2cm]
