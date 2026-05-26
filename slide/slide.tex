@@ -263,10 +263,15 @@ Puis il utilise la structure de la chaîne de permutation
 \node[draw,rectangle,right of=sn] (sn1) {$ST_{n+1}$};
 \node[right of=sn1] (dots) {$\dots$};
 \node[draw,rectangle,right of=dots] (sx) {$ST_x$};
-\draw[->] (sn) -- node[above] {$\pi$} (sn1);
-\draw[->] (sn1) -- node[above] {$\pi$} (dots);
-\draw[->] (dots) -- node[above] {$\pi$} (sx);
+
+% flèches inversées (sauf la rouge)
+\draw[->] (sn1) -- node[above] {$\pi$} (sn);
+\draw[->] (dots) -- node[above] {$\pi$} (sn1);
+\draw[->] (sx) -- node[above] {$\pi$} (dots);
+
+% flèche rouge inchangée
 \draw[->,red,dashed,bend right=40] (sx) to node[below] {$\pi^{x-n}$} (sn);
+
 \end{tikzpicture}
 \end{center}
 
