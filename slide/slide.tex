@@ -21,7 +21,7 @@ Sorbonne Université \\
 Master 1 -- Cryptologie, Calcul Haute-Performance et Algorithmes
 }
 
-\date{\today}
+\date{28 mai 2026}
 
 \begin{document}
 
@@ -156,6 +156,74 @@ Inverse de la permutation :
 
 \end{frame}
 
+%------------------------------------------------
+\begin{frame}{Pourquoi Rabin ne convient pas ?}
+
+\centering
+
+\vspace{-0.4cm}
+\[
+f(x)=x^2 \bmod n
+\]
+
+
+\textbf{Chaque inversion possède 4 pré-images possibles}
+\vspace{0.4cm}
+
+\scalebox{0.72}{
+\begin{tikzpicture}[
+  grow=down,
+  sibling distance=16mm,
+  level distance=14mm,
+  every node/.style={
+    fill=red!15,
+    draw=red!40,
+    circle,
+    align=center,
+    minimum width=7mm,
+    inner sep=1pt
+  },
+  correct/.style={
+    fill=green!20,
+    draw=green!50!black
+  }
+]
+
+\node[correct] {\scriptsize $ST_0$}
+  child {node[correct] {\scriptsize $X_0$}
+    child {node {\scriptsize $X_0$}}
+    child {node {\scriptsize $X_1$}}
+    child {node[correct] {\scriptsize $X_2$}
+      child {node[correct] {\scriptsize $\dots$}
+        child {node[correct] {\scriptsize $ST_n$}}
+        child {node {\scriptsize $X_1$}}
+        child {node {\scriptsize $X_2$}}
+        child {node {\scriptsize $X_3$}}
+      }
+      child {node {\scriptsize $X_1$}}
+      child {node {\scriptsize $X_2$}}
+      child {node {\scriptsize $X_3$}}
+    }
+    child {node {\scriptsize $X_3$}}
+  }
+  child {node {\scriptsize $X_1$}}
+  child {node {\scriptsize $X_2$}}
+  child {node {\scriptsize $X_3$}};
+
+\end{tikzpicture}
+}
+
+{\scriptsize
+\[
+x \equiv
+\pm r_p q(q^{-1}\bmod p)
+\;\pm\;
+r_q p(p^{-1}\bmod q)
+\pmod n
+\]
+}
+
+\end{frame}
 %------------------------------------------------
 \begin{frame}{Clé contrainte}
 
@@ -312,36 +380,9 @@ f_k(x) = E_k(x), \qquad f_k^{-1}(x) = D_k(x)
 
 %------------------------------------------------
 \end{comment}
-\begin{frame}{Alternative : fonction de Rabin}
-
-La fonction de Rabin est définie par :
-\[
-f(x) = x^2 \bmod n, \qquad n = p \cdot q
-\]
-
-\vspace{0.3cm}
-
-\textbf{Inversion} (avec la clé secrète $(p, q)$) :
-résoudre $x^2 \equiv y \pmod{n}$ donne \textbf{4 racines} :
-\[
-\pm r_p \cdot q \cdot (q^{-1} \bmod p) \;\pm\; r_q \cdot p \cdot (p^{-1} \bmod q) \pmod{n}
-\]
-
-\vspace{0.3cm}
-
-\textbf{Problème fondamental :}
-\begin{itemize}
-    \item $f$ n'est \textbf{pas injective} : une image admet 4 pré-images.
-    \item Même avec la clé privée, on ne sait pas laquelle est la \og bonne \fg.
-    \item Il est donc impossible d'itérer $f^{-1}$ de façon déterministe.
-\end{itemize}
-
-\vspace{0.3cm}
 
 
-\end{frame}
 
-%------------------------------------------------
 
 
 \begin{frame}{Alternative : $F^{\mathrm{WEAK}}$ --- construction}
