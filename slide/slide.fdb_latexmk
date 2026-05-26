@@ -1,8 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1779791934.35477 "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779791936.13675 0
+["pdflatex"] 1779805916.46148 "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" "slide.pdf" "slide" 1779805917.79274 0
   "../rapport_fr/images/sorbonne.png" 1779390895.78305 7860 7634c442bbbc26e80b522a21fb5dd53f ""
   "/etc/texmf/web2c/texmf.cnf" 1761145480.36181 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" 1779791934.02347 16423 ddb3ae11b1fcf6fa2f081d72cfdd3242 ""
+  "/home/julian/Bureau/PCCA/bmo17-cprf/slide/slide.tex" 1779805916.27329 16485 be9de85e040733fd07d211ece116e5d7 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -47,7 +47,6 @@
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi12.pfb" 1248133631 25095 0ff1f6d531b320ecbbd6ea84d875816c ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb" 1248133631 25168 33771b85f45c82138dd7745db7092d1c ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1248133631 32569 5e5ddc8df908dea60932f3c484a54c0d ""
-  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1248133631 32587 1788b0c1c5b39540c96f5e42ccd6dae8 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb" 1248133631 31764 459c573c03a4949a528c2cc7f557e217 ""
@@ -245,10 +244,10 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1770116836.56821 5349306 5bebe4c4513170eb7b91d5de73269dde ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1770116845 6837886 995b4c421a219235e7928a91b461690a ""
-  "slide.aux" 1779791936.04445 3171 f8ffaba20b516eced04d2c0450d2562f "pdflatex"
-  "slide.nav" 1779791936.04545 2039 5a4196ea47006e239fc20568aaec1af6 "pdflatex"
-  "slide.out" 1779791935.11246 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "slide.tex" 1779791934.02347 16423 ddb3ae11b1fcf6fa2f081d72cfdd3242 ""
+  "slide.aux" 1779805917.71728 3042 b524a4a695d8287a79736f2cb8085686 "pdflatex"
+  "slide.nav" 1779805917.71828 1946 cc1d57bc897673374b837eab8153475a "pdflatex"
+  "slide.out" 1779805917.01929 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "slide.tex" 1779805916.27329 16485 be9de85e040733fd07d211ece116e5d7 ""
   (generated)
   "slide.aux"
   "slide.log"
