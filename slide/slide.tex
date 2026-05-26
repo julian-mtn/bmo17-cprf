@@ -464,7 +464,7 @@ Pour chaque ligne $i$ de $S$, on a :
 S_{i,1} x_1 + \cdots + S_{i,N-1} x_{N-1} + S_{i,N} x_N = y_i
 \]
 
-Puisque $S_{i,1}, \ldots, S_{i,N-1}$ sont connus, on en déduit :
+Comme $S_{i,1}, \ldots, S_{i,N-1}$ sont connus, on en déduit :
 \[
 S_{i,N} = x_N^{-1}\left(y_i - \sum_{j=1}^{N-1} S_{i,j} x_j\right)
 \]
@@ -568,7 +568,7 @@ Un oracle $P$ est non-programmable si :
  
 \vspace{0.15cm}
 
-La valeur de $H(z)$ est fixée \textbf{au moment de la première évaluation} et ne peut plus être modifiée.
+$H(z)$ est fixée \textbf{au moment de la première évaluation} et ne peut plus être modifiée.
  
 \vspace{0.3cm}
  
@@ -587,8 +587,8 @@ La valeur de $H(z)$ est fixée \textbf{au moment de la première évaluation} et
 La CPRF $CF$ est IND$^*$-NC sécurisée si \textbf{aucun attaquant efficace} ne peut :
 \begin{enumerate}
     \item demander \textbf{toutes} ses évaluations d'un coup (non-adaptativement),
-    \item effectue ses calculs,
-    \item renvoye sa décision à l'oracle tout en ayant un \textbf{avantage significatif}
+    \item effectuer ses calculs,
+    \item renvoyer sa décision à l'oracle tout en ayant un \textbf{avantage significatif}
 \end{enumerate}
 \end{block}
  
