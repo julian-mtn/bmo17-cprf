@@ -531,11 +531,10 @@ alors $\mathsf{Hashed}[CF]$ est\\
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Vérification --- Condition 1 : super-polynomial}
+\begin{frame}{Vérification --- Super-polynomial et non-programmable}
 
 \textbf{Condition 1 : } $|\mathit{F^{\mathrm{WEAK}}.Out}(\lambda, x)|$ est super-polynomial en $\lambda$.
 
-\vspace{0.3cm}
 
 Les coefficients sont dans $\mathbb{Z}/p\mathbb{Z}$ avec $|p| \approx \lambda$ bits.\\
 La matrice $S$ contient $M \times N$ coefficients, donc :
@@ -544,49 +543,29 @@ La matrice $S$ contient $M \times N$ coefficients, donc :
 \]
 \textcolor{green!60!black}{\checkmark} \textbf{Condition 1 vérifiée.}
 
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{Vérification --- Condition 3 : oracle non-programmable}
- 
-\textbf{Condition 3 :} l'oracle aléatoire $H$ est \textbf{non-programmable}.
- 
 \vspace{0.3cm}
-
-
 
 \textbf{Implémentation d'une fonction de hachage par lazy sampling :}
  
-\vspace{0.2cm}
-
-
-\begin{block}{Définition}
-Un oracle $P$ est non-programmable si :
-\begin{itemize}
-    \item on ne peut pas \textbf{forcer} $P(z) = y$ pour une valeur $y$ choisie à l'avance,
-    \item la distribution de $P(z)$ pour une entrée non encore évaluée est toujours \textbf{uniforme et indépendante}.
-\end{itemize}
-\end{block}
- 
-\vspace{0.3cm}
  
 \begin{itemize}
     \item Si $z$ \textbf{déjà évalué} : retourner la valeur mémorisée $H(z)$.
     \item Sinon : tirer $y \leftarrow \{0,1\}^\lambda$ aléatoirement, mémoriser $(z, y)$, retourner $y$.
 \end{itemize}
  
-\vspace{0.15cm}
 
-$H(z)$ est fixée \textbf{au moment de la première évaluation} et ne peut plus être modifiée.
  
-\vspace{0.3cm}
+H(z) peut être réalisé via un procédure lazy-sampling: fixée au moment de la première évaluation par une \textbf{valeur aléatoire} et ne peut plus être modifiée.
+
  
 \textcolor{green!60!black}{\Large\checkmark} \textbf{Condition 3 vérifiée.}
- 
+
+
 \end{frame}
- 
+
 %------------------------------------------------
-\begin{frame}{Vérification --- Condition 2 : IND$^*$-NC-CPRF (1/2)}
+
+\begin{frame}{Vérification --- IND$^*$-NC-CPRF (1/2)}
  
 \textbf{Condition 2 :} $F^{\mathrm{WEAK}}$ est IND$^*$-NC-CPRF sécurisée.
  
@@ -608,11 +587,10 @@ Pour prouver que $F^{\mathrm{WEAK}}$ n'est \textbf{pas} IND$^*$-NC sécurisée, 
 \end{frame}
  
 %------------------------------------------------
-\begin{frame}{Vérification --- Condition 2 : IND$^*$-NC-CPRF (2/2)}
+\begin{frame}{Vérification --- IND$^*$-NC-CPRF (2/2)}
  
 \textbf{Jeu de sécurité simplifié contre $F^{\mathrm{WEAK}}$ :}
  
-\vspace{0.1cm}
  
 \begin{enumerate}
  
@@ -635,7 +613,7 @@ Pour prouver que $F^{\mathrm{WEAK}}$ n'est \textbf{pas} IND$^*$-NC sécurisée, 
     Sinon $\Rightarrow$ fonction aléatoire.
 \end{enumerate}
  
-\vspace{0.1cm}
+Toutes ces étapes se font en temps polynomial
  
 \textcolor{red!60!black}{$\times$} \textbf{Condition 2 non vérifiée.}
  
